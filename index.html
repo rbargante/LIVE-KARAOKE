@@ -5,695 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Carlos Karaoke Live</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-    }
-
-    .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 999;
-      background: rgba(0,0,0,.88);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .nav-inner {
-      max-width: 1120px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 14px;
-      gap: 16px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      font-size: 17px;
-      letter-spacing: .6px;
-      white-space: nowrap;
-      color: #fff;
-      text-shadow: 0 0 14px rgba(255,50,50,.18);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      color: #cfcfcf;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 8px 10px;
-      border-radius: 10px;
-      transition: background .2s ease, color .2s ease;
-    }
-
-    .nav-links a:hover {
-      color: #fff;
-      background: rgba(255,255,255,.06);
-    }
-
-    .container {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 14px;
-    }
-
-    h1, h2, h3 {
-      text-align: center;
-      margin: 0;
-    }
-
-    h1 {
-      margin-bottom: 14px;
-      font-size: 56px;
-      letter-spacing: .5px;
-    }
-
-    .section-title {
-      margin-top: 44px;
-      margin-bottom: 16px;
-      font-size: 38px;
-      letter-spacing: .4px;
-    }
-
-    .section-sub {
-      text-align: center;
-      color: #bdbdbd;
-      margin: 0 0 18px 0;
-      font-size: 15px;
-    }
-
-    .badge-wrap {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-
-    #live-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      background: #2b2b2b;
-      color: #d7d7d7;
-      border: 1px solid rgba(255,255,255,.12);
-    }
-
-    #live-status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #666;
-      display: inline-block;
-    }
-
-    .player {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .player iframe,
-    .player video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: #000;
-    }
-
-    .controls {
-      position: absolute;
-      right: 14px;
-      bottom: 14px;
-      z-index: 20;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .control-btn {
-      background: rgba(0,0,0,.78);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.16);
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 15px;
-      cursor: pointer;
-      min-height: 46px;
-      font-weight: 700;
-    }
-
-    .back-btn {
-      background: rgba(255,255,255,.12);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-    }
-
-    .card {
-      background: #0d0d0d;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .replay-card {
-      cursor: pointer;
-      transition: transform .2s ease;
-    }
-
-    .replay-card:hover {
-      transform: scale(1.03);
-    }
-
-    .card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background: #111;
-    }
-
-    .card p {
-      margin: 0;
-      padding: 10px 12px 14px;
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .view-more-wrap {
-      text-align: center;
-      margin-top: 18px;
-    }
-
-    .view-more-btn {
-      background: none;
-      color: #d8d8d8;
-      border: none;
-      padding: 0;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-
-    .artist-card {
-      padding: 14px;
-      text-align: center;
-    }
-
-    .artist-card.live-item {
-      border: 1px solid rgba(255,90,90,.55);
-      box-shadow: 0 0 0 1px rgba(255,90,90,.15);
-    }
-
-    .artist-card img {
-      width: 100%;
-      display: block;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      background: #111;
-      border-radius: 14px;
-      margin-bottom: 10px;
-    }
-
-    .artist-card .live-ring {
-      border: 3px solid #ff4747;
-      box-shadow: 0 0 0 4px rgba(255,71,71,.18);
-    }
-
-    .artist-card h3 {
-      font-size: 22px;
-      margin-bottom: 6px;
-    }
-
-    .artist-card p {
-      padding: 0;
-      color: #c8c8c8;
-      margin-top: 6px;
-    }
-
-    .artist-style {
-      color: #ff6b6b;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: .4px;
-    }
-
-    .admin-card-buttons {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .small-btn {
-      background: #1f1f1f;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      padding: 9px 12px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .small-btn.delete {
-      background: #481515;
-    }
-
-    .schedule-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .schedule-head {
-      display: grid;
-      grid-template-columns: 70px 110px 1.1fr 110px 1fr 1.1fr auto;
-      gap: 14px;
-      padding: 0 14px 8px 14px;
-      color: #9c9c9c;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .schedule-item {
-      display: grid;
-      grid-template-columns: 70px 110px 1.1fr 110px 1fr 1.1fr auto;
-      gap: 14px;
-      align-items: center;
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 16px;
-      padding: 12px 14px;
-    }
-
-    .schedule-item.live-item {
-      border: 1px solid rgba(255,90,90,.35);
-      box-shadow: 0 0 0 1px rgba(255,90,90,.12);
-    }
-
-    .schedule-photo {
-      width: 56px;
-      height: 56px;
-      border-radius: 12px;
-      object-fit: cover;
-      background: #111;
-      border: 2px solid transparent;
-    }
-
-    .schedule-photo.live-photo {
-      border-color: #ff4747;
-      box-shadow: 0 0 0 3px rgba(255,71,71,.18);
-    }
-
-    .schedule-name {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .schedule-day {
-      color: #d7d7d7;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .schedule-time {
-      font-size: 16px;
-      font-weight: 700;
-      color: #ff5a5a;
-    }
-
-    .schedule-style,
-    .schedule-show {
-      color: #d2d2d2;
-      font-size: 14px;
-      line-height: 1.35;
-    }
-
-    .schedule-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .schedule-right {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      align-items: flex-end;
-    }
-
-    .live-pill,
-    .next-pill {
-      display: inline-block;
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .live-pill {
-      background: rgba(255,60,60,.14);
-      color: #ff6a6a;
-      border: 1px solid rgba(255,90,90,.35);
-    }
-
-    .next-pill {
-      background: rgba(255,255,255,.08);
-      color: #ddd;
-      border: 1px solid rgba(255,255,255,.12);
-    }
-
-    .next-note {
-      color: #9f9f9f;
-      font-size: 12px;
-      margin-top: 6px;
-    }
-
-    .admin-shell {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 18px;
-      max-width: 940px;
-      margin: 0 auto;
-    }
-
-    .admin-card {
-      background: #0d0d0d;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .admin-card h3 {
-      margin-bottom: 16px;
-      font-size: 26px;
-    }
-
-    .admin {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .admin input,
-    .admin textarea,
-    .admin select {
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.08);
-      font-size: 16px;
-      background: #f2f2f2;
-      color: #111;
-      box-sizing: border-box;
-      width: 100%;
-    }
-
-    .admin textarea {
-      min-height: 100px;
-      resize: vertical;
-      font-family: Arial, sans-serif;
-    }
-
-    .admin button {
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      background: #f52a1f;
-      color: white;
-      font-weight: 700;
-      font-size: 18px;
-      cursor: pointer;
-    }
-
-    .admin-note {
-      color: #a7a7a7;
-      text-align: center;
-      font-size: 13px;
-      margin-top: 8px;
-      line-height: 1.4;
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: #cfcfcf;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .admin-tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-
-    .tab-btn {
-      background: #2a2a2a;
-      color: white;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .tab-btn.active {
-      background: #f13a2c;
-      border-color: transparent;
-    }
-
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    .add-artist-wrap,
-    .add-schedule-wrap,
-    .settings-wrap {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .preview-wrap {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .preview-img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #ff2a2a;
-      background: #222;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .secondary-btn {
-      background: #333 !important;
-    }
-
-    .site-footer {
-      margin-top: 44px;
-      padding: 24px 12px 30px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      text-align: center;
-      color: #a7a7a7;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .site-footer strong {
-      color: #fff;
-    }
-
-    #backToTop {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      background: #f52a1f;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      font-size: 18px;
-      cursor: pointer;
-      display: none;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,.4);
-    }
-
-    #backToTop:hover {
-      background: #ff3b2f;
-    }
-
-    .footer-logo {
-      margin-top: 20px;
-      opacity: .85;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: .5px;
-    }
-
-    @media (max-width: 900px) {
-      .nav-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .nav-links {
-        gap: 14px;
-      }
-
-      h1 {
-        font-size: 42px;
-      }
-
-      .schedule-head {
-        display: none;
-      }
-
-      .schedule-item {
-        grid-template-columns: 56px 1fr auto;
-        gap: 12px;
-      }
-
-      .schedule-day,
-      .schedule-time,
-      .schedule-style,
-      .schedule-show-col {
-        display: none;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .nav-links {
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .nav-links a {
-        font-size: 13px;
-        padding: 6px 8px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-
-      .section-title {
-        font-size: 18px;
-      }
-
-      .section-sub {
-        font-size: 13px;
-      }
-
-      .container {
-        padding: 12px;
-      }
-
-      .schedule-row {
-        display: block;
-        padding: 10px;
-        background: rgba(255,255,255,.03);
-        border-radius: 10px;
-        margin-bottom: 8px;
-      }
-
-      .schedule-row div {
-        font-size: 13px;
-        margin-bottom: 4px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .container {
-        padding: 10px;
-      }
-
-      h1 {
-        font-size: 30px;
-      }
-
-      .controls {
-        right: 12px;
-        bottom: 12px;
-      }
-
-      .control-btn {
-        padding: 14px 16px;
-        font-size: 16px;
-        min-height: 52px;
-      }
-
-      .schedule-name {
-        font-size: 17px;
-      }
-    }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #000; color: #fff; font-family: Arial, sans-serif; }
+    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(0,0,0,.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.08); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 14px; }
+    .logo { font-weight: 800; font-size: 18px; letter-spacing: .5px; }
+    .nav-links { display: flex; gap: 14px; flex-wrap: wrap; }
+    .nav-links a { color: #d0d0d0; text-decoration: none; font-size: 14px; font-weight: 700; padding: 8px 10px; border-radius: 10px; }
+    .nav-links a:hover { color: #fff; background: rgba(255,255,255,.06); }
+    .container { max-width: 1120px; margin: 0 auto; padding: 14px; }
+    h1, h2, h3 { margin: 0; text-align: center; }
+    h1 { font-size: 48px; margin-bottom: 14px; }
+    .section-title { margin-top: 44px; margin-bottom: 16px; font-size: 34px; }
+    .section-sub { text-align: center; color: #bdbdbd; margin: 0 0 18px; font-size: 15px; }
+    .badge-wrap { display: flex; justify-content: center; margin-bottom: 12px; }
+    #live-status-badge { display: inline-flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 700; background: #2b2b2b; color: #d7d7d7; border: 1px solid rgba(255,255,255,.12); }
+    #live-status-dot { width: 10px; height: 10px; border-radius: 50%; background: #666; display: inline-block; }
+    .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); }
+    .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+    .controls { position: absolute; right: 14px; bottom: 14px; z-index: 20; display: flex; gap: 10px; flex-wrap: wrap; }
+    .control-btn { background: rgba(0,0,0,.78); color: #fff; border: 1px solid rgba(255,255,255,.16); padding: 12px 14px; border-radius: 12px; font-size: 15px; cursor: pointer; min-height: 46px; font-weight: 700; text-decoration: none; }
+    .back-btn { background: rgba(255,255,255,.12); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+    .card { background: #0d0d0d; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); }
+    .replay-card { cursor: pointer; transition: transform .2s ease; }
+    .replay-card:hover { transform: scale(1.03); }
+    .card img { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; background: #111; }
+    .card p { margin: 0; padding: 10px 12px 14px; font-size: 14px; line-height: 1.4; }
+    .artist-card { padding: 14px; text-align: center; }
+    .artist-card h3 { font-size: 22px; margin-bottom: 6px; }
+    .artist-card p { padding: 0; color: #c8c8c8; margin-top: 6px; }
+    .artist-style { color: #ff6b6b; font-size: 13px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+    .schedule-list { display: flex; flex-direction: column; gap: 12px; }
+    .schedule-item { display: grid; grid-template-columns: 110px 1fr 110px; gap: 14px; align-items: center; background: #0d0d0d; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 14px; }
+    .schedule-day { color: #d7d7d7; font-size: 14px; font-weight: 700; }
+    .schedule-show { color: #d2d2d2; font-size: 14px; line-height: 1.35; }
+    .schedule-time { font-size: 16px; font-weight: 700; color: #ff5a5a; }
+    .view-more-wrap { text-align: center; margin-top: 18px; }
+    .view-more-btn { background: none; color: #d8d8d8; border: none; padding: 0; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; }
+    .site-footer { margin-top: 44px; padding: 24px 12px 30px; border-top: 1px solid rgba(255,255,255,.08); text-align: center; color: #a7a7a7; font-size: 14px; line-height: 1.7; }
+    .site-footer strong { color: #fff; }
+    #backToTop { position: fixed; right: 20px; bottom: 20px; background: #f52a1f; color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: none; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,.4); }
+    @media (max-width: 900px) { .nav-inner { flex-direction: column; align-items: flex-start; } .schedule-item { grid-template-columns: 1fr; } .schedule-time { text-align: left; } }
+    @media (max-width: 700px) { .container { padding: 10px; } h1 { font-size: 32px; } .section-title { font-size: 24px; } .nav-links a { font-size: 13px; padding: 6px 8px; } }
   </style>
 </head>
 <body>
   <div class="top-nav">
     <div class="nav-inner">
-      <div class="logo"><span>Carlos Karaoke Live</span></div>
+      <div class="logo">Carlos Karaoke Live</div>
       <div class="nav-links">
         <a href="#top">Início</a>
         <a href="#videos">Vídeos</a>
-        <a href="#artist" id="navArtist">Artista</a>
-        <a href="#eventos" id="navEventos">Eventos</a>
-        <a href="#agenda" id="navSchedule">Agenda</a>
+        <a href="#eventos">Eventos</a>
+        <a href="#agenda">Agenda</a>
+        <a href="#contacto">Contacto</a>
       </div>
     </div>
   </div>
@@ -709,365 +76,96 @@
     </div>
 
     <div class="player" id="playerWrap">
-      <iframe
-        id="livePlayer"
-        src="https://player.kick.com/carloskaraoke?muted=true"
-        allow="autoplay; fullscreen"
-        allowfullscreen>
-      </iframe>
-
+      <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?muted=true" allow="autoplay; fullscreen" allowfullscreen></iframe>
       <div class="controls">
         <button class="control-btn" id="unmuteBtn">🔊 SOM</button>
+        <button class="control-btn back-btn" id="backToLiveBtn" style="display:none;">⬅ VOLTAR AO LIVE</button>
       </div>
     </div>
 
     <h2 class="section-title" id="videos">VÍDEOS</h2>
-    <p class="section-sub">Atuações gravadas e momentos do canal.</p>
+    <p class="section-sub">Atuações gravadas e momentos do canal. Ao abrir um vídeo, o live sai do player até voltares ao live.</p>
     <div id="replaysStatus" class="section-sub" style="margin-top:-6px; margin-bottom:18px; color:#8f8f8f;"></div>
     <div id="videosGrid" class="grid"></div>
     <div class="view-more-wrap" id="viewMoreWrap"></div>
 
-    <div id="artistSectionWrap">
-      <h2 class="section-title" id="artist">ARTISTA PRINCIPAL</h2>
-      <p class="section-sub">Projeto liderado por um cantor principal com karaoke ao vivo e animação musical.</p>
-      <div id="artistGrid" class="grid"></div>
-      <div class="view-more-wrap" id="artistMoreWrap"></div>
-    </div>
-
-    <div id="eventosSectionWrap">
-      <h2 class="section-title" id="eventos">EVENTOS</h2>
-      <p class="section-sub">Noites de karaoke, festas privadas e karaoke live no website de vez em quando.</p>
-      <div id="eventosGrid" class="grid"></div>
-    </div>
-
-    <div id="scheduleSectionWrap">
-      <h2 class="section-title" id="agenda">AGENDA</h2>
-      <p class="section-sub">Programação semanal em formato de lista.</p>
-
-      <div class="schedule-head">
-        <div></div>
-        <div>Dia</div>
-        <div>Evento</div>
-        <div>Hora</div>
-        <div>Estilo</div>
-        <div>Sessão</div>
-        <div></div>
+    <h2 class="section-title" id="eventos">EVENTOS</h2>
+    <p class="section-sub">Karaoke ao vivo, festas privadas e eventos especiais.</p>
+    <div class="grid">
+      <div class="card artist-card">
+        <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80" alt="">
+        <h3>Karaoke Night</h3>
+        <div class="artist-style">Noite ao vivo</div>
+        <p>Noites animadas com público, música e participação ao vivo.</p>
       </div>
-
-      <div class="schedule-list" id="scheduleList"></div>
-      <div class="view-more-wrap" id="scheduleMoreWrap"></div>
-    </div>
-
-    <div id="adminAccess" style="text-align:center; margin-top:24px;">
-      <button id="adminAccessBtn" class="view-more-btn" onclick="toggleAdminLogin()">Admin login</button>
-    </div>
-
-    <div id="adminSection" style="display:none;">
-      <h2 class="section-title">ADMIN</h2>
-      <p class="section-sub">Login demo por agora, backend real pode ser ligado depois.</p>
-
-      <div class="admin-shell">
-        <div id="loginBox" class="admin-card">
-          <div class="status-pill">Acesso demo</div>
-          <h3>Login</h3>
-          <div class="admin">
-            <input id="user" placeholder="Username">
-            <input id="pass" type="password" placeholder="Password">
-            <button onclick="login()">LOGIN</button>
-          </div>
-          <div class="admin-note">Username: admin, Password: 1234</div>
-        </div>
-
-        <div id="adminPanel" class="admin-card" style="display:none;">
-          <div class="status-pill">Painel demo</div>
-
-          <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="tab-artista" onclick="switchTab('tab-artista')">Artista</button>
-            <button class="tab-btn" data-tab="tab-agenda" onclick="switchTab('tab-agenda')">Agenda</button>
-            <button class="tab-btn" data-tab="tab-settings" onclick="switchTab('tab-settings')">Settings</button>
-          </div>
-
-          <div class="form-actions" style="margin-bottom:18px;">
-            <button class="secondary-btn" onclick="logoutAdmin()">LOG OUT</button>
-          </div>
-
-          <div class="tab-panel active" id="tab-artista">
-            <h3>Editar artista</h3>
-            <div class="add-artist-wrap">
-              <div class="preview-wrap">
-                <img id="previewImg" class="preview-img" src="https://via.placeholder.com/120" alt="Preview">
-              </div>
-
-              <div class="admin">
-                <input id="name" placeholder="Nome">
-                <input id="img" placeholder="Image URL" oninput="updatePreview()">
-                <input id="style" placeholder="Estilo (ex: Karaoke / Pop / Baladas)">
-                <textarea id="bio" placeholder="Bio"></textarea>
-
-                <div class="form-actions">
-                  <button onclick="saveArtist()">SAVE</button>
-                  <button class="secondary-btn" onclick="resetArtistForm()">CLEAR</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="tab-panel" id="tab-agenda">
-            <h3>Adicionar ou editar agenda</h3>
-            <div class="add-schedule-wrap">
-              <div class="admin">
-                <select id="scheduleDay">
-                  <option value="">Select Day</option>
-                  <option>Monday</option>
-                  <option>Tuesday</option>
-                  <option>Wednesday</option>
-                  <option>Thursday</option>
-                  <option>Friday</option>
-                  <option>Saturday</option>
-                  <option>Sunday</option>
-                  <option>Everyday</option>
-                </select>
-                <select id="scheduleTime"></select>
-                <input id="scheduleStyle" placeholder="Style (ex: Karaoke / Pop / Party)">
-                <input id="scheduleShow" placeholder="Show name">
-
-                <div class="form-actions">
-                  <button onclick="saveSchedule()">SAVE SCHEDULE</button>
-                  <button class="secondary-btn" onclick="resetScheduleForm()">CLEAR</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="tab-panel" id="tab-settings">
-            <h3>Visibility</h3>
-            <div class="settings-wrap">
-              <div class="admin">
-                <div class="form-actions">
-                  <button id="toggleArtistBtn" onclick="toggleArtistSection()">Artist: ON</button>
-                  <button id="toggleEventosBtn" onclick="toggleEventosSection()">Events: ON</button>
-                  <button id="toggleScheduleBtn" onclick="toggleScheduleSection()">Schedule: ON</button>
-                  <button id="toggleBadgeBtn" onclick="toggleBadgeSection()">Badge: ON</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="admin-note">Saved in this browser only. Refresh keeps data here, another browser/device will not.</div>
-        </div>
+      <div class="card artist-card">
+        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80" alt="">
+        <h3>Festas privadas</h3>
+        <div class="artist-style">Eventos</div>
+        <p>Ideal para aniversários, grupos e celebrações especiais.</p>
       </div>
+      <div class="card artist-card">
+        <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1200&q=80" alt="">
+        <h3>Karaoke Live no website</h3>
+        <div class="artist-style">Online</div>
+        <p>Temos karaoke live no website de vez em quando.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="agenda">AGENDA</h2>
+    <p class="section-sub">Próximas noites e horários.</p>
+    <div class="schedule-list">
+      <div class="schedule-item"><div><div class="schedule-day">Sexta</div><div class="schedule-show">Karaoke Live</div></div><div class="schedule-show">Noite de karaoke ao vivo com animação.</div><div class="schedule-time">20:00</div></div>
+      <div class="schedule-item"><div><div class="schedule-day">Sábado</div><div class="schedule-show">Noite Especial</div></div><div class="schedule-show">Sessão com ambiente de festa e música variada.</div><div class="schedule-time">22:00</div></div>
+      <div class="schedule-item"><div><div class="schedule-day">Domingo</div><div class="schedule-show">Sessão de Karaoke</div></div><div class="schedule-show">Noite descontraída para cantar e conviver.</div><div class="schedule-time">18:00</div></div>
+    </div>
+
+    <h2 class="section-title" id="contacto">CONTACTO</h2>
+    <p class="section-sub">Para reservas e informações de eventos.</p>
+    <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+      <a class="control-btn" href="#">WHATSAPP</a>
+      <a class="control-btn back-btn" href="#">INSTAGRAM</a>
     </div>
 
     <footer class="site-footer">
       <div><strong>Carlos Karaoke Live</strong></div>
-      <div>Karaoke ao vivo, vídeos gravados, eventos e agenda semanal.</div>
-      <div style="margin-top:8px;">
-        <a href="#top" style="color:#d8d8d8; text-decoration:underline;">Voltar ao topo</a>
-      </div>
-      <div style="margin-top:8px; color:#7f7f7f;">© 2026 Carlos Karaoke Live. Todos os direitos reservados.</div>
+      <div>Karaoke ao vivo, animação e eventos especiais.</div>
+      <div style="margin-top:8px;"><a href="#top" style="color:#d8d8d8;text-decoration:underline;">Voltar ao topo</a></div>
+      <div style="margin-top:8px;color:#7f7f7f;">© 2026 Carlos Karaoke Live</div>
     </footer>
   </div>
 
-  <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-  <div style="text-align:center;padding:20px 0;">
-    <div class="footer-logo">Carlos Karaoke Live</div>
-  </div>
+  <button id="backToTop" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">↑</button>
 
   <script>
     let hls = null;
-    let currentMode = "live";
+    let currentMode = 'live';
     let allVideos = [];
     let replayExpanded = false;
-    let scheduleExpanded = false;
-    const scheduleBaseCount = 5;
-    let editScheduleIndex = null;
-    let isChannelLive = false;
-    const fallbackSetMinutes = 120;
+    const replayBaseCount = 8;
 
-    const defaultArtist = {
-      name: "Carlos",
-      img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80",
-      style: "Karaoke / Pop / Eventos",
-      bio: "Projeto liderado por um cantor principal, com karaoke ao vivo, animação e eventos especiais."
-    };
+    function attachButtons() {
+      const unmuteBtn = document.getElementById('unmuteBtn');
+      const backBtn = document.getElementById('backToLiveBtn');
 
-    const defaultEventos = [
-      {
-        title: "🎤 Karaoke Night",
-        text: "Noites animadas com público, música e participação ao vivo."
-      },
-      {
-        title: "🎉 Festas privadas",
-        text: "Ideal para aniversários, grupos e celebrações especiais."
-      },
-      {
-        title: "🥂 Eventos especiais",
-        text: "Atuação adaptada a bares, salões, jantares e noites temáticas."
-      },
-      {
-        title: "📺 Karaoke Live no website",
-        text: "Temos karaoke live no website de vez em quando."
-      }
-    ];
-
-    const defaultSchedule = [
-      { day: "Friday", time: "20:00", style: "Karaoke / Pop", show: "Karaoke Live" },
-      { day: "Saturday", time: "22:00", style: "Party / Karaoke", show: "Noite Especial" },
-      { day: "Sunday", time: "18:00", style: "Karaoke / Chill", show: "Sessão de Karaoke" }
-    ];
-
-    function getArtist() {
-      const saved = JSON.parse(localStorage.getItem("artist_demo"));
-      return saved || defaultArtist;
-    }
-
-    function saveArtistData(artist) {
-      localStorage.setItem("artist_demo", JSON.stringify(artist));
-    }
-
-    function getSchedule() {
-      const saved = JSON.parse(localStorage.getItem("schedule_karaoke_demo"));
-      return saved && Array.isArray(saved) ? saved : defaultSchedule;
-    }
-
-    function saveScheduleData(schedule) {
-      localStorage.setItem("schedule_karaoke_demo", JSON.stringify(schedule));
-    }
-
-    function getUiSettings() {
-      const saved = JSON.parse(localStorage.getItem("ui_settings_karaoke_demo"));
-      return saved || { showArtist: true, showEventos: true, showSchedule: true, showBadge: true };
-    }
-
-    function saveUiSettings(settings) {
-      localStorage.setItem("ui_settings_karaoke_demo", JSON.stringify(settings));
-    }
-
-    function applyUiSettings() {
-      const settings = getUiSettings();
-      document.getElementById("artistSectionWrap").style.display = settings.showArtist ? "block" : "none";
-      document.getElementById("eventosSectionWrap").style.display = settings.showEventos ? "block" : "none";
-      document.getElementById("scheduleSectionWrap").style.display = settings.showSchedule ? "block" : "none";
-      document.getElementById("badgeWrap").style.display = settings.showBadge ? "flex" : "none";
-
-      const navArtist = document.getElementById("navArtist");
-      const navEventos = document.getElementById("navEventos");
-      const navSchedule = document.getElementById("navSchedule");
-      if (navArtist) navArtist.style.display = settings.showArtist ? "inline-block" : "none";
-      if (navEventos) navEventos.style.display = settings.showEventos ? "inline-block" : "none";
-      if (navSchedule) navSchedule.style.display = settings.showSchedule ? "inline-block" : "none";
-
-      const artistBtn = document.getElementById("toggleArtistBtn");
-      const eventosBtn = document.getElementById("toggleEventosBtn");
-      const scheduleBtn = document.getElementById("toggleScheduleBtn");
-      const badgeBtn = document.getElementById("toggleBadgeBtn");
-
-      if (artistBtn) {
-        artistBtn.textContent = settings.showArtist ? "Artist: ON" : "Artist: OFF";
-        artistBtn.style.background = settings.showArtist ? "#f52a1f" : "#333";
+      if (unmuteBtn) {
+        unmuteBtn.onclick = () => {
+          const iframe = document.getElementById('livePlayer');
+          if (iframe) iframe.src = 'https://player.kick.com/carloskaraoke';
+        };
       }
 
-      if (eventosBtn) {
-        eventosBtn.textContent = settings.showEventos ? "Events: ON" : "Events: OFF";
-        eventosBtn.style.background = settings.showEventos ? "#f52a1f" : "#333";
+      if (backBtn) {
+        backBtn.onclick = loadLive;
       }
-
-      if (scheduleBtn) {
-        scheduleBtn.textContent = settings.showSchedule ? "Schedule: ON" : "Schedule: OFF";
-        scheduleBtn.style.background = settings.showSchedule ? "#f52a1f" : "#333";
-      }
-
-      if (badgeBtn) {
-        badgeBtn.textContent = settings.showBadge ? "Badge: ON" : "Badge: OFF";
-        badgeBtn.style.background = settings.showBadge ? "#f52a1f" : "#333";
-      }
-    }
-
-    function toggleArtistSection() {
-      const settings = getUiSettings();
-      settings.showArtist = !settings.showArtist;
-      saveUiSettings(settings);
-      applyUiSettings();
-    }
-
-    function toggleEventosSection() {
-      const settings = getUiSettings();
-      settings.showEventos = !settings.showEventos;
-      saveUiSettings(settings);
-      applyUiSettings();
-    }
-
-    function toggleScheduleSection() {
-      const settings = getUiSettings();
-      settings.showSchedule = !settings.showSchedule;
-      saveUiSettings(settings);
-      applyUiSettings();
-    }
-
-    function toggleBadgeSection() {
-      const settings = getUiSettings();
-      settings.showBadge = !settings.showBadge;
-      saveUiSettings(settings);
-      applyUiSettings();
-    }
-
-    function getCurrentDayName() {
-      return new Date().toLocaleDateString("en-GB", { weekday: "long" });
-    }
-
-    function getCurrentMinutes() {
-      const now = new Date();
-      return now.getHours() * 60 + now.getMinutes();
-    }
-
-    function timeToMinutes(value) {
-      const [h, m] = (value || "00:00").split(":").map(Number);
-      return (h || 0) * 60 + (m || 0);
-    }
-
-    function buildTodaySchedule() {
-      const today = getCurrentDayName();
-      return getSchedule()
-        .map((item, index) => ({ ...item, originalIndex: index, startMinutes: timeToMinutes(item.time) }))
-        .filter(item => item.day === today || item.day === "Everyday")
-        .sort((a, b) => a.startMinutes - b.startMinutes);
-    }
-
-    function getLiveAndNextItems() {
-      const todaysItems = buildTodaySchedule();
-      const nowMinutes = getCurrentMinutes();
-
-      let liveItem = null;
-      let nextItem = null;
-
-      for (let i = 0; i < todaysItems.length; i++) {
-        const current = todaysItems[i];
-        const next = todaysItems[i + 1] || null;
-        const endMinutes = next ? next.startMinutes : current.startMinutes + fallbackSetMinutes;
-
-        if (nowMinutes >= current.startMinutes && nowMinutes < endMinutes) {
-          liveItem = current;
-          nextItem = next;
-          break;
-        }
-
-        if (!liveItem && !nextItem && nowMinutes < current.startMinutes) {
-          nextItem = current;
-          break;
-        }
-      }
-
-      return { liveItem, nextItem };
     }
 
     function showBadge() {
-      const settings = getUiSettings();
-      document.getElementById("badgeWrap").style.display = settings.showBadge ? "flex" : "none";
+      document.getElementById('badgeWrap').style.display = 'flex';
     }
 
     function hideBadge() {
-      document.getElementById("badgeWrap").style.display = "none";
+      document.getElementById('badgeWrap').style.display = 'none';
     }
 
     function stopEverything() {
@@ -1075,150 +173,133 @@
         hls.destroy();
         hls = null;
       }
-      document.getElementById("playerWrap").innerHTML = "";
+      document.getElementById('playerWrap').innerHTML = '';
     }
 
-    function attachLiveSoundButton() {
-      const unmuteBtn = document.getElementById("unmuteBtn");
-      if (unmuteBtn) {
-        unmuteBtn.onclick = () => {
-          const iframe = document.getElementById("livePlayer");
-          if (iframe) {
-            iframe.src = "https://player.kick.com/carloskaraoke";
-          }
-        };
-      }
+    function liveControlsHtml() {
+      return `
+        <div class="controls">
+          <button class="control-btn" id="unmuteBtn">🔊 SOM</button>
+          <button class="control-btn back-btn" id="backToLiveBtn" style="display:none;">⬅ VOLTAR AO LIVE</button>
+        </div>
+      `;
+    }
+
+    function replayControlsHtml() {
+      return `
+        <div class="controls">
+          <button class="control-btn back-btn" id="backToLiveBtn">⬅ VOLTAR AO LIVE</button>
+        </div>
+      `;
     }
 
     function loadLive() {
       stopEverything();
-      currentMode = "live";
+      currentMode = 'live';
       showBadge();
-
-      const wrap = document.getElementById("playerWrap");
-      wrap.innerHTML = `
+      document.getElementById('playerWrap').innerHTML = `
         <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?muted=true" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        <div class="controls">
-          <button class="control-btn" id="unmuteBtn">🔊 SOM</button>
-        </div>
+        ${liveControlsHtml()}
       `;
-
-      attachLiveSoundButton();
+      attachButtons();
     }
 
     function loadReplay(url) {
       stopEverything();
-      currentMode = "replay";
+      currentMode = 'replay';
       hideBadge();
-
-      const wrap = document.getElementById("playerWrap");
-      wrap.innerHTML = `
+      document.getElementById('playerWrap').innerHTML = `
         <video id="replayVideo" controls autoplay playsinline></video>
-        <div class="controls">
-          <button class="control-btn back-btn" id="backChannelBtn">← VOLTAR AO LIVE</button>
-        </div>
+        ${replayControlsHtml()}
       `;
 
-      const video = document.getElementById("replayVideo");
-
-      if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      const video = document.getElementById('replayVideo');
+      if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
-      } else if (window.Hls && Hls.isSupported()) {
+      } else if (window.Hls && window.Hls.isSupported()) {
         hls = new Hls();
         hls.loadSource(url);
         hls.attachMedia(video);
+      } else {
+        video.src = url;
       }
 
-      const backBtn = document.getElementById("backChannelBtn");
-      if (backBtn) {
-        backBtn.onclick = loadLive;
-      }
+      attachButtons();
+      document.getElementById('playerWrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     async function loadVideos() {
-      const container = document.getElementById("videosGrid");
-      const wrap = document.getElementById("viewMoreWrap");
-      const statusBox = document.getElementById("replaysStatus");
-      container.innerHTML = "<p>A carregar vídeos...</p>";
-      wrap.innerHTML = "";
-      if (statusBox) statusBox.textContent = "A verificar biblioteca de vídeos...";
+      const container = document.getElementById('videosGrid');
+      const wrap = document.getElementById('viewMoreWrap');
+      const statusBox = document.getElementById('replaysStatus');
+      container.innerHTML = '<p>A carregar vídeos...</p>';
+      wrap.innerHTML = '';
+      if (statusBox) statusBox.textContent = 'A verificar biblioteca de vídeos...';
 
       const fallbackVideos = [
-        { session_title: "Vídeo 1", thumbnail: { src: "https://via.placeholder.com/640x360?text=Video+1" }, source: "" },
-        { session_title: "Vídeo 2", thumbnail: { src: "https://via.placeholder.com/640x360?text=Video+2" }, source: "" },
-        { session_title: "Vídeo 3", thumbnail: { src: "https://via.placeholder.com/640x360?text=Video+3" }, source: "" },
-        { session_title: "Vídeo 4", thumbnail: { src: "https://via.placeholder.com/640x360?text=Video+4" }, source: "" }
+        { session_title: 'Vídeo 1', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+1' }, source: '' },
+        { session_title: 'Vídeo 2', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+2' }, source: '' },
+        { session_title: 'Vídeo 3', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+3' }, source: '' },
+        { session_title: 'Vídeo 4', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+4' }, source: '' }
       ];
 
       try {
-        let data = null;
-
-        const channelTry = await fetch("https://karaoke-videos.ricardobargante.workers.dev", { cache: "no-store" });
-        if (!channelTry.ok) throw new Error("Bad response");
-        const parsed = await channelTry.json();
-        if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("No videos");
-        data = parsed;
+        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Bad response');
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error('No videos');
 
         allVideos = data.map((v, i) => ({
           session_title: v.session_title || `Vídeo ${i + 1}`,
-          thumbnail: {
-            src: v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${i + 1}`
-          },
-          source: v.source || ""
+          thumbnail: { src: v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${i + 1}` },
+          source: v.source || ''
         }));
 
-        if (statusBox) {
-          statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? "" : "s"} disponível${allVideos.length === 1 ? "" : "eis"}.`;
-        }
-      } catch {
+        if (statusBox) statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? '' : 's'} disponível${allVideos.length === 1 ? '' : 'eis'}.`;
+      } catch (e) {
         allVideos = fallbackVideos;
-        if (statusBox) {
-          statusBox.textContent = "Playlist automática indisponível neste momento. Se o worker ainda não estiver ligado ao canal carloskaraoke, mostra placeholders até ser atualizado.";
-        }
+        if (statusBox) statusBox.textContent = 'Playlist automática indisponível neste momento.';
       }
 
       renderVideos();
     }
 
     function renderVideos() {
-      const container = document.getElementById("videosGrid");
-      const viewMoreWrap = document.getElementById("viewMoreWrap");
-      container.innerHTML = "";
-      viewMoreWrap.innerHTML = "";
+      const container = document.getElementById('videosGrid');
+      const viewMoreWrap = document.getElementById('viewMoreWrap');
+      container.innerHTML = '';
+      viewMoreWrap.innerHTML = '';
 
       if (!allVideos.length) {
-        container.innerHTML = "<p>Sem vídeos disponíveis neste momento.</p>";
+        container.innerHTML = '<p>Sem vídeos disponíveis neste momento.</p>';
         return;
       }
 
-      const count = replayExpanded ? allVideos.length : Math.min(8, allVideos.length);
-
+      const count = replayExpanded ? allVideos.length : Math.min(replayBaseCount, allVideos.length);
       allVideos.slice(0, count).forEach((v, index) => {
-        const card = document.createElement("div");
-        card.className = "card replay-card";
-
+        const card = document.createElement('div');
+        card.className = 'card replay-card';
         const thumb = v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${index + 1}`;
-        const source = v.source || "";
+        const source = v.source || '';
 
         card.innerHTML = `
           <img src="${thumb}" alt="${v.session_title || 'Vídeo'}" onerror="this.onerror=null;this.src='https://via.placeholder.com/640x360?text=Video';">
-          <p>${v.session_title || "Vídeo"}</p>
+          <p>${v.session_title || 'Vídeo'}</p>
         `;
 
         if (source) {
           card.onclick = () => loadReplay(source);
         } else {
-          card.style.cursor = "default";
-          card.onclick = null;
+          card.style.cursor = 'default';
         }
 
         container.appendChild(card);
       });
 
-      if (allVideos.length > 8) {
-        const btn = document.createElement("button");
-        btn.className = "view-more-btn";
-        btn.textContent = replayExpanded ? "Ver menos" : "Ver mais";
+      if (allVideos.length > replayBaseCount) {
+        const btn = document.createElement('button');
+        btn.className = 'view-more-btn';
+        btn.textContent = replayExpanded ? 'Ver menos' : 'Ver mais';
         btn.onclick = () => {
           replayExpanded = !replayExpanded;
           renderVideos();
@@ -1227,285 +308,47 @@
       }
     }
 
-    function renderArtist() {
-      const grid = document.getElementById("artistGrid");
-      const artist = getArtist();
-      const { liveItem } = getLiveAndNextItems();
-      grid.innerHTML = "";
-
-      const card = document.createElement("div");
-      card.className = "card artist-card" + (liveItem ? " live-item" : "");
-      card.innerHTML = `
-        <img src="${artist.img}" alt="${artist.name}" class="${liveItem ? 'live-ring' : ''}">
-        <h3>${artist.name}</h3>
-        <div class="artist-style">${artist.style}</div>
-        <p>${artist.bio}</p>
-        ${liveItem ? `<span class="live-pill">AO VIVO</span>` : ``}
-      `;
-
-      grid.appendChild(card);
-    }
-
-    function renderEventos() {
-      const grid = document.getElementById("eventosGrid");
-      grid.innerHTML = "";
-      defaultEventos.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "card artist-card";
-        card.innerHTML = `
-          <h3>${item.title}</h3>
-          <p>${item.text}</p>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function translateDay(day) {
-      const map = {
-        Monday: "Segunda",
-        Tuesday: "Terça",
-        Wednesday: "Quarta",
-        Thursday: "Quinta",
-        Friday: "Sexta",
-        Saturday: "Sábado",
-        Sunday: "Domingo",
-        Everyday: "Todos os dias"
-      };
-      return map[day] || day;
-    }
-
-    function renderSchedule() {
-      const container = document.getElementById("scheduleList");
-      const original = getSchedule().map((item, index) => ({ ...item, originalIndex: index }));
-      const { liveItem, nextItem } = getLiveAndNextItems();
-
-      let ordered = [...original];
-      ordered.sort((a, b) => {
-        const aLive = liveItem && a.originalIndex === liveItem.originalIndex;
-        const bLive = liveItem && b.originalIndex === liveItem.originalIndex;
-        const aNext = nextItem && a.originalIndex === nextItem.originalIndex;
-        const bNext = nextItem && b.originalIndex === nextItem.originalIndex;
-
-        if (aLive && !bLive) return -1;
-        if (!aLive && bLive) return 1;
-        if (aNext && !bNext && !bLive) return -1;
-        if (!aNext && bNext && !aLive) return 1;
-        return timeToMinutes(a.time) - timeToMinutes(b.time);
-      });
-
-      container.innerHTML = "";
-      const count = scheduleExpanded ? ordered.length : Math.min(scheduleBaseCount, ordered.length);
-
-      ordered.slice(0, count).forEach(item => {
-        const isLiveRow = liveItem && item.originalIndex === liveItem.originalIndex;
-        const isNextRow = nextItem && item.originalIndex === nextItem.originalIndex;
-
-        const row = document.createElement("div");
-        row.className = "schedule-item" + (isLiveRow ? " live-item" : "");
-        row.innerHTML = `
-          <img class="schedule-photo ${isLiveRow ? 'live-photo' : ''}" src="${getArtist().img}" alt="">
-          <div class="schedule-day">${translateDay(item.day) || ""}</div>
-          <div class="schedule-meta">
-            <div class="schedule-name">Carlos Karaoke Live</div>
-            <div class="schedule-show">${item.show}</div>
-            ${isLiveRow && nextItem ? `<div class="next-note">A seguir: ${nextItem.show} às ${nextItem.time}</div>` : ``}
-          </div>
-          <div class="schedule-time">${item.time}</div>
-          <div class="schedule-style">${item.style}</div>
-          <div class="schedule-show schedule-show-col">${item.show}</div>
-          <div class="schedule-right">
-            ${isLiveRow ? `<span class="live-pill">AO VIVO</span>` : ``}
-            ${!isLiveRow && isNextRow ? `<span class="next-pill">A SEGUIR</span>` : ``}
-          </div>
-        `;
-        container.appendChild(row);
-      });
-
-      const moreWrap = document.getElementById("scheduleMoreWrap");
-      moreWrap.innerHTML = "";
-      if (ordered.length > scheduleBaseCount) {
-        const btn = document.createElement("button");
-        btn.className = "view-more-btn";
-        btn.textContent = scheduleExpanded ? "Ver menos" : "Ver mais";
-        btn.onclick = () => {
-          scheduleExpanded = !scheduleExpanded;
-          renderSchedule();
-        };
-        moreWrap.appendChild(btn);
-      }
-    }
-
     async function updateLiveStatus() {
-      const badge = document.getElementById("live-status-badge");
-      const dot = document.getElementById("live-status-dot");
-      const text = document.getElementById("live-status-text");
+      const badge = document.getElementById('live-status-badge');
+      const dot = document.getElementById('live-status-dot');
+      const text = document.getElementById('live-status-text');
 
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbzMvkIpTAEEORQKvh_hWNzLY5Y7A9k_kO6KmlqTAXbK-9MXE37rE5UqFGgZx0z8Kr-E/exec?action=status&t=" + Date.now());
+        const res = await fetch('https://script.google.com/macros/s/AKfycbzMvkIpTAEEORQKvh_hWNzLY5Y7A9k_kO6KmlqTAXbK-9MXE37rE5UqFGgZx0z8Kr-E/exec?action=status&t=' + Date.now());
         const status = (await res.text()).trim().toLowerCase();
 
-        if (status === "live") {
-          isChannelLive = true;
-          badge.style.background = "rgba(255,0,0,.15)";
-          badge.style.color = "#ff5a5a";
-          badge.style.border = "1px solid rgba(255,90,90,.35)";
-          dot.style.background = "#ff3b3b";
-          text.textContent = "AO VIVO";
+        if (status === 'live') {
+          badge.style.background = 'rgba(255,0,0,.15)';
+          badge.style.color = '#ff5a5a';
+          badge.style.border = '1px solid rgba(255,90,90,.35)';
+          dot.style.background = '#ff3b3b';
+          text.textContent = 'AO VIVO';
         } else {
-          isChannelLive = false;
-          badge.style.background = "#2b2b2b";
-          badge.style.color = "#ccc";
-          badge.style.border = "1px solid rgba(255,255,255,.12)";
-          dot.style.background = "#666";
-          text.textContent = "OFFLINE";
+          badge.style.background = '#2b2b2b';
+          badge.style.color = '#ccc';
+          badge.style.border = '1px solid rgba(255,255,255,.12)';
+          dot.style.background = '#666';
+          text.textContent = 'OFFLINE';
         }
       } catch {
-        isChannelLive = false;
-        badge.style.background = "#2b2b2b";
-        badge.style.color = "#ccc";
-        badge.style.border = "1px solid rgba(255,255,255,.12)";
-        dot.style.background = "#666";
-        text.textContent = "OFFLINE";
-      }
-
-      renderArtist();
-      renderEventos();
-      renderSchedule();
-    }
-
-    function login() {
-      const user = document.getElementById("user").value;
-      const pass = document.getElementById("pass").value;
-      if (user === "admin" && pass === "1234") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-      } else {
-        alert("Wrong login");
+        badge.style.background = '#2b2b2b';
+        badge.style.color = '#ccc';
+        badge.style.border = '1px solid rgba(255,255,255,.12)';
+        dot.style.background = '#666';
+        text.textContent = 'OFFLINE';
       }
     }
 
-    function logoutAdmin() {
-      document.getElementById("adminPanel").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("adminSection").style.display = "none";
-    }
-
-    function toggleAdminLogin() {
-      const adminSection = document.getElementById("adminSection");
-      const loginBox = document.getElementById("loginBox");
-      const adminPanel = document.getElementById("adminPanel");
-      const isOpen = adminSection.style.display === "block";
-      adminSection.style.display = isOpen ? "none" : "block";
-      loginBox.style.display = "block";
-      adminPanel.style.display = "none";
-      if (!isOpen) adminSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function switchTab(tabId) {
-      document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
-      const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-      if (activeBtn) activeBtn.classList.add("active");
-      const activePanel = document.getElementById(tabId);
-      if (activePanel) activePanel.classList.add("active");
-    }
-
-    function updatePreview() {
-      const url = document.getElementById("img").value.trim();
-      document.getElementById("previewImg").src = url || "https://via.placeholder.com/120";
-    }
-
-    function resetArtistForm() {
-      const artist = defaultArtist;
-      document.getElementById("name").value = artist.name;
-      document.getElementById("img").value = artist.img;
-      document.getElementById("style").value = artist.style;
-      document.getElementById("bio").value = artist.bio;
-      updatePreview();
-    }
-
-    function saveArtist() {
-      const artist = {
-        name: document.getElementById("name").value.trim(),
-        img: document.getElementById("img").value.trim(),
-        style: document.getElementById("style").value.trim(),
-        bio: document.getElementById("bio").value.trim()
-      };
-      if (!artist.name || !artist.img) {
-        alert("Fill name and image URL");
-        return;
-      }
-      saveArtistData(artist);
-      renderArtist();
-    }
-
-    function populateScheduleTimeSelect() {
-      const select = document.getElementById("scheduleTime");
-      if (!select || select.options.length > 0) return;
-      select.innerHTML = `<option value="">Select Time</option>`;
-      for (let i = 0; i < 24; i++) {
-        const h = i.toString().padStart(2, "0") + ":00";
-        const option = document.createElement("option");
-        option.value = h;
-        option.textContent = h;
-        select.appendChild(option);
-      }
-    }
-
-    function resetScheduleForm() {
-      editScheduleIndex = null;
-      document.getElementById("scheduleDay").value = "";
-      document.getElementById("scheduleTime").value = "";
-      document.getElementById("scheduleStyle").value = "";
-      document.getElementById("scheduleShow").value = "";
-    }
-
-    function saveSchedule() {
-      const day = document.getElementById("scheduleDay").value.trim();
-      const time = document.getElementById("scheduleTime").value.trim();
-      const style = document.getElementById("scheduleStyle").value.trim();
-      const show = document.getElementById("scheduleShow").value.trim();
-
-      if (!day || !time || !style || !show) {
-        alert("Fill all schedule fields");
-        return;
-      }
-
-      const schedule = getSchedule();
-      if (editScheduleIndex !== null) {
-        schedule[editScheduleIndex] = { day, time, style, show };
-      } else {
-        schedule.push({ day, time, style, show });
-      }
-      saveScheduleData(schedule);
-      resetScheduleForm();
-      renderSchedule();
-    }
-
-    function applyAdminVisibility() {
-      document.getElementById("adminSection").style.display = "none";
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("adminPanel").style.display = "none";
-    }
-
-    const btn = document.getElementById('backToTop');
+    const backToTopBtn = document.getElementById('backToTop');
     window.addEventListener('scroll', () => {
-      btn.style.display = window.scrollY > 300 ? 'block' : 'none';
+      backToTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
     });
 
-    applyAdminVisibility();
-    applyUiSettings();
     loadLive();
     loadVideos();
-    renderArtist();
-    renderEventos();
-    renderSchedule();
-    populateScheduleTimeSelect();
-    resetArtistForm();
     updateLiveStatus();
-
     setInterval(() => {
-      if (currentMode === "live") updateLiveStatus();
+      if (currentMode === 'live') updateLiveStatus();
     }, 60000);
   </script>
 </body>
