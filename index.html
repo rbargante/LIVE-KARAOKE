@@ -880,6 +880,8 @@
     let allVideos = [];
     let replayExpanded = false;
     let scheduleExpanded = false;
+    const scheduleBaseCount = 5;
+    const scheduleBaseCount = 5;
     let editScheduleIndex = null;
     let isChannelLive = false;
     const fallbackSetMinutes = 120;
@@ -1152,7 +1154,7 @@
       try {
         let data = null;
 
-        const channelTry = await fetch("https://blue-cherry-d10a.ricardobargante.workers.dev/videos?channel=carloskaraoke", { cache: "no-store" });
+        const channelTry = await fetch("https://karaoke-videos.ricardobargante.workers.dev", { cache: "no-store" });
         if (!channelTry.ok) throw new Error("Bad response");
         const parsed = await channelTry.json();
         if (!Array.isArray(parsed) || parsed.length === 0) throw new Error("No videos");
