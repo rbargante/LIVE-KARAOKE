@@ -3,38 +3,71 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlashMix Karaoke</title>
+<title>Carlos Karaoke Live</title>
 <style>
-body { margin:0; font-family:Arial; background:black; color:white; text-align:center; }
-header { padding:20px; font-size:28px; color:#ff2b2b; }
-.player { width:90%; max-width:1000px; margin:20px auto; }
+body { margin:0; font-family:Arial, sans-serif; background:linear-gradient(180deg,#000,#1a0000); color:white; }
+header { text-align:center; padding:30px 20px; border-bottom:1px solid rgba(255,255,255,0.1); }
+header h1 { margin:0; font-size:32px; color:#ff2b2b; }
+header p { margin:5px 0 0; color:#ccc; }
+nav { display:flex; justify-content:center; gap:20px; margin-top:15px; }
+nav a { color:white; text-decoration:none; font-size:14px; }
+.player { width:90%; max-width:1000px; margin:30px auto; border:2px solid rgba(255,0,0,0.4); border-radius:12px; overflow:hidden; box-shadow:0 0 25px rgba(255,0,0,0.3); }
 iframe { width:100%; height:500px; border:none; }
-.section { margin:30px; }
-.card { background:#111; padding:15px; margin:10px; border-radius:10px; }
+.section { padding:40px 20px; max-width:1000px; margin:auto; }
+.section h2 { margin-bottom:10px; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:15px; }
+.card { background:#111; padding:15px; border-radius:10px; }
+.footer { text-align:center; padding:30px; font-size:12px; color:#888; }
+.button { display:inline-block; margin-top:10px; padding:10px 15px; background:#ff2b2b; color:white; border-radius:6px; text-decoration:none; }
 </style>
 </head>
 <body>
 
-<header>🎤 FLASHMIX KARAOKE LIVE</header>
+<header>
+<h1>🎤 Carlos Karaoke Live</h1>
+<p>Karaoke ao vivo, animação e eventos especiais</p>
+<nav>
+<a href="#">Início</a>
+<a href="#sobre">Sobre</a>
+<a href="#eventos">Eventos</a>
+<a href="#agenda">Agenda</a>
+<a href="#contacto">Contacto</a>
+</nav>
+</header>
 
 <div class="player">
-<iframe src="https://player.kick.com/DJLIVETV?muted=true"></iframe>
+<iframe src="https://player.kick.com/carloskaraoke?muted=true"></iframe>
 </div>
 
-<div class="section">
-<h2>Cantores</h2>
-<div class="card">Artista 1</div>
-<div class="card">Artista 2</div>
-<div class="card">Artista 3</div>
+<div class="section" id="sobre">
+<h2>Sobre</h2>
+<p>Projeto liderado por Carlos, focado em karaoke ao vivo, animação e eventos especiais. Atuações em bares, festas privadas e eventos personalizados.</p>
 </div>
 
-<div class="section">
+<div class="section" id="eventos">
+<h2>Eventos</h2>
+<div class="cards">
+<div class="card">🎤 Karaoke Night</div>
+<div class="card">🎉 Festas privadas</div>
+<div class="card">🥂 Eventos especiais</div>
+</div>
+</div>
+
+<div class="section" id="agenda">
 <h2>Agenda</h2>
-<div class="card">20:00 - Karaoke Live</div>
-<div class="card">22:00 - Sessão Especial</div>
+<div class="card">Sexta 20:00 — Karaoke Live</div>
+<div class="card">Sábado 22:00 — Noite Especial</div>
 </div>
 
-<footer style="margin:40px; font-size:12px;">© FlashMix Karaoke</footer>
+<div class="section" id="contacto">
+<h2>Contacto</h2>
+<p>Para reservas e eventos:</p>
+<a class="button" href="#">Contactar</a>
+</div>
+
+<div class="footer">
+© Carlos Karaoke Live
+</div>
 
 </body>
 </html>
