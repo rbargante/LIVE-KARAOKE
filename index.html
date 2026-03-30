@@ -232,20 +232,22 @@
 
 <section class="hero" id="top">
   <div class="live-badge-wrap">
-    <div class="live-badge">
+    <div class="live-badge" id="statusBadge">
       <span class="live-dot"></span>
-      <span>AO VIVO</span>
+      <span id="statusText">AO VIVO</span>
     </div>
   </div>
 
   <div class="player-wrap">
     <iframe id="kickPlayer" src="https://player.kick.com/carloskaraoke?muted=true" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <video id="replayPlayer" controls playsinline style="display:none; width:100%; height:520px; background:#000;"></video>
   </div>
 
   <div class="hero-sub">Animação, música e karaoke para noites especiais.</div>
 
   <div class="hero-actions">
     <button class="button" onclick="ativarSom()">🔊 Ativar som</button>
+    <button class="button secondary" id="backToLiveBtn" onclick="voltarLive()" style="display:none;">⬅ Voltar ao live</button>
   </div>
 </section>
 
@@ -293,10 +295,23 @@
 
 <section class="section" id="videos">
   <h2>Vídeos e momentos</h2>
-  <div class="cards">
-    <div class="card"><strong>Live atual</strong><p>Transmissão principal pronta para eventos e atuações em direto.</p></div>
-    <div class="card"><strong>Momentos gravados</strong><p>Espaço preparado para replays, destaques e vídeos de noites anteriores.</p></div>
-    <div class="card"><strong>Galeria futura</strong><p>Mais tarde podes adicionar fotos, excertos e destaques do público.</p></div>
+  <p class="lead">Escolhe um vídeo da playlist. Quando abres um vídeo no player, o live sai do ecrã e podes voltar com um clique.</p>
+  <div class="cards" id="playlistGrid">
+    <div class="card">
+      <strong>Vídeo 1</strong>
+      <p>Exemplo de atuação gravada.</p>
+      <button class="button" onclick="abrirVideo('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8')">Abrir no player</button>
+    </div>
+    <div class="card">
+      <strong>Vídeo 2</strong>
+      <p>Outro momento em replay.</p>
+      <button class="button" onclick="abrirVideo('https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8')">Abrir no player</button>
+    </div>
+    <div class="card">
+      <strong>Vídeo 3</strong>
+      <p>Espaço pronto para mais vídeos.</p>
+      <button class="button" onclick="abrirVideo('https://mojenakale.pl/video.m3u8')">Abrir no player</button>
+    </div>
   </div>
 </section>
 
@@ -314,12 +329,72 @@
   © Carlos Karaoke Live, Karaoke ao vivo, animação e eventos especiais.
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
+  let hlsInstance = null;
+
   function ativarSom() {
     const player = document.getElementById('kickPlayer');
     if (player) {
       player.src = 'https://player.kick.com/carloskaraoke';
     }
+  }
+
+  function abrirVideo(url) {
+    const iframe = document.getElementById('kickPlayer');
+    const video = document.getElementById('replayPlayer');
+    const backBtn = document.getElementById('backToLiveBtn');
+    const statusText = document.getElementById('statusText');
+
+    if (hlsInstance) {
+      hlsInstance.destroy();
+      hlsInstance = null;
+    }
+
+    iframe.style.display = 'none';
+    video.style.display = 'block';
+    backBtn.style.display = 'inline-block';
+    statusText.textContent = 'A VER REPLAY';
+
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = url;
+    } else if (window.Hls && Hls.isSupported()) {
+      hlsInstance = new Hls();
+      hlsInstance.loadSource(url);
+      hlsInstance.attachMedia(video);
+    } else {
+      video.src = url;
+    }
+
+    video.play().catch(() => {});
+    document.querySelector('.player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function voltarLive() {
+    const iframe = document.getElementById('kickPlayer');
+    const video = document.getElementById('replayPlayer');
+    const backBtn = document.getElementById('backToLiveBtn');
+    const statusText = document.getElementById('statusText');
+
+    if (hlsInstance) {
+      hlsInstance.destroy();
+      hlsInstance = null;
+    }
+
+    video.pause();
+    video.removeAttribute('src');
+    video.load();
+    video.style.display = 'none';
+
+    iframe.style.display = 'block';
+    iframe.src = iframe.src;
+    backBtn.style.display = 'none';
+    statusText.textContent = 'AO VIVO';
+    document.querySelector('.player-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 </script>
 
