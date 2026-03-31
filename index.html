@@ -183,7 +183,7 @@
     let currentMode = 'live';
     let allVideos = [];
     let replayExpanded = false;
-    const replayBaseCount = 6;
+    const replayBaseCount = 8; // AGORA SÓ MOSTRA 8 INICIALMENTE
 
     function getServices() {
       const saved = localStorage.getItem('karaoke_services');
@@ -366,11 +366,6 @@
         statusBox.textContent = 'A verificar biblioteca de vídeos...';
       }
 
-      const fallbackVideos = [
-        { session_title: 'Vídeo 1', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+1' }, source: '' },
-        { session_title: 'Vídeo 2', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+2' }, source: '' }
-      ];
-
       try {
         const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev', {
           cache: 'no-store'
@@ -393,7 +388,7 @@
           statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? '' : 's'} disponível${allVideos.length === 1 ? '' : 'eis'}.`;
         }
       } catch (error) {
-        allVideos = fallbackVideos;
+        allVideos = [];
         if (statusBox) {
           statusBox.textContent = 'Playlist automática indisponível neste momento.';
         }
@@ -437,6 +432,7 @@
         container.appendChild(card);
       });
 
+      // SÓ MOSTRA O BOTÃO SE EXISTIREM MAIS DE 8 VÍDEOS
       if (allVideos.length > replayBaseCount) {
         const btn = document.createElement('button');
         btn.className = 'view-more-btn';
