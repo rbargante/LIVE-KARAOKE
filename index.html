@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+x<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -32,16 +32,22 @@
     .replay-card:hover { transform: scale(1.03); }
     .card img { width: 100%; display: block; aspect-ratio: 16 / 9; object-fit: cover; background: #111; }
     .card p { margin: 0; padding: 10px 12px 14px; font-size: 14px; line-height: 1.4; }
-    .wa-container { display: flex; justify-content: center; margin-top: 20px; }
-    .wa-button img { height: 48px; cursor: pointer; transition: opacity 0.2s; }
-    .wa-button:hover { opacity: 0.8; }
     .admin-input { padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); font-size: 16px; background: #f2f2f2; color: #111; box-sizing: border-box; width: 100%; margin-bottom: 10px; }
     .view-more-btn { background: none; color: #d8d8d8; border: none; padding: 10px; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; width: 100%; }
     .site-footer { margin-top: 44px; padding: 24px 12px; border-top: 1px solid rgba(255,255,255,.08); text-align: center; color: #a7a7a7; font-size: 14px; }
+    
+    /* POP-UP WHATSAPP FLUTUANTE */
+    #wa-popup { position: fixed; bottom: 20px; left: 20px; z-index: 1000; transition: transform 0.3s ease; }
+    #wa-popup:hover { transform: scale(1.1); }
+    #wa-popup img { width: 60px; height: 60px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); }
+
     #backToTop { position: fixed; right: 20px; bottom: 20px; background: #f52a1f; color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: none; z-index: 999; }
   </style>
 </head>
 <body>
+  
+  <div id="wa-popup"></div>
+
   <div class="top-nav">
     <div class="nav-inner">
       <div class="logo">Carlos Karaoke Live</div>
@@ -49,7 +55,6 @@
         <a href="#top">Início</a>
         <a href="#videos">Vídeos</a>
         <a href="#eventos">Serviços</a>
-        <a href="#contacto">Contacto</a>
         <a href="#" onclick="toggleAdminLogin(); return false;">Admin</a>
       </div>
     </div>
@@ -92,23 +97,16 @@
       <div id="adminPanel" style="display:none; max-width:800px; margin: 0 auto;">
         <div class="card" style="margin-bottom:20px; padding: 20px;">
           <h3>Configurações Gerais</h3>
-          <label style="display:block; margin-bottom:5px; font-size:14px; color:#ccc;">Número WhatsApp (apenas números com indicativo):</label>
+          <label style="display:block; margin-bottom:5px; font-size:14px; color:#ccc;">Número WhatsApp (apenas números):</label>
           <input id="adminWhatsApp" placeholder="Ex: 351912345678" class="admin-input">
         </div>
-        
         <div id="servicesEditList"></div>
-        
         <div style="display:flex; gap:10px; margin-top:20px;">
           <button class="control-btn" onclick="saveAdminData()" style="flex:1; background:#f52a1f;">GUARDAR TUDO</button>
           <button class="control-btn" onclick="logoutAdmin()" style="flex:1;">SAIR</button>
         </div>
       </div>
     </div>
-
-    <h2 class="section-title" id="contacto">CONTACTO</h2>
-    <p class="section-sub">Fale connosco para reservas e eventos.</p>
-    <div class="wa-container" id="waButtonWrap">
-        </div>
 
     <footer class="site-footer">
       <strong>Carlos Karaoke Live</strong><br>
@@ -123,7 +121,6 @@
     let replayExpanded = false;
     const replayBaseCount = 8;
 
-    // Configurações Iniciais
     const defaultData = {
       whatsapp: "351912345678",
       services: [
@@ -141,11 +138,11 @@
     function renderUI() {
       const data = loadData();
       
-      // Render WhatsApp Oficial
-      const waWrap = document.getElementById('waButtonWrap');
-      waWrap.innerHTML = `
-        <a aria-label="Chat on WhatsApp" href="https://wa.me/${data.whatsapp}" class="wa-button" target="_blank">
-          <img alt="Chat on WhatsApp" src="https://static.whatsapp.net/rsrc.php/v3/y7/r/DS_Wv9_vX_0.png" />
+      // Render WhatsApp POP-UP Flutuante
+      const waPop = document.getElementById('wa-popup');
+      waPop.innerHTML = `
+        <a href="https://wa.me/${data.whatsapp}" target="_blank" aria-label="WhatsApp">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Pop-up">
         </a>`;
 
       // Render Services
@@ -161,7 +158,6 @@
         </div>`).join('');
     }
 
-    // LOGIN & ADMIN
     function toggleAdminLogin() {
       const sec = document.getElementById('adminSection');
       sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
@@ -172,35 +168,31 @@
       if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
-        
         const data = loadData();
         document.getElementById('adminWhatsApp').value = data.whatsapp;
-        
         document.getElementById('servicesEditList').innerHTML = data.services.map((s, i) => `
           <div class="card" style="margin-top:15px; padding: 20px;">
             <h4>Serviço ${i+1}</h4>
-            <input id="s${i}t" value="${s.title}" class="admin-input" placeholder="Título">
-            <input id="s${i}i" value="${s.image}" class="admin-input" placeholder="URL da Imagem">
-            <textarea id="s${i}x" class="admin-input" placeholder="Descrição">${s.text}</textarea>
+            <input id="s${i}t" value="${s.title}" class="admin-input">
+            <input id="s${i}i" value="${s.image}" class="admin-input">
+            <textarea id="s${i}x" class="admin-input">${s.text}</textarea>
           </div>
         `).join('');
-      } else { alert('Dados incorretos (admin / 1234)'); }
+      } else { alert('Dados incorretos'); }
     }
 
     function saveAdminData() {
       const data = loadData();
-      data.whatsapp = document.getElementById('adminWhatsApp').value.replace(/\D/g, ''); // Remove espaços e letras
-      
+      data.whatsapp = document.getElementById('adminWhatsApp').value.replace(/\D/g, '');
       data.services = data.services.map((s, i) => ({
         title: document.getElementById(`s${i}t`).value,
         style: s.style,
         image: document.getElementById(`s${i}i`).value,
         text: document.getElementById(`s${i}x`).value
       }));
-
       localStorage.setItem('karaoke_data', JSON.stringify(data));
       renderUI();
-      alert('Configurações guardadas!');
+      alert('Guardado!');
     }
 
     function logoutAdmin() {
@@ -209,14 +201,13 @@
       document.getElementById('adminSection').style.display = 'none';
     }
 
-    // VIDEOS
     async function loadVideos() {
       try {
         const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
         allVideos = await res.json();
-        document.getElementById('replaysStatus').textContent = `${allVideos.length} vídeos disponíveis.`;
+        document.getElementById('replaysStatus').textContent = `${allVideos.length} vídeos.`;
         renderVideos();
-      } catch (e) { document.getElementById('replaysStatus').textContent = 'Playlist temporariamente indisponível.'; }
+      } catch (e) { document.getElementById('replaysStatus').textContent = 'Erro vídeos.'; }
     }
 
     function renderVideos() {
@@ -228,7 +219,6 @@
           <p>${v.session_title}</p>
         </div>
       `).join('');
-
       const wrap = document.getElementById('viewMoreWrap');
       if(allVideos.length > replayBaseCount) {
         wrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()">${replayExpanded ? 'VER MENOS' : 'VER MAIS'}</button>`;
@@ -247,13 +237,12 @@
       wrap.innerHTML = `<video id="rep" controls autoplay style="width:100%; height:100%;"></video>
                         <div class="controls"><button class="control-btn" onclick="location.reload()">⬅ LIVE</button></div>`;
       const video = document.getElementById('rep');
-      if (window.Hls && Hls.isSupported()) {
+      if (Hls.isSupported()) {
         const hls = new Hls(); hls.loadSource(url); hls.attachMedia(video);
       } else { video.src = url; }
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    // LIVE STATUS
     async function updateStatus() {
         try {
             const res = await fetch('https://script.google.com/macros/s/AKfycbzMvkIpTAEEORQKvh_hWNzLY5Y7A9k_kO6KmlqTAXbK-9MXE37rE5UqFGgZx0z8Kr-E/exec?action=status');
@@ -268,16 +257,13 @@
         } catch(e) {}
     }
 
-    // START
     renderUI();
     loadVideos();
     updateStatus();
     setInterval(updateStatus, 60000);
-
     document.getElementById('unmuteBtn').onclick = () => {
         document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke";
     };
-
     window.addEventListener('scroll', () => {
       document.getElementById('backToTop').style.display = window.scrollY > 400 ? 'block' : 'none';
     });
