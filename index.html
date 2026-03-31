@@ -144,7 +144,6 @@
     <p class="section-sub">Para reservas e informações de eventos.</p>
     <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
       <a class="control-btn" href="#">WHATSAPP</a>
-      <a class="control-btn back-btn" href="#">INSTAGRAM</a>
     </div>
 
     <footer class="site-footer">
@@ -183,7 +182,7 @@
     let currentMode = 'live';
     let allVideos = [];
     let replayExpanded = false;
-    const replayBaseCount = 8; // AGORA SÓ MOSTRA 8 INICIALMENTE
+    const replayBaseCount = 8;
 
     function getServices() {
       const saved = localStorage.getItem('karaoke_services');
@@ -362,10 +361,7 @@
 
       container.innerHTML = '<p>A carregar vídeos...</p>';
       wrap.innerHTML = '';
-      if (statusBox) {
-        statusBox.textContent = 'A verificar biblioteca de vídeos...';
-      }
-
+      
       try {
         const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev', {
           cache: 'no-store'
@@ -385,12 +381,12 @@
         }));
 
         if (statusBox) {
-          statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? '' : 's'} disponível${allVideos.length === 1 ? '' : 'eis'}.`;
+          statusBox.textContent = `${allVideos.length} vídeos disponíveis.`;
         }
       } catch (error) {
         allVideos = [];
         if (statusBox) {
-          statusBox.textContent = 'Playlist automática indisponível neste momento.';
+          statusBox.textContent = 'Playlist automática indisponível.';
         }
       }
 
@@ -405,7 +401,7 @@
       viewMoreWrap.innerHTML = '';
 
       if (!allVideos.length) {
-        container.innerHTML = '<p>Sem vídeos disponíveis neste momento.</p>';
+        container.innerHTML = '<p>Sem vídeos disponíveis.</p>';
         return;
       }
 
@@ -419,20 +415,17 @@
         const source = v.source || '';
 
         card.innerHTML = `
-          <img src="${thumb}" alt="${v.session_title || 'Vídeo'}" onerror="this.onerror=null;this.src='https://via.placeholder.com/640x360?text=Video';">
-          <p>${v.session_title || 'Vídeo'}</p>
+          <img src="${thumb}" alt="${v.session_title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/640x360?text=Video';">
+          <p>${v.session_title}</p>
         `;
 
         if (source) {
           card.onclick = () => loadReplay(source);
-        } else {
-          card.style.cursor = 'default';
         }
 
         container.appendChild(card);
       });
 
-      // SÓ MOSTRA O BOTÃO SE EXISTIREM MAIS DE 8 VÍDEOS
       if (allVideos.length > replayBaseCount) {
         const btn = document.createElement('button');
         btn.className = 'view-more-btn';
@@ -440,6 +433,9 @@
         btn.onclick = () => {
           replayExpanded = !replayExpanded;
           renderVideos();
+          if(!replayExpanded) {
+             document.getElementById('videos').scrollIntoView({ behavior: 'smooth' });
+          }
         };
         viewMoreWrap.appendChild(btn);
       }
@@ -468,10 +464,6 @@
           text.textContent = 'OFFLINE';
         }
       } catch {
-        badge.style.background = '#2b2b2b';
-        badge.style.color = '#ccc';
-        badge.style.border = '1px solid rgba(255,255,255,.12)';
-        dot.style.background = '#666';
         text.textContent = 'OFFLINE';
       }
     }
