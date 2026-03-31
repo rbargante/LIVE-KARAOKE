@@ -232,9 +232,12 @@
       const container = document.getElementById('videosGrid');
       const wrap = document.getElementById('viewMoreWrap');
       const statusBox = document.getElementById('replaysStatus');
+
       container.innerHTML = '<p>A carregar vídeos...</p>';
       wrap.innerHTML = '';
-      if (statusBox) statusBox.textContent = 'A verificar biblioteca de vídeos...';
+      if (statusBox) {
+        statusBox.textContent = 'A verificar biblioteca de vídeos...';
+      }
 
       const fallbackVideos = [
         { session_title: 'Vídeo 1', thumbnail: { src: 'https://via.placeholder.com/640x360?text=Video+1' }, source: '' },
@@ -244,21 +247,31 @@
       ];
 
       try {
-        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev', { cache: 'no-store' });
+        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev', {
+          cache: 'no-store'
+        });
+
         if (!res.ok) throw new Error('Bad response');
+
         const data = await res.json();
         if (!Array.isArray(data) || data.length === 0) throw new Error('No videos');
 
         allVideos = data.map((v, i) => ({
           session_title: v.session_title || `Vídeo ${i + 1}`,
-          thumbnail: { src: v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${i + 1}` },
+          thumbnail: {
+            src: v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${i + 1}`
+          },
           source: v.source || ''
         }));
 
-        if (statusBox) statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? '' : 's'} disponível${allVideos.length === 1 ? '' : 'eis'}.`;
-      } catch (e) {
+        if (statusBox) {
+          statusBox.textContent = `${allVideos.length} vídeo${allVideos.length === 1 ? '' : 's'} disponível${allVideos.length === 1 ? '' : 'eis'}.`;
+        }
+      } catch (error) {
         allVideos = fallbackVideos;
-        if (statusBox) statusBox.textContent = 'Playlist automática indisponível neste momento.';
+        if (statusBox) {
+          statusBox.textContent = 'Playlist automática indisponível neste momento.';
+        }
       }
 
       renderVideos();
@@ -267,6 +280,7 @@
     function renderVideos() {
       const container = document.getElementById('videosGrid');
       const viewMoreWrap = document.getElementById('viewMoreWrap');
+
       container.innerHTML = '';
       viewMoreWrap.innerHTML = '';
 
@@ -276,9 +290,11 @@
       }
 
       const count = replayExpanded ? allVideos.length : Math.min(replayBaseCount, allVideos.length);
+
       allVideos.slice(0, count).forEach((v, index) => {
         const card = document.createElement('div');
         card.className = 'card replay-card';
+
         const thumb = v.thumbnail?.src || `https://via.placeholder.com/640x360?text=Video+${index + 1}`;
         const source = v.source || '';
 
@@ -353,3 +369,4 @@
   </script>
 </body>
 </html>
+
