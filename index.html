@@ -509,5 +509,48 @@
       if (currentMode === 'live') updateLiveStatus();
     }, 60000);
   </script>
+<script>
+// POPULAR DROPDOWNS
+const days = ["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo","Todos"];
+const times = [];
+for(let h=0; h<24; h++){
+  for(let m=0; m<60; m+=30){
+    const hh = String(h).padStart(2,'0');
+    const mm = String(m).padStart(2,'0');
+    times.push(`${hh}:${mm}`);
+  }
+}
+
+function fillSelect(id, arr){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = arr.map(v => `<option value="${v}">${v}</option>`).join('');
+}
+
+["agendaDay1","agendaDay2","agendaDay3"].forEach(id => fillSelect(id, days));
+["agendaTime1","agendaTime2","agendaTime3"].forEach(id => fillSelect(id, times));
+
+// SHOW / HIDE AGENDA
+const agendaSection = document.getElementById('agenda');
+const toggle = document.getElementById('showAgendaToggle');
+
+if(toggle){
+  toggle.addEventListener('change', () => {
+    if(toggle.checked){
+      agendaSection.style.display = 'block';
+      localStorage.setItem('agendaVisible','1');
+    } else {
+      agendaSection.style.display = 'none';
+      localStorage.setItem('agendaVisible','0');
+    }
+  });
+}
+
+// LOAD STATE
+if(localStorage.getItem('agendaVisible') === '0'){
+  if(agendaSection) agendaSection.style.display = 'none';
+  if(toggle) toggle.checked = false;
+}
+</script>
 </body>
 </html>
