@@ -91,26 +91,7 @@
 
     <h2 class="section-title" id="eventos">SERVIÇOS</h2>
     <p class="section-sub">Karaoke ao vivo, festas privadas e serviços para eventos especiais.</p>
-    <div class="grid">
-      <div class="card artist-card">
-        <img src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80" alt="">
-        <h3>Karaoke ao vivo</h3>
-        <div class="artist-style">Serviço principal</div>
-        <p>Noites animadas com público, música e participação ao vivo.</p>
-      </div>
-      <div class="card artist-card">
-        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80" alt="">
-        <h3>Festas privadas</h3>
-        <div class="artist-style">Serviço</div>
-        <p>Ideal para aniversários, grupos e celebrações especiais.</p>
-      </div>
-      <div class="card artist-card">
-        <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1200&q=80" alt="">
-        <h3>Karaoke Live no website</h3>
-        <div class="artist-style">Serviço online</div>
-        <p>Temos karaoke live no website de vez em quando.</p>
-      </div>
-    </div>
+    <div class="grid" id="servicesGrid"></div>
 
     <h2 class="section-title" id="agenda">AGENDA</h2>
     <p class="section-sub">Próximas noites e horários.</p>
@@ -118,6 +99,62 @@
       <div class="schedule-item"><div><div class="schedule-day">Sexta</div><div class="schedule-show">Karaoke Live</div></div><div class="schedule-show">Noite de karaoke ao vivo com animação.</div><div class="schedule-time">20:00</div></div>
       <div class="schedule-item"><div><div class="schedule-day">Sábado</div><div class="schedule-show">Noite Especial</div></div><div class="schedule-show">Sessão com ambiente de festa e música variada.</div><div class="schedule-time">22:00</div></div>
       <div class="schedule-item"><div><div class="schedule-day">Domingo</div><div class="schedule-show">Sessão de Karaoke</div></div><div class="schedule-show">Noite descontraída para cantar e conviver.</div><div class="schedule-time">18:00</div></div>
+    </div>
+
+    <div id="adminAccess" style="text-align:center; margin-top:24px;">
+      <button id="adminAccessBtn" class="view-more-btn" onclick="toggleAdminLogin()">Admin login</button>
+    </div>
+
+    <div id="adminSection" style="display:none; margin-top:30px;">
+      <h2 class="section-title">ADMIN</h2>
+      <p class="section-sub">Área escondida para editar serviços com password.</p>
+
+      <div id="loginBox" class="card" style="max-width:720px; margin:0 auto 18px; padding:20px;">
+        <div class="section-sub" style="margin-bottom:12px;">Login demo</div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <input id="adminUser" placeholder="Username" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+          <input id="adminPass" type="password" placeholder="Password" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+          <button class="control-btn" style="background:#f52a1f;border:none;" onclick="loginAdmin()">ENTRAR</button>
+        </div>
+        <div class="section-sub" style="margin-top:12px; margin-bottom:0;">Username: admin, Password: 1234</div>
+      </div>
+
+      <div id="adminPanel" class="card" style="display:none; max-width:860px; margin:0 auto; padding:20px;">
+        <h3 style="margin-bottom:16px;">Editar serviços</h3>
+        <div style="display:grid; gap:18px;">
+          <div class="card" style="padding:16px;">
+            <h3 style="text-align:left; margin-bottom:12px; font-size:20px;">Serviço 1</h3>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input id="service1Title" placeholder="Título" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service1Style" placeholder="Subtítulo" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service1Image" placeholder="URL da foto" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <textarea id="service1Text" placeholder="Texto" style="min-height:90px;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;font-family:Arial,sans-serif;"></textarea>
+            </div>
+          </div>
+          <div class="card" style="padding:16px;">
+            <h3 style="text-align:left; margin-bottom:12px; font-size:20px;">Serviço 2</h3>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input id="service2Title" placeholder="Título" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service2Style" placeholder="Subtítulo" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service2Image" placeholder="URL da foto" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <textarea id="service2Text" placeholder="Texto" style="min-height:90px;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;font-family:Arial,sans-serif;"></textarea>
+            </div>
+          </div>
+          <div class="card" style="padding:16px;">
+            <h3 style="text-align:left; margin-bottom:12px; font-size:20px;">Serviço 3</h3>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <input id="service3Title" placeholder="Título" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service3Style" placeholder="Subtítulo" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <input id="service3Image" placeholder="URL da foto" style="padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;">
+              <textarea id="service3Text" placeholder="Texto" style="min-height:90px;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.08);font-size:16px;background:#f2f2f2;color:#111;box-sizing:border-box;width:100%;font-family:Arial,sans-serif;"></textarea>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+            <button class="control-btn" style="background:#f52a1f;border:none;" onclick="saveServices()">GUARDAR SERVIÇOS</button>
+            <button class="control-btn back-btn" onclick="logoutAdmin()">SAIR</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <h2 class="section-title" id="contacto">CONTACTO</h2>
@@ -139,10 +176,117 @@
 
   <script>
     let hls = null;
+    const defaultServices = [
+      {
+        title: 'Karaoke ao vivo',
+        style: 'Serviço principal',
+        image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80',
+        text: 'Noites animadas com público, música e participação ao vivo.'
+      },
+      {
+        title: 'Festas privadas',
+        style: 'Serviço',
+        image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=1200&q=80',
+        text: 'Ideal para aniversários, grupos e celebrações especiais.'
+      },
+      {
+        title: 'Karaoke Live no website',
+        style: 'Serviço online',
+        image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1200&q=80',
+        text: 'Temos karaoke live no website de vez em quando.'
+      }
+    ];
+
     let currentMode = 'live';
     let allVideos = [];
     let replayExpanded = false;
     const replayBaseCount = 6;
+
+    function getServices() {
+      const saved = localStorage.getItem('karaoke_services');
+      try {
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) && parsed.length === 3 ? parsed : defaultServices;
+      } catch {
+        return defaultServices;
+      }
+    }
+
+    function saveServicesData(services) {
+      localStorage.setItem('karaoke_services', JSON.stringify(services));
+    }
+
+    function renderServices() {
+      const grid = document.getElementById('servicesGrid');
+      if (!grid) return;
+      const services = getServices();
+      grid.innerHTML = '';
+      services.forEach(service => {
+        const card = document.createElement('div');
+        card.className = 'card artist-card';
+        card.innerHTML = `
+          <img src="${service.image}" alt="${service.title}" onerror="this.onerror=null;this.src='https://via.placeholder.com/640x360?text=Servico';">
+          <h3>${service.title}</h3>
+          <div class="artist-style">${service.style}</div>
+          <p>${service.text}</p>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleAdminLogin() {
+      const adminSection = document.getElementById('adminSection');
+      const loginBox = document.getElementById('loginBox');
+      const adminPanel = document.getElementById('adminPanel');
+      const isOpen = adminSection.style.display === 'block';
+      adminSection.style.display = isOpen ? 'none' : 'block';
+      loginBox.style.display = 'block';
+      adminPanel.style.display = 'none';
+      if (!isOpen) {
+        adminSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function loginAdmin() {
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value.trim();
+      if (user === 'admin' && pass === '1234') {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        fillServiceForm();
+      } else {
+        alert('Login errado');
+      }
+    }
+
+    function logoutAdmin() {
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('loginBox').style.display = 'block';
+      document.getElementById('adminSection').style.display = 'none';
+    }
+
+    function fillServiceForm() {
+      const services = getServices();
+      services.forEach((service, index) => {
+        const n = index + 1;
+        document.getElementById(`service${n}Title`).value = service.title;
+        document.getElementById(`service${n}Style`).value = service.style;
+        document.getElementById(`service${n}Image`).value = service.image;
+        document.getElementById(`service${n}Text`).value = service.text;
+      });
+    }
+
+    function saveServices() {
+      const services = [1,2,3].map(n => ({
+        title: document.getElementById(`service${n}Title`).value.trim(),
+        style: document.getElementById(`service${n}Style`).value.trim(),
+        image: document.getElementById(`service${n}Image`).value.trim(),
+        text: document.getElementById(`service${n}Text`).value.trim()
+      }));
+      saveServicesData(services);
+      renderServices();
+      alert('Serviços guardados');
+    }
 
     function attachButtons() {
       const unmuteBtn = document.getElementById('unmuteBtn');
@@ -362,6 +506,7 @@
 
     loadLive();
     loadVideos();
+    renderServices();
     updateLiveStatus();
     setInterval(() => {
       if (currentMode === 'live') updateLiveStatus();
