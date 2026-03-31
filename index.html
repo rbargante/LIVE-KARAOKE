@@ -9,7 +9,6 @@
     html { scroll-behavior: smooth; }
     body { margin: 0; background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.6; }
     
-    /* Navegação Minimalista */
     .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(0,0,0,.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,.1); }
     .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; padding: 12px 16px; }
     .nav-links { display: flex; gap: 8px; }
@@ -17,31 +16,38 @@
     .nav-links a:hover { background: rgba(255,255,255,.1); }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 2.5rem; text-align: center; margin: 20px 0; font-weight: 900; text-transform: lowercase; }
+    
+    h1 { font-size: 2.2rem; text-align: center; margin: 30px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #fff; }
+
     .section-title { margin-top: 40px; margin-bottom: 10px; font-size: 1.8rem; text-align: center; text-transform: uppercase; }
     .section-sub { text-align: center; color: #aaa; margin-bottom: 24px; font-size: 14px; padding: 0 10px; }
 
-    /* Player */
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #111; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     
     .controls { position: absolute; bottom: 12px; right: 12px; z-index: 20; display: flex; gap: 8px; }
-    .control-btn { background: rgba(0,0,0,.8); color: #fff; border: 1px solid rgba(255,255,255,.2); padding: 10px 16px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 700; backdrop-filter: blur(5px); }
+    .control-btn { background: rgba(0,0,0,.8); color: #fff; border: 1px solid rgba(255,255,255,.2); padding: 10px 16px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 700; backdrop-filter: blur(5px); text-decoration: none; }
 
-    /* Grid */
+    /* Estilo da nova secção Projeto */
+    .project-box { background: #0d0d0d; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 24px; margin: 30px 0; text-align: center; }
+    .project-text { color: #ccc; font-size: 16px; max-width: 800px; margin: 0 auto; white-space: pre-wrap; }
+
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     
     @media (max-width: 600px) {
       .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 1.8rem; }
+      h1 { font-size: 1.5rem; letter-spacing: 1px; }
       .nav-links a { padding: 5px; font-size: 12px; }
     }
 
-    .card { background: #0d0d0d; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); transition: 0.3s; }
+    .card { background: #0d0d0d; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); transition: 0.3s; display: flex; flex-direction: column; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
-    .card-content { padding: 16px; text-align: center; }
-    .card h3 { margin: 0; font-size: 1.2rem; }
-    .card p { margin: 8px 0 0; color: #bbb; font-size: 14px; }
+    .card-content { padding: 16px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card h3 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
+    .card p { margin: 8px 0 16px; color: #bbb; font-size: 14px; }
+
+    .wa-service-btn { background: #25d366; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; display: inline-block; transition: 0.3s; }
+    .wa-service-btn:hover { background: #1ebe57; }
 
     .replay-card { cursor: pointer; }
     .replay-card:active { transform: scale(0.98); }
@@ -79,6 +85,11 @@
       </div>
     </div>
 
+    <div class="project-box">
+      <h2 style="text-transform: uppercase; margin-bottom: 15px; font-size: 1.4rem;">O Projeto</h2>
+      <div id="projectDisplay" class="project-text"></div>
+    </div>
+
     <h2 class="section-title" id="videos">VÍDEOS</h2>
     <p class="section-sub" id="replaysStatus">A carregar momentos especiais...</p>
     <div id="videosGrid" class="grid"></div>
@@ -97,12 +108,15 @@
 
       <div id="adminPanel" style="display:none; max-width:600px; margin: 0 auto;">
         <div class="card" style="padding: 20px; margin-bottom: 20px;">
-          <h3>WhatsApp de Contacto</h3>
+          <h3>Configurações Gerais</h3>
+          <label style="color:#ccc; font-size: 13px;">WhatsApp:</label>
           <input id="adminWhatsApp" placeholder="Ex: 351912345678" class="admin-input">
+          <label style="color:#ccc; font-size: 13px;">Descrição do Projeto:</label>
+          <textarea id="adminProjectText" class="admin-input" rows="5" placeholder="Descreve a tua empresa de karaoke..."></textarea>
         </div>
         <div id="servicesEditList"></div>
         <div style="display:flex; gap:10px; margin-top:20px;">
-          <button class="control-btn" onclick="saveAdminData()" style="flex:1; background:#28a745; border:none;">GUARDAR</button>
+          <button class="control-btn" onclick="saveAdminData()" style="flex:1; background:#28a745; border:none;">GUARDAR TUDO</button>
           <button class="control-btn" onclick="logoutAdmin()" style="flex:1;">SAIR</button>
         </div>
       </div>
@@ -121,10 +135,11 @@
 
     const defaultData = {
       whatsapp: "351912345678",
+      project: "Somos uma empresa de karaoke especializada em festas privadas, eventos corporativos e animação de bares. Levamos a música e a diversão onde quer que seja necessário!",
       services: [
-        { title: 'Karaoke ao vivo', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação garantida para o seu bar ou restaurante.' },
-        { title: 'Festas Privadas', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Tornamos o seu dia especial inesquecível com muita música.' },
-        { title: 'Live Stream', style: 'Entretenimento Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Acompanhe as nossas sessões em direto a partir de qualquer lugar.' }
+        { title: 'KARAOKE AO VIVO', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação garantida para o seu bar ou restaurante.' },
+        { title: 'FESTAS PRIVADAS', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Tornamos o seu dia especial inesquecível com muita música.' },
+        { title: 'LIVE STREAM', style: 'Entretenimento Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Acompanhe as nossas sessões em direto a partir de qualquer lugar.' }
       ]
     };
 
@@ -135,17 +150,28 @@
 
     function renderUI() {
       const data = loadData();
+      
+      // Render Projeto
+      document.getElementById('projectDisplay').textContent = data.project;
+
+      // WhatsApp Pop
       const waPop = document.getElementById('wa-popup');
       waPop.innerHTML = `<a href="https://wa.me/${data.whatsapp}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"></a>`;
 
+      // Services
       const grid = document.getElementById('servicesGrid');
       grid.innerHTML = data.services.map(s => `
         <div class="card">
           <img src="${s.image}" alt="${s.title}">
           <div class="card-content">
-            <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase;">${s.style}</div>
-            <h3>${s.title}</h3>
-            <p>${s.text}</p>
+            <div>
+              <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase;">${s.style}</div>
+              <h3>${s.title}</h3>
+              <p>${s.text}</p>
+            </div>
+            <a href="https://wa.me/${data.whatsapp}?text=Olá! Gostaria de reservar o serviço: ${s.title}" target="_blank" class="wa-service-btn">
+              👉 RESERVAR NO WHATSAPP
+            </a>
           </div>
         </div>`).join('');
     }
@@ -162,6 +188,7 @@
         document.getElementById('adminPanel').style.display = 'block';
         const data = loadData();
         document.getElementById('adminWhatsApp').value = data.whatsapp;
+        document.getElementById('adminProjectText').value = data.project;
         document.getElementById('servicesEditList').innerHTML = data.services.map((s, i) => `
           <div class="card" style="margin-top:15px; padding: 15px;">
             <h4 style="margin:0 0 10px">Editar Serviço ${i+1}</h4>
@@ -175,15 +202,16 @@
     function saveAdminData() {
       const data = loadData();
       data.whatsapp = document.getElementById('adminWhatsApp').value.replace(/\D/g, '');
+      data.project = document.getElementById('adminProjectText').value;
       data.services = data.services.map((s, i) => ({
-        title: document.getElementById(`s${i}t`).value,
+        title: document.getElementById(`s${i}t`).value.toUpperCase(),
         style: s.style,
         image: document.getElementById(`s${i}i`).value,
         text: document.getElementById(`s${i}x`).value
       }));
       localStorage.setItem('karaoke_data', JSON.stringify(data));
       renderUI();
-      alert('Alterações guardadas!');
+      alert('Tudo guardado com sucesso!');
       logoutAdmin();
     }
 
@@ -213,7 +241,7 @@
 
       const btnWrap = document.getElementById('viewMoreWrap');
       if(allVideos.length > replayBaseCount) {
-        btnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()">${replayExpanded ? 'MOSTRAR MENOS' : 'VER TODOS OS VÍDEOS'}</button>`;
+        btnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()" style="background:none; color:#d8d8d8; border:none; padding:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:underline; width:100%;">${replayExpanded ? 'MOSTRAR MENOS' : 'VER TODOS OS VÍDEOS'}</button>`;
       }
     }
 
