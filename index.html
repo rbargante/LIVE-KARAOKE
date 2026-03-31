@@ -39,7 +39,8 @@ button {padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
 <h1>Carlos Karaoke Live</h1>
 
 <div class="player" id="playerWrap">
-<iframe src="https://player.kick.com/carloskaraoke?muted=true"></iframe>
+<iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?muted=true"></iframe>
+<button id="soundBtn" onclick="unmute()" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:red;color:white;z-index:5;">🔊 Ativar Som</button>
 </div>
 
 <h2 id="videos">VÍDEOS</h2>
@@ -65,7 +66,10 @@ button {padding:10px 14px;border-radius:8px;border:none;cursor:pointer}
 </div>
 
 <h2 id="contacto">CONTACTO</h2>
-<p style="text-align:center">WhatsApp | Instagram</p>
+<p style="text-align:center">WhatsApp</p>
+<footer style="text-align:center;margin-top:30px;color:#888;font-size:14px;line-height:1.6;">
+Carlos Karaoke Live, karaoke ao vivo, festas privadas e eventos especiais.
+</footer>
 
 </div>
 
@@ -103,25 +107,29 @@ renderVideos()
 }
 
 function play(url){
-document.getElementById('playerWrap').innerHTML=`<video src="${url}" controls autoplay></video><button onclick="loadLive()">Voltar Live</button>`
+document.getElementById('playerWrap').innerHTML=`<video src="${url}" controls autoplay playsinline style="width:100%;height:100%"></video><button onclick="loadLive()" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:red;color:white;z-index:5;">Voltar Live</button>`
+}" controls autoplay></video><button onclick="loadLive()">Voltar Live</button>`
 }
 
 function loadLive(){
-document.getElementById('playerWrap').innerHTML=`<iframe src="https://player.kick.com/carloskaraoke"></iframe>`
+document.getElementById('playerWrap').innerHTML=`<iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?muted=true"></iframe><button id="soundBtn" onclick="unmute()" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:red;color:white;z-index:5;">🔊 Ativar Som</button>`
 }
 
 function renderServices(){
 const s=JSON.parse(localStorage.getItem('services'))||[
-'Karaoke ao vivo',
-'Festas privadas',
-'Eventos especiais'
+{name:'Karaoke ao vivo',img:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80'},
+{name:'Festas privadas',img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80'},
+{name:'Eventos especiais',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80'}
 ]
 const g=document.getElementById('servicesGrid')
 g.innerHTML=''
 s.forEach(x=>{
 const d=document.createElement('div')
 d.className='card'
-d.innerHTML=`<p>${x}</p>`
+d.innerHTML=`<img src="${x.img}" alt="${x.name}"><p>${x.name}</p>`
+g.appendChild(d)
+})
+}</p>`
 g.appendChild(d)
 })
 }
@@ -138,12 +146,17 @@ document.getElementById('panel').style.display='block'
 
 function save(){
 const arr=[
-document.getElementById('s1').value,
-document.getElementById('s2').value,
-document.getElementById('s3').value
+{name:document.getElementById('s1').value || 'Karaoke ao vivo',img:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80'},
+{name:document.getElementById('s2').value || 'Festas privadas',img:'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80'},
+{name:document.getElementById('s3').value || 'Eventos especiais',img:'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80'}
 ]
 localStorage.setItem('services',JSON.stringify(arr))
 renderServices()
+}
+
+function unmute(){
+const iframe=document.getElementById('livePlayer')
+if(iframe) iframe.src='https://player.kick.com/carloskaraoke'
 }
 
 loadVideos()
