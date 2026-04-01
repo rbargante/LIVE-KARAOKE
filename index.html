@@ -11,22 +11,37 @@
     * { box-sizing: border-box; }
     html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; }
     body { background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); }
+    
     .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #222; height: 60px; display: flex; align-items: center; padding: 0 20px; }
     .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .menu-btn { cursor: pointer; font-size: 13px; font-weight: 900; border: 1px solid #333; padding: 7px 15px; border-radius: 8px; text-transform: uppercase; }
+
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
+    h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+    
     .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 10px; }
     .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; }
     .player-area iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
     .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; color: #888; }
     .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
     .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+
+    .section-title { text-align: center; font-size: 1.5rem; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; border-bottom: 2px solid var(--red); display: table; margin: 0 auto; padding-bottom: 5px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 15px; }
+    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+    .card h3 { color: #fff; margin: 15px 0 5px; text-transform: uppercase; font-size: 1.1rem; }
+
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
     .gallery-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; border: 1px solid #222; background: #111; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
     .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 25px; padding: 25px; margin-top: 40px; }
     .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
+    .admin-label { font-size: 11px; color: var(--red); font-weight: 800; text-transform: uppercase; display: block; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -47,10 +62,10 @@
       </div>
       <div class="live-bar" id="liveBar" style="display:none;">
         <div><span class="dot"></span> LIVE</div>
-        <div>👥 <span id="vCount">--</span></div>
+        <div>👥 <span id="vCount">--</span> Visualizadores</div>
         <div>🕒 <span id="vTime">00:00:00</span></div>
       </div>
-      <div id="btnSomArea" style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;">
+      <div style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;">
         <button class="btn-red" onclick="document.getElementById('livePlayer').src='https://player.kick.com/carloskaraoke?autoplay=true&muted=false&parent=karaokelive.online'">🔊 ATIVAR SOM EM DIRETO</button>
       </div>
       <div id="chatBox" style="height:350px; display:none;"><iframe src="https://kick.com/popout/carloskaraoke/chat" width="100%" height="100%"></iframe></div>
@@ -58,14 +73,18 @@
 
     <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; text-align:center; border: 1px solid #111; margin: 40px 0;">
       <h2 style="color:#fff;">SOBRE NÓS</h2>
-      <p id="aboutText" style="color:#bbb;">A sincronizar com a base de dados...</p>
+      <p id="aboutText" style="color:#bbb;">A sincronizar com o Firebase...</p>
+      <div id="waArea"></div>
     </div>
 
-    <h2 style="text-align:center; color:#fff; text-transform: uppercase;">Momentos</h2>
+    <h2 class="section-title" id="momentos">Momentos</h2>
     <div id="galGrid" class="gallery-grid"></div>
 
+    <h2 class="section-title" id="eventos">Nossos Serviços</h2>
+    <div id="serGrid" class="grid"></div>
+
     <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center; color:var(--red);">ADMINISTRADOR GLOBAL</h2>
+      <h2 style="text-align:center; color:var(--red);">FULL ADMIN GLOBAL</h2>
       <div id="loginForm">
         <input id="u" placeholder="Utilizador" class="admin-input">
         <input id="p" type="password" placeholder="Senha" class="admin-input">
@@ -76,17 +95,30 @@
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer;"><input type="checkbox" id="inStats"> MOSTRAR INFO LIVE</label>
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top:10px;"><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
         </div>
-        <input id="inWa" class="admin-input" placeholder="Teu WhatsApp (351...)">
-        <textarea id="inAbout" class="admin-input" rows="3" placeholder="Texto Sobre Nós"></textarea>
-        <div id="galInputs"></div>
-        <button class="btn-red" onclick="save()" style="background:#28a745; width:100%; margin-top:20px;">GUARDAR E SINCRONIZAR</button>
-        <button class="btn-red" onclick="document.getElementById('adminArea').style.display='none'" style="background:#444; width:100%; margin-top:10px;">CANCELAR</button>
+        
+        <span class="admin-label">WhatsApp (ex: 351962839921)</span>
+        <input id="inWa" class="admin-input">
+        
+        <span class="admin-label">Sobre Nós (Texto)</span>
+        <textarea id="inAbout" class="admin-input" rows="3"></textarea>
+
+        <span class="admin-label">Galeria (12 URLs de Fotos)</span>
+        <div id="galInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;"></div>
+
+        <span class="admin-label">Serviços (3 Máx)</span>
+        <div id="serInputs"></div>
+
+        <button class="btn-red" onclick="save()" style="background:#28a745; width:100%; margin-top:30px;">GUARDAR EM TODOS OS DISPOSITIVOS</button>
+        <button class="btn-red" onclick="document.getElementById('adminArea').style.display='none'" style="background:#444; width:100%; margin-top:10px;">SAIR</button>
       </div>
     </div>
+
+    <footer style="text-align:center; padding: 60px 0; color:#444; font-size:11px; border-top:1px solid #111;">
+      <strong>KARAOKELIVE.ONLINE</strong>
+    </footer>
   </div>
 
   <script>
-    // LIGAÇÃO DIRETA AO TEU FIREBASE
     const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
 
     async function loadData() {
@@ -94,51 +126,28 @@
         const res = await fetch(DB_URL);
         const d = await res.json();
         if(d) {
-          document.getElementById('aboutText').textContent = d.about || "O melhor Karaoke profissional!";
+          document.getElementById('aboutText').textContent = d.about || "Karaoke Profissional!";
+          document.getElementById('waArea').innerHTML = `<button class="btn-red" style="background:#25d366" onclick="window.open('https://wa.me/${d.wa.replace(/\D/g,'')}')">💬 WHATSAPP</button>`;
           document.getElementById('liveBar').style.display = d.stats ? 'flex' : 'none';
           document.getElementById('chatBox').style.display = d.chat ? 'block' : 'none';
+          
+          // Render Galeria
           document.getElementById('galGrid').innerHTML = (d.gal || []).map(img => `<div class="gallery-item"><img src="${img}" style="width:100%;height:100%;object-fit:cover;"></div>`).join('');
+          
+          // Render Serviços
+          document.getElementById('serGrid').innerHTML = (d.ser || []).map(s => `
+            <div class="card">
+              <img src="${s.i}">
+              <div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;">${s.d}</p></div>
+            </div>`).join('');
+            
           window.globalConfig = d;
         }
-      } catch(e) { console.error("Erro na Sincronização"); }
+      } catch(e) { console.error("Erro Firebase"); }
     }
 
     async function save() {
-      const urls = []; 
-      for(let i=0; i<12; i++) { 
-        const v = document.getElementById('g'+i).value; 
-        if(v) urls.push(v); 
-      }
-      const data = {
-        wa: document.getElementById('inWa').value,
-        about: document.getElementById('inAbout').value,
-        stats: document.getElementById('inStats').checked,
-        chat: document.getElementById('inChat').checked,
-        gal: urls
-      };
-      // ENVIA PARA A NUVEM
-      await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(data) });
-      alert("SUCESSO! O site foi atualizado em todos os dispositivos.");
-      location.reload();
-    }
-
-    function login() {
-      if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
-        document.getElementById('loginForm').style.display='none';
-        document.getElementById('editForm').style.display='block';
-        const d = window.globalConfig || {};
-        document.getElementById('inWa').value = d.wa || "";
-        document.getElementById('inAbout').value = d.about || "";
-        document.getElementById('inStats').checked = d.stats;
-        document.getElementById('inChat').checked = d.chat;
-        let h = ""; 
-        for(let i=0; i<12; i++) {
-          h += `<input id="g${i}" class="admin-input" placeholder="Link da Foto ${i+1}" value="${(d.gal && d.gal[i]) ? d.gal[i] : ''}">`;
-        }
-        document.getElementById('galInputs').innerHTML = h;
-      }
-    }
-    loadData();
-  </script>
-</body>
-</html>
+      const g = []; for(let i=0; i<12; i++) { const v = document.getElementById('g'+i).value; if(v) g.push(v); }
+      const s = []; for(let i=0; i<3; i++) {
+        if(document.getElementById('st'+i).value) {
+          s.push({ t: document.getElementById('st'+i).value, i: document.getElementById('si'+i).value,
