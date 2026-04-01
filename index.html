@@ -17,32 +17,19 @@
     /* NAVEGAÇÃO */
     .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.06); height: 60px; display: flex; align-items: center; }
     .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; padding: 0 20px; }
-    
-    /* Menu Desktop */
     .nav-links { display: flex; gap: 10px; }
     .nav-links a { color: #eee; text-decoration: none; font-size: 13px; font-weight: 700; padding: 8px 15px; border-radius: 10px; transition: 0.3s; text-transform: uppercase; }
     .nav-links a:hover { background: rgba(255,255,255,0.08); color: #f52a1f; }
-
-    /* Ícone Hambúrguer (Escondido por padrão) */
     .menu-icon { display: none; cursor: pointer; font-size: 28px; color: #fff; }
 
     /* Menu Mobile Lateral */
-    .mobile-menu { 
-      position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; 
-      background: #0a0a0a; z-index: 1000; transition: 0.4s ease; 
-      display: flex; flex-direction: column; padding: 60px 30px; box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-    }
+    .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; background: #0a0a0a; z-index: 1000; transition: 0.4s ease; display: flex; flex-direction: column; padding: 60px 30px; }
     .mobile-menu.active { right: 0; }
     .mobile-menu a { color: #fff; text-decoration: none; font-size: 1.2rem; font-weight: 800; margin-bottom: 25px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; }
-    .close-menu { position: absolute; top: 20px; right: 25px; font-size: 30px; cursor: pointer; color: #f52a1f; }
     .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 998; display: none; }
     .overlay.active { display: block; }
 
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .menu-icon { display: block; }
-      h1 { font-size: 1.8rem; margin: 30px 0 20px; }
-    }
+    @media (max-width: 768px) { .nav-links { display: none; } .menu-icon { display: block; } }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 2.5rem; text-align: center; margin: 40px 0 25px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #fff; }
@@ -50,6 +37,11 @@
     .player-wrap { width: 100%; margin-bottom: 20px; position: relative; }
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
     .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+    /* MODO CHEIO */
+    body.fullscreen-mode { overflow: hidden; }
+    body.fullscreen-mode .player-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #000; margin: 0; display: flex; align-items: center; }
+    body.fullscreen-mode .player { border-radius: 0; border: none; width: 100%; height: 100%; aspect-ratio: auto; }
 
     .controls-area { text-align: center; margin-top: -10px; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; }
     .som-btn { background: #f52a1f; color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
@@ -70,23 +62,27 @@
     #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; }
     #wa-popup svg { width: 32px; height: 32px; fill: white; }
 
+    #exitFull { display: none; position: fixed; top: 15px; right: 15px; z-index: 10000; background: #f52a1f; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; cursor: pointer; }
+    body.fullscreen-mode #exitFull { display: flex; align-items: center; justify-content: center; }
+
     .admin-card { background: #111; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
     .admin-input { padding: 12px; border-radius: 10px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; box-sizing: border-box; }
     .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #666; font-size: 13px; }
-    .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
   
   <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
   <div class="mobile-menu" id="mobileMenu">
-    <div class="close-menu" onclick="toggleMenu()">✕</div>
+    <div style="text-align:right; padding: 20px;" onclick="toggleMenu()">✕</div>
     <a href="#top" onclick="toggleMenu()">Home</a>
     <a href="#momentos" onclick="toggleMenu()">Momentos</a>
     <a href="#videos" onclick="toggleMenu()">Vídeos</a>
     <a href="#eventos" onclick="toggleMenu()">Serviços</a>
     <a href="#" onclick="toggleMenu(); toggleAdminLogin();">Admin</a>
   </div>
+
+  <button id="exitFull" onclick="toggleFull()">✕</button>
 
   <nav class="top-nav">
     <div class="nav-inner">
@@ -105,45 +101,40 @@
     <h1>os canta agora karaoke</h1>
 
     <div class="player-wrap">
-      <div class="player">
-        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
-      </div>
+      <div class="player"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe></div>
     </div>
 
     <div class="controls-area">
-      <button class="som-btn" id="unmuteBtn">🔊 SOM EM DIRETO</button>
+      <button class="som-btn" id="unmuteBtn">🔊 ATIVAR SOM</button>
       <button class="full-btn" onclick="toggleFull()">📱 MODO CHEIO</button>
     </div>
 
     <div class="project-box">
-      <h2 style="color: #f52a1f; text-transform: uppercase;">O Projeto</h2>
+      <h2 style="color: #f52a1f;">O Projeto</h2>
       <div id="projectDisplay" class="project-text"></div>
       <div id="projectWaButtonWrap"></div>
     </div>
 
     <h2 class="section-title" id="momentos">Momentos</h2>
     <div id="galleryGrid" class="gallery-grid"></div>
-    <div style="text-align:center"><div id="viewMoreGalleryWrap"></div></div>
 
-    <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
+    <h2 class="section-title" id="videos">VÍDEOS</h2>
     <div id="videosGrid" class="grid"></div>
-    <div style="text-align:center"><div id="viewMoreWrap"></div></div>
 
-    <h2 class="section-title" id="eventos">Nossos Serviços</h2>
-    <div class="grid" id="servicesGrid"></div>
+    <h2 class="section-title" id="eventos">SERVIÇOS</h2>
+    <div id="servicesGrid" class="grid"></div>
 
     <div id="adminSection" style="display:none; margin-top:60px;">
       <h2 class="section-title">ADMIN PANEL</h2>
       <div id="loginBox" class="admin-card" style="max-width:400px; margin: 0 auto; text-align: center;">
-        <input id="adminUser" placeholder="Utilizador" class="admin-input">
+        <input id="adminUser" placeholder="Utilizador" class="admin-input" style="margin-bottom:10px;">
         <input id="adminPass" type="password" placeholder="Palavra-passe" class="admin-input">
         <button class="som-btn" onclick="loginAdmin()" style="width:100%; margin-top:15px;">ENTRAR</button>
       </div>
       <div id="adminPanel" style="display:none; max-width:850px; margin: 0 auto;">
         <div class="admin-card">
-          <h3 style="color:#f52a1f;">WhatsApp e Projeto</h3>
-          <input id="adminWhatsApp" class="admin-input" placeholder="Teu número (Ex: 351962839921)">
-          <textarea id="adminProjectText" class="admin-input" rows="3"></textarea>
+          <input id="adminWhatsApp" class="admin-input" placeholder="Teu número real">
+          <textarea id="adminProjectText" class="admin-input" rows="3" style="margin-top:10px;"></textarea>
         </div>
         <div style="display:flex; gap:15px; margin-bottom:50px;">
           <button class="som-btn" onclick="saveAdminData()" style="flex:2; background:#28a745">GUARDAR TUDO</button>
@@ -153,7 +144,7 @@
     </div>
 
     <footer class="site-footer">
-      <strong>OS CANTA AGORA KARAOKE</strong><br>© 2026 • Todos os direitos reservados
+      <strong>KARAOKELIVE.ONLINE</strong><br>© 2026 • Todos os direitos reservados
     </footer>
   </div>
 
@@ -163,78 +154,34 @@
 
   <script>
     let allVideos = [];
-    let galleryExpanded = false;
-
     const defaultData = {
-      whatsapp: "351962839921", 
-      project: "Karaoke profissional para festas e eventos privados.",
+      whatsapp: "351962839921", project: "Karaoke profissional para bares e eventos privados.",
       gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"],
-      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação bares.' }]
+      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação recorrente para espaços comerciais.' }]
     };
 
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('active');
-      document.getElementById('overlay').classList.toggle('active');
-    }
-
-    function loadData() { 
-      const saved = localStorage.getItem('karaoke_data'); 
-      return saved ? JSON.parse(saved) : defaultData;
-    }
-
-    function openWa() {
-      const data = loadData();
-      const num = data.whatsapp.toString().replace(/\D/g, '');
-      window.open(`https://wa.me/${num}`, '_blank');
-    }
+    function loadData() { const saved = localStorage.getItem('karaoke_data'); return saved ? JSON.parse(saved) : defaultData; }
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    function openWa() { const num = loadData().whatsapp.toString().replace(/\D/g, ''); window.open(`https://wa.me/${num}`, '_blank'); }
 
     function renderUI() {
       const data = loadData();
       document.getElementById('projectDisplay').textContent = data.project;
       const num = data.whatsapp.toString().replace(/\D/g, '');
       document.getElementById('projectWaButtonWrap').innerHTML = `<a href="https://wa.me/${num}" target="_blank" class="project-wa-btn">💬 FALAR NO WHATSAPP</a>`;
-      
-      const validG = (data.gallery || []).filter(u => u);
-      document.getElementById('galleryGrid').innerHTML = (galleryExpanded ? validG : validG.slice(0, 4)).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('viewMoreGalleryWrap').innerHTML = validG.length > 4 ? `<button class="view-more-btn" onclick="galleryExpanded=!galleryExpanded; renderUI();">${galleryExpanded?'FECHAR':'VER MAIS'}</button>` : '';
-      document.getElementById('servicesGrid').innerHTML = (data.services || []).map(s => `<div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
+      document.getElementById('galleryGrid').innerHTML = (data.gallery || defaultData.gallery).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+      document.getElementById('servicesGrid').innerHTML = (data.services || defaultData.services).map(s => `<div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
     }
 
-    function loginAdmin() {
-      if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        const data = loadData();
-        document.getElementById('adminWhatsApp').value = data.whatsapp;
-        document.getElementById('adminProjectText').value = data.project;
-      }
-    }
-
-    function saveAdminData() {
-      const data = {
-        whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
-        project: document.getElementById('adminProjectText').value,
-        gallery: defaultData.gallery,
-        services: defaultData.services
-      };
-      localStorage.setItem('karaoke_data', JSON.stringify(data)); renderUI(); logoutAdmin();
-      alert("Guardado!");
-    }
-
+    function toggleFull() { document.body.classList.toggle('fullscreen-mode'); window.scrollTo(0, 0); }
+    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; window.scrollTo(0, document.getElementById('adminSection').offsetTop); }
+    function loginAdmin() { if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') { document.getElementById('loginBox').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; const d = loadData(); document.getElementById('adminWhatsApp').value = d.whatsapp; document.getElementById('adminProjectText').value = d.project; } }
+    function saveAdminData() { const data = { whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''), project: document.getElementById('adminProjectText').value, gallery: defaultData.gallery, services: defaultData.services }; localStorage.setItem('karaoke_data', JSON.stringify(data)); renderUI(); logoutAdmin(); }
     function logoutAdmin() { document.getElementById('adminSection').style.display = 'none'; document.getElementById('adminPanel').style.display = 'none'; document.getElementById('loginBox').style.display = 'block'; }
-    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; window.scrollTo(0, document.getElementById('adminSection').offsetTop - 50); }
 
     async function loadVideos() { try { const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev'); allVideos = await res.json(); renderVideos(); } catch(e){} }
-    function renderVideos() {
-      const count = 8;
-      document.getElementById('videosGrid').innerHTML = allVideos.slice(0, count).map(v => `<div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join('');
-    }
-
-    function loadReplay(url) {
-      document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div style="text-align:center; margin-top:10px;"><button class="som-btn" onclick="location.reload()" style="background:#444">⬅ VOLTAR</button></div>`;
-      if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); }
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    function renderVideos() { document.getElementById('videosGrid').innerHTML = allVideos.slice(0, 8).map(v => `<div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join(''); }
+    function loadReplay(url) { document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div style="text-align:center; margin-top:10px;"><button class="som-btn" onclick="location.reload()">⬅ VOLTAR</button></div>`; if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); } window.scrollTo({top: 0, behavior: 'smooth'}); }
 
     renderUI(); loadVideos();
     document.getElementById('unmuteBtn').onclick = () => { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; };
