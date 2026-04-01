@@ -20,55 +20,46 @@
     .nav-links a:hover { background: rgba(255,255,255,0.08); color: #f52a1f; }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 2.5rem; text-align: center; margin: 40px 0 25px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
+    h1 { font-size: 2.5rem; text-align: center; margin: 40px 0 25px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #fff; }
     .section-title { margin-top: 60px; margin-bottom: 10px; font-size: 1.8rem; text-align: center; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; }
     .section-sub { text-align: center; color: #888; margin-bottom: 35px; font-size: 14px; padding: 0 10px; }
 
-    /* Player Glass Effect */
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
     .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .controls { position: absolute; bottom: 15px; right: 15px; z-index: 20; display: flex; gap: 10px; }
-    .control-btn { background: rgba(245, 42, 31, 0.9); color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 800; transition: 0.3s; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); }
-    .control-btn:hover { transform: scale(1.05); background: #ff3c31; }
+    .control-btn { background: rgba(245, 42, 31, 0.9); color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 800; transition: 0.3s; }
 
-    /* Projeto Section */
     .project-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px 24px; margin: 45px 0; text-align: center; }
-    .project-text { color: #ddd; font-size: 17px; max-width: 800px; margin: 0 auto 30px; white-space: pre-wrap; font-weight: 400; }
-    .project-wa-btn { background: #25d366; color: #fff; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 800; font-size: 15px; display: inline-flex; align-items: center; gap: 12px; transition: 0.3s; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.2); }
-    .project-wa-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(37, 211, 102, 0.3); }
+    .project-text { color: #ddd; font-size: 17px; max-width: 800px; margin: 0 auto 30px; white-space: pre-wrap; }
+    .project-wa-btn { background: #25d366; color: #fff; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 800; font-size: 15px; display: inline-flex; align-items: center; gap: 12px; transition: 0.3s; }
 
-    /* Grids */
+    /* Estilo Secção Porquê Escolher-nos */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; }
+    .feature-card { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+    .feature-card h4 { margin: 0 0 10px; font-size: 1.2rem; color: #fff; text-transform: uppercase; }
+    .feature-card p { margin: 0; color: #888; font-size: 14px; }
+
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
     
-    @media (max-width: 600px) { .grid, .gallery-grid { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; letter-spacing: 1px; } }
+    @media (max-width: 600px) { .grid, .gallery-grid { grid-template-columns: 1fr; } }
 
     .card { background: #0a0a0a; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
-    .card:hover { transform: translateY(-8px); border-color: rgba(245, 42, 31, 0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
-    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
     .card-content { padding: 22px; text-align: center; }
-    .card h3 { margin: 0; font-size: 1.3rem; font-weight: 800; color: #fff; }
-    
     .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
-    .gallery-item:hover img { transform: scale(1.1); }
 
-    /* Admin Styling */
     .admin-input { padding: 12px 15px; border-radius: 12px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; margin-bottom: 10px; }
-    .admin-input:focus { border-color: #f52a1f; outline: none; }
-    
-    #wa-popup { position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    #wa-popup:hover { transform: scale(1.15) rotate(10deg); }
-    #wa-popup img { width: 30px; height: 30px; filter: invert(1); }
-
-    .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #444; font-size: 12px; letter-spacing: 1px; }
-    .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 20px; }
-    .view-more-btn:hover { background: rgba(255,255,255,0.1); border-color: #f52a1f; }
+    #wa-popup { position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s; }
+    .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #444; font-size: 12px; }
+    .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
   
-  <div id="wa-popup"><img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" alt="WhatsApp"></div>
+  <div id="wa-popup"><img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" width="30" style="filter:invert(1)"></div>
 
   <nav class="top-nav">
     <div class="nav-inner">
@@ -95,15 +86,15 @@
       <h2 style="text-transform: uppercase; margin-bottom: 20px; font-size: 1.6rem; font-weight: 900; color: #f52a1f;">O Projeto</h2>
       <div id="projectDisplay" class="project-text"></div>
       <div id="projectWaButtonWrap"></div>
+      
+      <div id="featuresDisplay" class="features-grid"></div>
     </div>
 
     <h2 class="section-title" id="momentos">Momentos</h2>
-    <p class="section-sub">Registos reais das nossas noites de música</p>
     <div id="galleryGrid" class="gallery-grid"></div>
     <div style="text-align:center"><div id="viewMoreGalleryWrap"></div></div>
 
     <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
-    <p class="section-sub" id="replaysStatus">Carregando as melhores atuações...</p>
     <div id="videosGrid" class="grid"></div>
     <div style="text-align:center"><div id="viewMoreWrap"></div></div>
 
@@ -120,13 +111,21 @@
 
       <div id="adminPanel" style="display:none; max-width:800px; margin: 0 auto;">
         <div class="card" style="padding: 25px; margin-bottom: 20px; background: #111;">
-          <h3 style="margin:0 0 15px; color:#f52a1f">Geral & Configurações</h3>
-          <label style="font-size:12px; color:#666">NÚMERO WHATSAPP (EX: 351912345678):</label>
-          <input id="adminWhatsApp" class="admin-input">
-          <label style="font-size:12px; color:#666">DESCRIÇÃO DO PROJETO:</label>
-          <textarea id="adminProjectText" class="admin-input" rows="5"></textarea>
+          <h3 style="color:#f52a1f">Geral & Diferenciais</h3>
+          <input id="adminWhatsApp" placeholder="WhatsApp (ex: 351912345678)" class="admin-input">
+          <textarea id="adminProjectText" class="admin-input" rows="3" placeholder="Texto O Projeto"></textarea>
           
-          <h4 style="margin:20px 0 10px; font-size:14px">LINKS DAS FOTOS (MOMENTOS):</h4>
+          <h4 style="font-size:14px; margin:15px 0 10px;">Diferenciais (Ícones):</h4>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+             <input id="f1t" placeholder="Título 1" class="admin-input">
+             <input id="f1d" placeholder="Desc 1" class="admin-input">
+             <input id="f2t" placeholder="Título 2" class="admin-input">
+             <input id="f2d" placeholder="Desc 2" class="admin-input">
+             <input id="f3t" placeholder="Título 3" class="admin-input">
+             <input id="f3d" placeholder="Desc 3" class="admin-input">
+          </div>
+
+          <h4 style="font-size:14px; margin:15px 0 10px;">Fotos Galeria (URL):</h4>
           <div id="adminPhotosInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
         </div>
         <div id="servicesEditList"></div>
@@ -138,8 +137,7 @@
     </div>
 
     <footer class="site-footer">
-      <strong>OS CANTA AGORA KARAOKE</strong><br>
-      © 2026 • Design by Gemini • Todos os direitos reservados
+      <strong>OS CANTA AGORA KARAOKE</strong><br>© 2026 • Todos os direitos reservados
     </footer>
   </div>
 
@@ -147,98 +145,91 @@
     let allVideos = [];
     let replayExpanded = false;
     let galleryExpanded = false;
-    const replayBaseCount = 8;
-    const galleryBaseCount = 4;
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Levamos o karaoke profissional a bares, eventos privados e festas de aniversário. Som de alta qualidade e animação sem limites!",
-      gallery: [
-        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600",
-        "https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600",
-        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600",
-        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"
+      project: "Karaoke profissional para festas e eventos.",
+      features: [
+        { icon: "🎤", title: "Equipamento Pro", desc: "Som e imagem de alta fidelidade." },
+        { icon: "📚", title: "Catálogo Infinito", desc: "Músicas para todos os gostos." },
+        { icon: "🎉", title: "Animação", desc: "Ambiente garantido." }
       ],
-      services: [
-        { title: 'KARAOKE AO VIVO', style: 'Bares e Rest.', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação recorrente para espaços comerciais.' },
-        { title: 'FESTAS PRIVADAS', style: 'Exclusivo', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Casamentos, Aniversários e Eventos de Empresa.' },
-        { title: 'LIVE STREAM', style: 'Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Sessões em direto para todo o mundo via Kick.' }
-      ]
+      gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"],
+      services: [{ title: 'KARAOKE AO VIVO', style: 'Evento', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total.' },{ title: 'FESTAS PRIVADAS', style: 'Exclusivo', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },{ title: 'LIVE STREAM', style: 'Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Web sessions.' }]
     };
 
     function loadData() {
       const saved = localStorage.getItem('karaoke_data');
-      if (!saved) return defaultData;
-      try { return JSON.parse(saved); } catch (e) { return defaultData; }
+      return saved ? JSON.parse(saved) : defaultData;
     }
 
     function renderUI() {
       const data = loadData();
-      document.getElementById('projectDisplay').textContent = data.project || defaultData.project;
+      document.getElementById('projectDisplay').textContent = data.project;
       
-      const numWa = data.whatsapp || defaultData.whatsapp;
-      const waUrl = `https://wa.me/${numWa}`;
-      document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
-      document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 FALAR CONNOSCO</a>`;
-
-      // Gallery Logic
-      const validGallery = (data.gallery || defaultData.gallery).filter(u => u && u.trim() !== "");
-      const visiblePhotos = galleryExpanded ? validGallery : validGallery.slice(0, galleryBaseCount);
-      document.getElementById('galleryGrid').innerHTML = visiblePhotos.map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('viewMoreGalleryWrap').innerHTML = validGallery.length > galleryBaseCount ? 
-        `<button class="view-more-btn" onclick="toggleGallery()">${galleryExpanded ? 'VER MENOS' : 'VER MAIS MOMENTOS'}</button>` : '';
-
-      // Services
-      document.getElementById('servicesGrid').innerHTML = (data.services || defaultData.services).map(s => `
-        <div class="card">
-          <img src="${s.image}">
-          <div class="card-content">
-            <div style="color:#f52a1f; font-size:11px; font-weight:900; text-transform:uppercase; margin-bottom:5px;">${s.style}</div>
-            <h3>${s.title}</h3>
-            <p>${s.text}</p>
-          </div>
+      // Render Diferenciais
+      const featGrid = document.getElementById('featuresDisplay');
+      featGrid.innerHTML = (data.features || defaultData.features).map(f => `
+        <div class="feature-card">
+          <span class="feature-icon">${f.icon}</span>
+          <h4>${f.title}</h4>
+          <p>${f.desc}</p>
         </div>`).join('');
+
+      // WhatsApp
+      const waUrl = `https://wa.me/${data.whatsapp || defaultData.whatsapp}`;
+      document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
+      document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 CONTACTO</a>`;
+
+      // Gallery & Videos & Services (conforme lógica anterior)
+      const validGallery = (data.gallery || defaultData.gallery).filter(u => u);
+      document.getElementById('galleryGrid').innerHTML = (galleryExpanded ? validGallery : validGallery.slice(0, 4)).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+      document.getElementById('viewMoreGalleryWrap').innerHTML = validGallery.length > 4 ? `<button class="view-more-btn" onclick="toggleGallery()">${galleryExpanded ? 'VER MENOS' : 'VER MAIS'}</button>` : '';
+
+      document.getElementById('servicesGrid').innerHTML = (data.services || defaultData.services).map(s => `
+        <div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
     }
 
-    function toggleGallery() { galleryExpanded = !galleryExpanded; renderUI(); if(!galleryExpanded) document.getElementById('momentos').scrollIntoView(); }
-
-    function toggleAdminLogin() {
-      const sec = document.getElementById('adminSection');
-      sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
-      if(sec.style.display === 'block') window.scrollTo({top: sec.offsetTop - 50, behavior: 'smooth'});
-    }
+    function toggleGallery() { galleryExpanded = !galleryExpanded; renderUI(); }
 
     function loginAdmin() {
       if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         const data = loadData();
-        document.getElementById('adminWhatsApp').value = data.whatsapp || defaultData.whatsapp;
-        document.getElementById('adminProjectText').value = data.project || defaultData.project;
+        document.getElementById('adminWhatsApp').value = data.whatsapp;
+        document.getElementById('adminProjectText').value = data.project;
         
+        // Carregar diferenciais no form
+        for(let i=0; i<3; i++) {
+          document.getElementById(`f${i+1}t`).value = data.features[i].title;
+          document.getElementById(`f${i+1}d`).value = data.features[i].desc;
+        }
+
         let photoHtml = '';
-        for(let i=0; i<12; i++) photoHtml += `<input id="gimg${i}" value="${data.gallery && data.gallery[i] ? data.gallery[i] : ''}" class="admin-input" placeholder="Foto ${i+1} URL">`;
+        for(let i=0; i<12; i++) photoHtml += `<input id="gimg${i}" value="${data.gallery[i] || ''}" class="admin-input" placeholder="Foto ${i+1} URL">`;
         document.getElementById('adminPhotosInputs').innerHTML = photoHtml;
-        
-        document.getElementById('servicesEditList').innerHTML = (data.services || defaultData.services).map((s, i) => `
+
+        document.getElementById('servicesEditList').innerHTML = data.services.map((s, i) => `
           <div class="card" style="margin-top:15px; padding: 20px; background:#111">
-            <h4 style="margin:0 0 10px">Serviço ${i+1}</h4>
             <input id="s${i}t" value="${s.title}" class="admin-input">
             <input id="s${i}i" value="${s.image}" class="admin-input">
             <textarea id="s${i}x" class="admin-input">${s.text}</textarea>
           </div>`).join('');
-      } else { alert('Credenciais Admin incorretas'); }
+      }
     }
 
     function saveAdminData() {
       const currentData = loadData();
-      const newGallery = [];
-      for(let i=0; i<12; i++) { const v = document.getElementById(`gimg${i}`).value; if(v) newGallery.push(v); }
-
       const newData = {
         whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
         project: document.getElementById('adminProjectText').value,
-        gallery: newGallery,
+        features: [
+          { icon: "🎤", title: document.getElementById('f1t').value, desc: document.getElementById('f1d').value },
+          { icon: "📚", title: document.getElementById('f2t').value, desc: document.getElementById('f2d').value },
+          { icon: "🎉", title: document.getElementById('f3t').value, desc: document.getElementById('f3d').value }
+        ],
+        gallery: Array.from({length: 12}, (_, i) => document.getElementById(`gimg${i}`).value).filter(v => v),
         services: currentData.services.map((s, i) => ({
           title: document.getElementById(`s${i}t`).value.toUpperCase(),
           style: s.style,
@@ -247,39 +238,27 @@
         }))
       };
       localStorage.setItem('karaoke_data', JSON.stringify(newData));
-      renderUI(); alert('Configurações atualizadas!'); logoutAdmin();
+      renderUI(); logoutAdmin();
     }
 
-    function logoutAdmin() { document.getElementById('adminPanel').style.display = 'none'; document.getElementById('loginBox').style.display = 'block'; document.getElementById('adminSection').style.display = 'none'; }
+    function logoutAdmin() { document.getElementById('adminSection').style.display = 'none'; }
+    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; }
 
     async function loadVideos() {
-      try {
-        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
-        allVideos = await res.json();
-        document.getElementById('replaysStatus').textContent = `${allVideos.length} atuações encontradas`;
-        renderVideos();
-      } catch (e) { document.getElementById('replaysStatus').textContent = 'Playlist offline.'; }
+      const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
+      allVideos = await res.json(); renderVideos();
     }
 
     function renderVideos() {
-      const count = replayExpanded ? allVideos.length : Math.min(allVideos.length, replayBaseCount);
+      const count = replayExpanded ? allVideos.length : 8;
       document.getElementById('videosGrid').innerHTML = allVideos.slice(0, count).map(v => `
-        <div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')">
-          <img src="${v.thumbnail.src}">
-          <div style="padding:15px; font-weight:800; font-size:13px; text-transform:uppercase">${v.session_title}</div>
-        </div>`).join('');
-      document.getElementById('viewMoreWrap').innerHTML = allVideos.length > replayBaseCount ? 
-        `<button class="view-more-btn" onclick="toggleVideos()">${replayExpanded ? 'OCULTAR VÍDEOS' : 'VER TODO O ARQUIVO'}</button>` : '';
+        <div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join('');
+      document.getElementById('viewMoreWrap').innerHTML = allVideos.length > 8 ? `<button class="view-more-btn" onclick="replayExpanded=!replayExpanded; renderVideos()">${replayExpanded ? 'OCULTAR' : 'VER TUDO'}</button>` : '';
     }
 
-    function toggleVideos() { replayExpanded = !replayExpanded; renderVideos(); if(!replayExpanded) document.getElementById('videos').scrollIntoView(); }
-
     function loadReplay(url) {
-      const wrap = document.getElementById('playerWrap');
-      wrap.innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video>
-                        <div class="controls"><button class="control-btn" onclick="location.reload()" style="background:#444">⬅ VOLTAR AO LIVE</button></div>`;
+      document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div class="controls"><button class="control-btn" onclick="location.reload()">⬅ VOLTAR AO LIVE</button></div>`;
       if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); }
-      else { document.getElementById('rep').src = url; }
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
