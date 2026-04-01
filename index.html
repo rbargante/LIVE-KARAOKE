@@ -20,15 +20,13 @@
     .nav-links a { color: #eee; text-decoration: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; transition: 0.3s; }
     .nav-links a:hover { background: rgba(255,255,255,0.08); color: #f52a1f; }
 
-    .container { max-width: 1120px; margin: 0 auto; padding: 16px; transition: 0.4s; }
+    .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 2.5rem; text-align: center; margin: 40px 0 25px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #fff; }
     
-    /* PLAYER FIXO */
     .player-wrap { width: 100%; margin-bottom: 20px; position: relative; }
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
     .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    /* MODO CHEIO DINÂMICO */
     body.fullscreen-mode { overflow: hidden; }
     body.fullscreen-mode .player-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #000; margin: 0; display: flex; align-items: center; }
     body.fullscreen-mode .player { border-radius: 0; border: none; width: 100%; height: 100%; aspect-ratio: auto; }
@@ -40,38 +38,39 @@
     #exitFull { display: none; position: fixed; top: 15px; right: 15px; z-index: 10000; background: rgba(245, 42, 31, 0.9); color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; cursor: pointer; font-weight: bold; align-items: center; justify-content: center; }
     body.fullscreen-mode #exitFull { display: flex; }
 
-    @media (max-width: 768px) { h1 { font-size: 1.6rem; } .som-btn, .full-btn { flex: 1; padding: 12px 5px; font-size: 10px; } }
-
-    /* SECÇÕES */
     .project-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px 24px; margin: 45px 0; text-align: center; }
     .project-text { color: #ddd; font-size: 17px; max-width: 800px; margin: 0 auto 30px; white-space: pre-wrap; }
     .project-wa-btn { background: #25d366; color: #fff; text-decoration: none; padding: 16px 32px; border-radius: 16px; font-weight: 800; font-size: 15px; display: inline-flex; align-items: center; gap: 12px; transition: 0.3s; }
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px; }
-    .feature-card { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-    .section-title { margin-top: 60px; margin-bottom: 10px; font-size: 1.8rem; text-align: center; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; }
+
+    .section-title { margin-top: 60px; margin-bottom: 10px; font-size: 1.8rem; text-align: center; text-transform: uppercase; font-weight: 800; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-    .card { background: #0a0a0a; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
+    .card { background: #0a0a0a; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-    .card-content { padding: 22px; text-align: center; }
     .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* ADMIN */
+    /* WHATSAPP FLUTUANTE FIXO (COM ÍCONE SVG) */
+    #wa-popup { 
+      position: fixed; bottom: 25px; right: 25px; z-index: 1000; 
+      background: #25D366; width: 60px; height: 60px; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s; 
+    }
+    #wa-popup svg { width: 32px; height: 32px; fill: white; }
+
     .admin-card { background: #111; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
-    .admin-label { display: block; font-size: 11px; color: #f52a1f; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
     .admin-input { padding: 12px; border-radius: 10px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; box-sizing: border-box; }
-    
-    #wa-popup { position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s; }
     .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #666; font-size: 13px; }
-    .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 24px; }
-    .social-links a { color: #fff; text-decoration: none; }
     .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
   
-  <div id="wa-popup"><img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" width="30" style="filter:invert(1)"></div>
+  <div id="wa-popup">
+    <svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+  </div>
+
   <button id="exitFull" onclick="toggleFull()">✕</button>
 
   <nav class="top-nav">
@@ -89,61 +88,49 @@
   <div class="container" id="top">
     <h1>os canta agora karaoke</h1>
 
-    <div class="player-wrap" id="mainPlayerWrap">
+    <div class="player-wrap">
       <div class="player">
         <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
       </div>
     </div>
 
     <div class="controls-area">
-      <button class="som-btn" id="unmuteBtn">🔊 ATIVAR SOM</button>
+      <button class="som-btn" id="unmuteBtn">🔊 SOM EM DIRETO</button>
       <button class="full-btn" onclick="toggleFull()">📱 MODO CHEIO</button>
     </div>
 
     <div class="project-box">
-      <h2 style="text-transform: uppercase; margin-bottom: 20px; font-size: 1.6rem; font-weight: 900; color: #f52a1f;">O Projeto</h2>
+      <h2 style="color: #f52a1f;">O Projeto</h2>
       <div id="projectDisplay" class="project-text"></div>
-      <div id="projectWaButtonWrap" style="margin-bottom: 30px;"></div>
-      <div id="featuresDisplay" class="features-grid"></div>
+      <div id="projectWaButtonWrap"></div>
     </div>
 
     <h2 class="section-title" id="momentos">Momentos</h2>
     <div id="galleryGrid" class="gallery-grid"></div>
     <div style="text-align:center"><div id="viewMoreGalleryWrap"></div></div>
 
-    <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
+    <h2 class="section-title" id="videos">VÍDEOS</h2>
     <div id="videosGrid" class="grid"></div>
     <div style="text-align:center"><div id="viewMoreWrap"></div></div>
 
-    <h2 class="section-title" id="eventos">Nossos Serviços</h2>
-    <div class="grid" id="servicesGrid"></div>
+    <h2 class="section-title" id="eventos">SERVIÇOS</h2>
+    <div id="servicesGrid" class="grid"></div>
 
     <div id="adminSection" style="display:none; margin-top:60px;">
       <h2 class="section-title">ADMIN PANEL</h2>
       <div id="loginBox" class="admin-card" style="max-width:400px; margin: 0 auto; text-align: center;">
-        <input id="adminUser" placeholder="Utilizador" class="admin-input"><input id="adminPass" type="password" placeholder="Palavra-passe" class="admin-input">
+        <input id="adminUser" placeholder="Utilizador" class="admin-input">
+        <input id="adminPass" type="password" placeholder="Palavra-passe" class="admin-input">
         <button class="som-btn" onclick="loginAdmin()" style="width:100%; margin-top:15px;">ENTRAR</button>
       </div>
       <div id="adminPanel" style="display:none; max-width:850px; margin: 0 auto;">
         <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">1. Geral & Projeto</h3>
-          <span class="admin-label">WhatsApp (ex: 351962839921):</span>
-          <input id="adminWhatsApp" class="admin-input" placeholder="Coloque o seu número aqui">
+          <h3 style="color:#f52a1f;">WhatsApp e Projeto</h3>
+          <input id="adminWhatsApp" class="admin-input" placeholder="Teu número (Ex: 351962839921)">
           <textarea id="adminProjectText" class="admin-input" rows="3"></textarea>
         </div>
-        <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">2. Redes Sociais</h3>
-          <input id="adminInsta" placeholder="Instagram URL" class="admin-input"><input id="adminFB" placeholder="Facebook URL" class="admin-input"><input id="adminTikTok" placeholder="TikTok URL" class="admin-input">
-        </div>
-        <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">3. Galeria (12 fotos)</h3>
-          <div id="adminPhotosInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
-        </div>
-        <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">4. Nossos Serviços</h3>
-          <div id="servicesEditList"></div>
-        </div>
-        <div style="display:flex; gap:15px; margin-top:30px; margin-bottom:50px;">
+        <div id="servicesEditList" class="admin-card"></div>
+        <div style="display:flex; gap:15px; margin-bottom:50px;">
           <button class="som-btn" onclick="saveAdminData()" style="flex:2; background:#28a745">GUARDAR TUDO</button>
           <button class="som-btn" onclick="logoutAdmin()" style="flex:1; background:#444">FECHAR</button>
         </div>
@@ -151,42 +138,35 @@
     </div>
 
     <footer class="site-footer">
-      <div class="social-links" id="socialFooter"></div>
       <strong>OS CANTA AGORA KARAOKE</strong><br>© 2026 • Todos os direitos reservados
     </footer>
   </div>
 
   <script>
     let allVideos = [];
-    let replayExpanded = false;
     let galleryExpanded = false;
 
+    // NUMERO REAL FORÇADO AQUI
     const defaultData = {
-      whatsapp: "351962839921", project: "Karaoke profissional.", socials: { insta: "", fb: "", tiktok: "" },
-      features: [{ icon: "🎤", title: "Equipamento Pro", desc: "Som hi-fi." },{ icon: "📚", title: "Catálogo", desc: "Músicas para todos." },{ icon: "🎉", title: "Animação", desc: "Ambiente TOP." }],
+      whatsapp: "351962839921", project: "Oferecemos o melhor serviço de karaoke.",
       gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"],
-      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Bares.' },{ title: 'FESTAS', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Privados.' },{ title: 'STREAM', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Online.' }]
+      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação bares.' }]
     };
 
     function loadData() { 
       const saved = localStorage.getItem('karaoke_data'); 
       if(!saved) return defaultData;
       let data = JSON.parse(saved);
+      // Limpeza de emergência para números errados
+      if(data.whatsapp.length < 9 || data.whatsapp.includes("12345")) data.whatsapp = "351962839921";
       return data;
     }
 
     function renderUI() {
       const data = loadData();
       document.getElementById('projectDisplay').textContent = data.project;
-      const socialContainer = document.getElementById('socialFooter');
-      let socialHtml = '';
-      if(data.socials?.insta) socialHtml += `<a href="${data.socials.insta}" target="_blank">📸</a>`;
-      if(data.socials?.fb) socialHtml += `<a href="${data.socials.fb}" target="_blank">👤</a>`;
-      if(data.socials?.tiktok) socialHtml += `<a href="${data.socials.tiktok}" target="_blank">🎵</a>`;
-      socialContainer.innerHTML = socialHtml;
-      document.getElementById('featuresDisplay').innerHTML = (data.features || defaultData.features).map(f => `<div class="feature-card"><span>${f.icon}</span><h4>${f.title}</h4><p>${f.desc}</p></div>`).join('');
       
-      const cleanNum = data.whatsapp.toString().replace(/\D/g, ''); // Limpa qualquer lixo antes de criar o link
+      const cleanNum = data.whatsapp.toString().replace(/\D/g, ''); 
       const waUrl = `https://wa.me/${cleanNum}`;
       
       document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
@@ -198,10 +178,7 @@
       document.getElementById('servicesGrid').innerHTML = (data.services || []).map(s => `<div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
     }
 
-    function toggleFull() { 
-        document.body.classList.toggle('fullscreen-mode');
-        window.scrollTo(0, 0);
-    }
+    function toggleFull() { document.body.classList.toggle('fullscreen-mode'); window.scrollTo(0, 0); }
 
     function loginAdmin() {
       if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
@@ -210,28 +187,18 @@
         const data = loadData();
         document.getElementById('adminWhatsApp').value = data.whatsapp;
         document.getElementById('adminProjectText').value = data.project;
-        document.getElementById('adminInsta').value = data.socials?.insta || "";
-        document.getElementById('adminFB').value = data.socials?.fb || "";
-        document.getElementById('adminTikTok').value = data.socials?.tiktok || "";
-        let photoHtml = '';
-        for(let i=0; i<12; i++) photoHtml += `<input id="gimg${i}" value="${data.gallery[i] || ''}" class="admin-input" placeholder="Foto ${i+1} URL">`;
-        document.getElementById('adminPhotosInputs').innerHTML = photoHtml;
-        document.getElementById('servicesEditList').innerHTML = (data.services || [{},{},{}]).map((s, i) => `<div style="margin-bottom:15px;"><input id="s${i}t" value="${s.title||''}" class="admin-input"><input id="s${i}i" value="${s.image||''}" class="admin-input"><textarea id="s${i}x" class="admin-input" rows="2">${s.text||''}</textarea></div>`).join('');
       }
     }
 
     function saveAdminData() {
       const data = {
-        whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''), // LIMPA TUDO AO GUARDAR
+        whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
         project: document.getElementById('adminProjectText').value,
-        socials: { insta: document.getElementById('adminInsta').value, fb: document.getElementById('adminFB').value, tiktok: document.getElementById('adminTikTok').value },
-        features: defaultData.features,
-        gallery: Array.from({length: 12}, (_, i) => document.getElementById(`gimg${i}`).value).filter(v => v),
-        services: [0,1,2].map(i => ({ title: document.getElementById(`s${i}t`).value.toUpperCase(), image: document.getElementById(`s${i}i`).value, text: document.getElementById(`s${i}x`).value }))
+        gallery: defaultData.gallery,
+        services: defaultData.services
       };
       localStorage.setItem('karaoke_data', JSON.stringify(data)); 
-      renderUI(); 
-      logoutAdmin();
+      renderUI(); logoutAdmin();
       alert("Tudo guardado!");
     }
 
@@ -240,13 +207,12 @@
 
     async function loadVideos() { try { const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev'); allVideos = await res.json(); renderVideos(); } catch(e){} }
     function renderVideos() {
-      const count = replayExpanded ? allVideos.length : 8;
+      const count = 8;
       document.getElementById('videosGrid').innerHTML = allVideos.slice(0, count).map(v => `<div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join('');
-      document.getElementById('viewMoreWrap').innerHTML = allVideos.length > 8 ? `<button class="view-more-btn" onclick="replayExpanded=!replayExpanded; renderVideos()">${replayExpanded ? 'OCULTAR' : 'VER TUDO'}</button>` : '';
     }
 
     function loadReplay(url) {
-      document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div class="controls-area" style="margin-top:10px;"><button class="som-btn" onclick="location.reload()" style="background:#444">⬅ VOLTAR AO LIVE</button></div>`;
+      document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div class="controls-area" style="margin-top:10px;"><button class="som-btn" onclick="location.reload()" style="background:#444">⬅ VOLTAR</button></div>`;
       if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); }
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
