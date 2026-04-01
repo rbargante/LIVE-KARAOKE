@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -14,22 +15,11 @@
       color: #eee; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.6; 
     }
     
-    /* NAVEGAÇÃO */
-    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.06); height: 60px; display: flex; align-items: center; }
-    .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; padding: 0 20px; }
-    .nav-links { display: flex; gap: 10px; }
-    .nav-links a { color: #eee; text-decoration: none; font-size: 13px; font-weight: 700; padding: 8px 15px; border-radius: 10px; transition: 0.3s; text-transform: uppercase; }
+    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; padding: 12px 16px; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { color: #eee; text-decoration: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; transition: 0.3s; }
     .nav-links a:hover { background: rgba(255,255,255,0.08); color: #f52a1f; }
-    .menu-icon { display: none; cursor: pointer; font-size: 28px; color: #fff; }
-
-    /* Menu Mobile Lateral */
-    .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; background: #0a0a0a; z-index: 1000; transition: 0.4s ease; display: flex; flex-direction: column; padding: 60px 30px; }
-    .mobile-menu.active { right: 0; }
-    .mobile-menu a { color: #fff; text-decoration: none; font-size: 1.2rem; font-weight: 800; margin-bottom: 25px; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 10px; }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 998; display: none; }
-    .overlay.active { display: block; }
-
-    @media (max-width: 768px) { .nav-links { display: none; } .menu-icon { display: block; } }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
     h1 { font-size: 2.5rem; text-align: center; margin: 40px 0 25px; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #fff; }
@@ -38,7 +28,6 @@
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 60px rgba(0,0,0,0.8); }
     .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    /* MODO CHEIO */
     body.fullscreen-mode { overflow: hidden; }
     body.fullscreen-mode .player-wrap { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background: #000; margin: 0; display: flex; align-items: center; }
     body.fullscreen-mode .player { border-radius: 0; border: none; width: 100%; height: 100%; aspect-ratio: auto; }
@@ -46,6 +35,9 @@
     .controls-area { text-align: center; margin-top: -10px; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; }
     .som-btn { background: #f52a1f; color: #fff; border: none; padding: 14px 20px; border-radius: 14px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
     .full-btn { background: #222; color: #fff; border: 1px solid #444; padding: 14px 20px; border-radius: 14px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
+    
+    #exitFull { display: none; position: fixed; top: 15px; right: 15px; z-index: 10000; background: rgba(245, 42, 31, 0.9); color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; cursor: pointer; font-weight: bold; align-items: center; justify-content: center; }
+    body.fullscreen-mode #exitFull { display: flex; }
 
     .project-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 40px 24px; margin: 45px 0; text-align: center; }
     .project-text { color: #ddd; font-size: 17px; max-width: 800px; margin: 0 auto 30px; white-space: pre-wrap; }
@@ -59,34 +51,31 @@
     .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 
-    #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; }
+    /* WHATSAPP FLUTUANTE FIXO (COM ÍCONE SVG) */
+    #wa-popup { 
+      position: fixed; bottom: 25px; right: 25px; z-index: 1000; 
+      background: #25D366; width: 60px; height: 60px; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s; 
+    }
     #wa-popup svg { width: 32px; height: 32px; fill: white; }
-
-    #exitFull { display: none; position: fixed; top: 15px; right: 15px; z-index: 10000; background: #f52a1f; color: #fff; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 24px; cursor: pointer; }
-    body.fullscreen-mode #exitFull { display: flex; align-items: center; justify-content: center; }
 
     .admin-card { background: #111; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
     .admin-input { padding: 12px; border-radius: 10px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; box-sizing: border-box; }
     .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #666; font-size: 13px; }
+    .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
   
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-  <div class="mobile-menu" id="mobileMenu">
-    <div style="text-align:right; padding: 20px;" onclick="toggleMenu()">✕</div>
-    <a href="#top" onclick="toggleMenu()">Home</a>
-    <a href="#momentos" onclick="toggleMenu()">Momentos</a>
-    <a href="#videos" onclick="toggleMenu()">Vídeos</a>
-    <a href="#eventos" onclick="toggleMenu()">Serviços</a>
-    <a href="#" onclick="toggleMenu(); toggleAdminLogin();">Admin</a>
+  <div id="wa-popup">
+    <svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
   </div>
 
   <button id="exitFull" onclick="toggleFull()">✕</button>
 
   <nav class="top-nav">
     <div class="nav-inner">
-      <div class="menu-icon" onclick="toggleMenu()">☰</div>
       <div class="nav-links">
         <a href="#top">HOME</a>
         <a href="#momentos">MOMENTOS</a>
@@ -101,11 +90,13 @@
     <h1>os canta agora karaoke</h1>
 
     <div class="player-wrap">
-      <div class="player"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe></div>
+      <div class="player">
+        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
+      </div>
     </div>
 
     <div class="controls-area">
-      <button class="som-btn" id="unmuteBtn">🔊 ATIVAR SOM</button>
+      <button class="som-btn" id="unmuteBtn">🔊 SOM EM DIRETO</button>
       <button class="full-btn" onclick="toggleFull()">📱 MODO CHEIO</button>
     </div>
 
@@ -117,9 +108,11 @@
 
     <h2 class="section-title" id="momentos">Momentos</h2>
     <div id="galleryGrid" class="gallery-grid"></div>
+    <div style="text-align:center"><div id="viewMoreGalleryWrap"></div></div>
 
     <h2 class="section-title" id="videos">VÍDEOS</h2>
     <div id="videosGrid" class="grid"></div>
+    <div style="text-align:center"><div id="viewMoreWrap"></div></div>
 
     <h2 class="section-title" id="eventos">SERVIÇOS</h2>
     <div id="servicesGrid" class="grid"></div>
@@ -127,15 +120,17 @@
     <div id="adminSection" style="display:none; margin-top:60px;">
       <h2 class="section-title">ADMIN PANEL</h2>
       <div id="loginBox" class="admin-card" style="max-width:400px; margin: 0 auto; text-align: center;">
-        <input id="adminUser" placeholder="Utilizador" class="admin-input" style="margin-bottom:10px;">
+        <input id="adminUser" placeholder="Utilizador" class="admin-input">
         <input id="adminPass" type="password" placeholder="Palavra-passe" class="admin-input">
         <button class="som-btn" onclick="loginAdmin()" style="width:100%; margin-top:15px;">ENTRAR</button>
       </div>
       <div id="adminPanel" style="display:none; max-width:850px; margin: 0 auto;">
         <div class="admin-card">
-          <input id="adminWhatsApp" class="admin-input" placeholder="Teu número real">
-          <textarea id="adminProjectText" class="admin-input" rows="3" style="margin-top:10px;"></textarea>
+          <h3 style="color:#f52a1f;">WhatsApp e Projeto</h3>
+          <input id="adminWhatsApp" class="admin-input" placeholder="Teu número (Ex: 351962839921)">
+          <textarea id="adminProjectText" class="admin-input" rows="3"></textarea>
         </div>
+        <div id="servicesEditList" class="admin-card"></div>
         <div style="display:flex; gap:15px; margin-bottom:50px;">
           <button class="som-btn" onclick="saveAdminData()" style="flex:2; background:#28a745">GUARDAR TUDO</button>
           <button class="som-btn" onclick="logoutAdmin()" style="flex:1; background:#444">FECHAR</button>
@@ -144,44 +139,84 @@
     </div>
 
     <footer class="site-footer">
-      <strong>KARAOKELIVE.ONLINE</strong><br>© 2026 • Todos os direitos reservados
+      <strong>OS CANTA AGORA KARAOKE</strong><br>© 2026 • Todos os direitos reservados
     </footer>
-  </div>
-
-  <div id="wa-popup" onclick="openWa()">
-    <svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
   </div>
 
   <script>
     let allVideos = [];
+    let galleryExpanded = false;
+
+    // NUMERO REAL FORÇADO AQUI
     const defaultData = {
-      whatsapp: "351962839921", project: "Karaoke profissional para bares e eventos privados.",
+      whatsapp: "351962839921", project: "Oferecemos o melhor serviço de karaoke.",
       gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"],
-      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação recorrente para espaços comerciais.' }]
+      services: [{ title: 'KARAOKE LIVE', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação bares.' }]
     };
 
-    function loadData() { const saved = localStorage.getItem('karaoke_data'); return saved ? JSON.parse(saved) : defaultData; }
-    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-    function openWa() { const num = loadData().whatsapp.toString().replace(/\D/g, ''); window.open(`https://wa.me/${num}`, '_blank'); }
+    function loadData() { 
+      const saved = localStorage.getItem('karaoke_data'); 
+      if(!saved) return defaultData;
+      let data = JSON.parse(saved);
+      // Limpeza de emergência para números errados
+      if(data.whatsapp.length < 9 || data.whatsapp.includes("12345")) data.whatsapp = "351962839921";
+      return data;
+    }
 
     function renderUI() {
       const data = loadData();
       document.getElementById('projectDisplay').textContent = data.project;
-      const num = data.whatsapp.toString().replace(/\D/g, '');
-      document.getElementById('projectWaButtonWrap').innerHTML = `<a href="https://wa.me/${num}" target="_blank" class="project-wa-btn">💬 FALAR NO WHATSAPP</a>`;
-      document.getElementById('galleryGrid').innerHTML = (data.gallery || defaultData.gallery).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('servicesGrid').innerHTML = (data.services || defaultData.services).map(s => `<div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
+      
+      const cleanNum = data.whatsapp.toString().replace(/\D/g, ''); 
+      const waUrl = `https://wa.me/${cleanNum}`;
+      
+      document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
+      document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 FALAR NO WHATSAPP</a>`;
+      
+      const validG = (data.gallery || []).filter(u => u);
+      document.getElementById('galleryGrid').innerHTML = (galleryExpanded ? validG : validG.slice(0, 4)).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+      document.getElementById('viewMoreGalleryWrap').innerHTML = validG.length > 4 ? `<button class="view-more-btn" onclick="galleryExpanded=!galleryExpanded; renderUI();">${galleryExpanded?'FECHAR':'VER MAIS'}</button>` : '';
+      document.getElementById('servicesGrid').innerHTML = (data.services || []).map(s => `<div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
     }
 
     function toggleFull() { document.body.classList.toggle('fullscreen-mode'); window.scrollTo(0, 0); }
-    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; window.scrollTo(0, document.getElementById('adminSection').offsetTop); }
-    function loginAdmin() { if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') { document.getElementById('loginBox').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; const d = loadData(); document.getElementById('adminWhatsApp').value = d.whatsapp; document.getElementById('adminProjectText').value = d.project; } }
-    function saveAdminData() { const data = { whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''), project: document.getElementById('adminProjectText').value, gallery: defaultData.gallery, services: defaultData.services }; localStorage.setItem('karaoke_data', JSON.stringify(data)); renderUI(); logoutAdmin(); }
+
+    function loginAdmin() {
+      if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        const data = loadData();
+        document.getElementById('adminWhatsApp').value = data.whatsapp;
+        document.getElementById('adminProjectText').value = data.project;
+      }
+    }
+
+    function saveAdminData() {
+      const data = {
+        whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
+        project: document.getElementById('adminProjectText').value,
+        gallery: defaultData.gallery,
+        services: defaultData.services
+      };
+      localStorage.setItem('karaoke_data', JSON.stringify(data)); 
+      renderUI(); logoutAdmin();
+      alert("Tudo guardado!");
+    }
+
     function logoutAdmin() { document.getElementById('adminSection').style.display = 'none'; document.getElementById('adminPanel').style.display = 'none'; document.getElementById('loginBox').style.display = 'block'; }
+    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; }
 
     async function loadVideos() { try { const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev'); allVideos = await res.json(); renderVideos(); } catch(e){} }
-    function renderVideos() { document.getElementById('videosGrid').innerHTML = allVideos.slice(0, 8).map(v => `<div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join(''); }
-    function loadReplay(url) { document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div style="text-align:center; margin-top:10px;"><button class="som-btn" onclick="location.reload()">⬅ VOLTAR</button></div>`; if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); } window.scrollTo({top: 0, behavior: 'smooth'}); }
+    function renderVideos() {
+      const count = 8;
+      document.getElementById('videosGrid').innerHTML = allVideos.slice(0, count).map(v => `<div class="card" style="cursor:pointer" onclick="loadReplay('${v.source}')"><img src="${v.thumbnail.src}"><div style="padding:15px; font-weight:800; font-size:13px;">${v.session_title}</div></div>`).join('');
+    }
+
+    function loadReplay(url) {
+      document.getElementById('playerWrap').innerHTML = `<video id="rep" controls autoplay playsinline style="width:100%; height:100%; background:#000"></video><div class="controls-area" style="margin-top:10px;"><button class="som-btn" onclick="location.reload()" style="background:#444">⬅ VOLTAR</button></div>`;
+      if (Hls.isSupported()) { const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('rep')); }
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
 
     renderUI(); loadVideos();
     document.getElementById('unmuteBtn').onclick = () => { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; };
