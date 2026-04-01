@@ -85,7 +85,7 @@
     </div>
 
     <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; margin:40px 0; text-align:center; border: 1px solid #111;">
-        <h2 style="color:var(--white); margin-top:0;">O PROJETO</h2>
+        <h2 style="color:var(--white); margin-top:0;">SOBRE NÓS</h2>
         <p id="projText" style="color:#bbb; margin-bottom:20px;"></p>
         <div id="waBtnWrap"></div>
     </div>
@@ -111,13 +111,13 @@
       <div id="adminControls" style="display:none">
         <span class="admin-label">WhatsApp (ex: 351962839921)</span>
         <input id="admWa" class="admin-input">
-        <span class="admin-label">Texto do Projeto</span>
+        <span class="admin-label">Texto Sobre Nós</span>
         <textarea id="admProj" class="admin-input" rows="4"></textarea>
         
-        <span class="admin-label">Links Galeria (Coloque URLs)</span>
+        <span class="admin-label">Links Galeria (URLs)</span>
         <div id="galInputs"></div>
 
-        <span class="admin-label">Serviços (Título | Imagem URL | Texto)</span>
+        <span class="admin-label">Nossos Serviços (Título | Imagem | Texto)</span>
         <div id="serInputs"></div>
 
         <button class="btn" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:20px;">GUARDAR TUDO</button>
@@ -126,7 +126,7 @@
     </div>
 
     <footer style="margin-top:80px; padding:40px; text-align:center; color:#444; font-size:11px; border-top:1px solid #111;">
-      <strong style="color:#666">KARAOKELIVE.ONLINE</strong><br>© 2026
+      <strong>KARAOKELIVE.ONLINE</strong><br>© 2026
     </footer>
   </div>
 
@@ -149,7 +149,7 @@
     };
 
     function loadData() {
-      const s = localStorage.getItem('karaoke_v3');
+      const s = localStorage.getItem('karaoke_v4');
       return s ? JSON.parse(s) : defaultConfig;
     }
 
@@ -228,7 +228,7 @@
         if(document.getElementById(`st${i}`).value) s.push({ t: document.getElementById(`st${i}`).value, i: document.getElementById(`si${i}`).value, d: document.getElementById(`sd${i}`).value });
       }
       const d = { whatsapp: document.getElementById('admWa').value, project: document.getElementById('admProj').value, gallery: g, services: s };
-      localStorage.setItem('karaoke_v3', JSON.stringify(d));
+      localStorage.setItem('karaoke_v4', JSON.stringify(d));
       renderUI(); hideAdmin(); alert("Guardado!");
     }
 
