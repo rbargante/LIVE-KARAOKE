@@ -46,24 +46,27 @@
     .card { background: #0a0a0a; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
     .card-content { padding: 22px; text-align: center; }
-    .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); cursor: pointer; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
 
-    /* Admin UI */
+    /* Admin UI Profissional */
     .admin-card { background: #111; border-radius: 20px; padding: 25px; margin-bottom: 20px; border: 1px solid #333; }
     .admin-label { display: block; font-size: 11px; color: #f52a1f; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; margin-top: 15px; }
     .admin-input { padding: 12px; border-radius: 10px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; box-sizing: border-box; }
     
     #wa-popup { position: fixed; bottom: 30px; right: 30px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; transition: 0.4s; }
+    #wa-popup img { width: 30px; filter: invert(1); }
+
     .site-footer { margin-top: 100px; padding: 60px 16px; border-top: 1px solid rgba(255,255,255,0.03); text-align: center; color: #666; font-size: 13px; }
     .social-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 24px; }
-    .social-links a { color: #fff; text-decoration: none; }
+    .social-links a { color: #fff; text-decoration: none; transition: 0.3s; }
+
     .view-more-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 12px 30px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 20px; }
   </style>
 </head>
 <body>
   
-  <div id="wa-popup"><img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" width="30" style="filter:invert(1)"></div>
+  <div id="wa-popup"><img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" alt="WhatsApp"></div>
 
   <nav class="top-nav">
     <div class="nav-inner">
@@ -81,7 +84,9 @@
 
     <div class="player" id="playerWrap">
       <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
-      <div class="controls"><button class="control-btn" id="unmuteBtn">🔊 ATIVAR SOM</button></div>
+      <div class="controls">
+        <button class="control-btn" id="unmuteBtn">🔊 ATIVAR SOM</button>
+      </div>
     </div>
 
     <div class="project-box">
@@ -104,53 +109,46 @@
 
     <div id="adminSection" style="display:none; margin-top:60px;">
       <h2 class="section-title">ADMIN PANEL</h2>
-      
-      <div id="loginBox" class="admin-card" style="max-width:400px; margin: 0 auto; text-align: center;">
-        <input id="adminUser" placeholder="Utilizador" class="admin-input" style="margin-bottom:10px;">
+      <div id="loginBox" class="card" style="max-width:400px; margin: 0 auto; padding: 30px; background: #111;">
+        <input id="adminUser" placeholder="Utilizador" class="admin-input">
         <input id="adminPass" type="password" placeholder="Palavra-passe" class="admin-input">
-        <button class="control-btn" onclick="loginAdmin()" style="width:100%; margin-top:15px;">ENTRAR</button>
+        <button class="control-btn" onclick="loginAdmin()" style="width:100%">ENTRAR</button>
       </div>
 
-      <div id="adminPanel" style="display:none; max-width:850px; margin: 0 auto;">
+      <div id="adminPanel" style="display:none; max-width:800px; margin: 0 auto;">
         
         <div class="admin-card">
           <h3 style="color:#f52a1f; margin-top:0;">1. Geral & Projeto</h3>
           <span class="admin-label">Número WhatsApp (ex: 351912345678):</span>
-          <input id="adminWhatsApp" class="admin-input">
+          <input id="adminWhatsApp" placeholder="351910000000" class="admin-input">
           <span class="admin-label">Descrição do Projeto:</span>
-          <textarea id="adminProjectText" class="admin-input" rows="3"></textarea>
+          <textarea id="adminProjectText" class="admin-input" rows="4" placeholder="Descreva o seu projeto aqui..."></textarea>
         </div>
 
         <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">2. Porquê Escolher-nos (Diferenciais)</h3>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div><span class="admin-label">Título 1:</span><input id="f1t" class="admin-input"></div>
-            <div><span class="admin-label">Descrição 1:</span><input id="f1d" class="admin-input"></div>
-            <div><span class="admin-label">Título 2:</span><input id="f2t" class="admin-input"></div>
-            <div><span class="admin-label">Descrição 2:</span><input id="f2d" class="admin-input"></div>
-            <div><span class="admin-label">Título 3:</span><input id="f3t" class="admin-input"></div>
-            <div><span class="admin-label">Descrição 3:</span><input id="f3d" class="admin-input"></div>
-          </div>
+          <h3 style="color:#f52a1f; margin-top:0;">2. Redes Sociais (Link completo)</h3>
+          <span class="admin-label">Instagram URL:</span>
+          <input id="adminInsta" placeholder="https://instagram.com/seu_perfil" class="admin-input">
+          <span class="admin-label">Facebook URL:</span>
+          <input id="adminFB" placeholder="https://facebook.com/sua_pagina" class="admin-input">
+          <span class="admin-label">TikTok URL:</span>
+          <input id="adminTikTok" placeholder="https://tiktok.com/@seu_perfil" class="admin-input">
         </div>
 
         <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">3. Redes Sociais (Links)</h3>
-          <span class="admin-label">Instagram URL:</span><input id="adminInsta" class="admin-input">
-          <span class="admin-label">Facebook URL:</span><input id="adminFB" class="admin-input">
-          <span class="admin-label">TikTok URL:</span><input id="adminTikTok" class="admin-input">
+          <h3 style="color:#f52a1f; margin-top:0;">3. Momentos (Fotos Galeria)</h3>
+          <p style="font-size:12px; color:#aaa;">Cole os URLs das imagens. Deixe em branco para remover.</p>
+          <div id="adminPhotosInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+             </div>
         </div>
 
         <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">4. Momentos (Fotos Galeria)</h3>
-          <div id="adminPhotosInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+          <h3 style="color:#f52a1f; margin-top:0;">4. Nossos Serviços</h3>
+          <div id="servicesEditList">
+             </div>
         </div>
 
-        <div class="admin-card">
-          <h3 style="color:#f52a1f; margin-top:0;">5. Nossos Serviços</h3>
-          <div id="servicesEditList"></div>
-        </div>
-
-        <div style="display:flex; gap:15px; margin-top:30px; margin-bottom:50px;">
+        <div style="display:flex; gap:15px; margin-top:30px;">
           <button class="control-btn" onclick="saveAdminData()" style="flex:2; background:#28a745">GUARDAR TUDO</button>
           <button class="control-btn" onclick="logoutAdmin()" style="flex:1; background:#444">FECHAR</button>
         </div>
@@ -170,7 +168,7 @@
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Empresa de Karaoke para festas.",
+      project: "Karaoke profissional para festas e eventos.",
       socials: { insta: "", fb: "", tiktok: "" },
       features: [
         { icon: "🎤", title: "Equipamento Pro", desc: "Som de alta fidelidade." },
@@ -178,11 +176,7 @@
         { icon: "🎉", title: "Animação", desc: "Ambiente garantido." }
       ],
       gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=600","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"],
-      services: [
-        { title: 'KARAOKE AO VIVO', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total.' },
-        { title: 'FESTAS PRIVADAS', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },
-        { title: 'LIVE STREAM', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Web sessions.' }
-      ]
+      services: [{ title: 'KARAOKE AO VIVO', style: 'Evento', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total.' },{ title: 'FESTAS PRIVADAS', style: 'Exclusivo', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },{ title: 'LIVE STREAM', style: 'Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Web sessions.' }]
     };
 
     function loadData() {
@@ -194,7 +188,6 @@
       const data = loadData();
       document.getElementById('projectDisplay').textContent = data.project;
       
-      // Rodapé Social
       const socialContainer = document.getElementById('socialFooter');
       let socialHtml = '';
       if(data.socials?.insta) socialHtml += `<a href="${data.socials.insta}" target="_blank">📸</a>`;
@@ -202,31 +195,23 @@
       if(data.socials?.tiktok) socialHtml += `<a href="${data.socials.tiktok}" target="_blank">🎵</a>`;
       socialContainer.innerHTML = socialHtml;
 
-      // Diferenciais
       const featGrid = document.getElementById('featuresDisplay');
       featGrid.innerHTML = (data.features || defaultData.features).map(f => `
         <div class="feature-card"><span class="feature-icon">${f.icon}</span><h4>${f.title}</h4><p>${f.desc}</p></div>`).join('');
 
-      // WhatsApp Pop e Botão
-      const waUrl = `https://wa.me/${data.whatsapp}`;
+      const waUrl = `https://wa.me/${data.whatsapp || defaultData.whatsapp}`;
       document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
       document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 CONTACTO WHATSAPP</a>`;
 
-      // Galeria
-      const validGallery = (data.gallery || []).filter(u => u);
+      const validGallery = (data.gallery || defaultData.gallery).filter(u => u);
       document.getElementById('galleryGrid').innerHTML = (galleryExpanded ? validGallery : validGallery.slice(0, 4)).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('viewMoreGalleryWrap').innerHTML = validGallery.length > 4 ? `<button class="view-more-btn" onclick="galleryExpanded=!galleryExpanded; renderUI();">${galleryExpanded?'FECHAR':'VER MAIS'}</button>` : '';
+      document.getElementById('viewMoreGalleryWrap').innerHTML = validGallery.length > 4 ? `<button class="view-more-btn" onclick="galleryExpanded=!galleryExpanded; renderUI();">VER MAIS</button>` : '';
 
-      // Serviços
-      document.getElementById('servicesGrid').innerHTML = (data.services || []).map(s => `
+      document.getElementById('servicesGrid').innerHTML = (data.services || defaultData.services).map(s => `
         <div class="card"><img src="${s.image}"><div class="card-content"><h3>${s.title}</h3><p>${s.text}</p></div></div>`).join('');
     }
 
-    function toggleAdminLogin() {
-      const sec = document.getElementById('adminSection');
-      sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
-      if(sec.style.display === 'block') window.scrollTo({top: sec.offsetTop - 50, behavior: 'smooth'});
-    }
+    function toggleGallery() { galleryExpanded = !galleryExpanded; renderUI(); }
 
     function loginAdmin() {
       if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === '1234') {
@@ -234,67 +219,71 @@
         document.getElementById('adminPanel').style.display = 'block';
         const data = loadData();
         
+        // Preencher Geral
         document.getElementById('adminWhatsApp').value = data.whatsapp || "";
         document.getElementById('adminProjectText').value = data.project || "";
+        
+        // Preencher Sociais
         document.getElementById('adminInsta').value = data.socials?.insta || "";
         document.getElementById('adminFB').value = data.socials?.fb || "";
         document.getElementById('adminTikTok').value = data.socials?.tiktok || "";
-        
-        for(let i=0; i<3; i++) {
-          document.getElementById(`f${i+1}t`).value = data.features[i]?.title || "";
-          document.getElementById(`f${i+1}d`).value = data.features[i]?.desc || "";
-        }
 
+        // Gerar inputs da Galeria (12 fotos)
         let photoHtml = '';
-        for(let i=0; i<12; i++) photoHtml += `<div><span class="admin-label">Foto ${i+1} URL:</span><input id="gimg${i}" value="${data.gallery[i] || ''}" class="admin-input"></div>`;
+        for(let i=0; i<12; i++) {
+          const val = (data.gallery && data.gallery[i]) ? data.gallery[i] : "";
+          photoHtml += `<input id="gimg${i}" value="${val}" class="admin-input" placeholder="Foto ${i+1} URL (ex: https://...)">`;
+        }
         document.getElementById('adminPhotosInputs').innerHTML = photoHtml;
 
-        document.getElementById('servicesEditList').innerHTML = (data.services || [{},{},{}]).map((s, i) => `
-          <div style="margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:15px;">
-            <span class="admin-label">Serviço ${i+1} - Título:</span><input id="s${i}t" value="${s.title||''}" class="admin-input">
-            <span class="admin-label">Serviço ${i+1} - Imagem URL:</span><input id="s${i}i" value="${s.image||''}" class="admin-input">
-            <span class="admin-label">Serviço ${i+1} - Texto:</span><textarea id="s${i}x" class="admin-input">${s.text||''}</textarea>
+        // Gerar inputs dos Serviços (3 serviços)
+        const services = (data.services && data.services.length === 3) ? data.services : [{},{},{}];
+        document.getElementById('servicesEditList').innerHTML = services.map((s, i) => `
+          <div class="card" style="margin-top:15px; padding: 20px; background:#111">
+            <h4 style="margin:0 0 10px">Serviço ${i+1}</h4>
+            <input id="s${i}t" value="${s.title||''}" class="admin-input" placeholder="Título (ex: FESTAS PRIVADAS)">
+            <input id="s${i}i" value="${s.image||''}" class="admin-input" placeholder="Imagem URL (ex: https://...)">
+            <textarea id="s${i}x" class="admin-input" rows="3" placeholder="Descrição curta...">${s.text||''}</textarea>
           </div>`).join('');
+      } else {
+        alert('Dados incorretos (admin / 1234)');
       }
     }
 
     function saveAdminData() {
-      const newData = {
+      const data = {
         whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
         project: document.getElementById('adminProjectText').value,
         socials: { 
-           insta: document.getElementById('adminInsta').value, 
-           fb: document.getElementById('adminFB').value, 
-           tiktok: document.getElementById('adminTikTok').value 
+          insta: document.getElementById('adminInsta').value, 
+          fb: document.getElementById('adminFB').value, 
+          tiktok: document.getElementById('adminTikTok').value 
         },
-        features: [
-          { icon: "🎤", title: document.getElementById('f1t').value, desc: document.getElementById('f1d').value },
-          { icon: "📚", title: document.getElementById('f2t').value, desc: document.getElementById('f2d').value },
-          { icon: "🎉", title: document.getElementById('f3t').value, desc: document.getElementById('f3d').value }
-        ],
+        features: defaultData.features, // Manter os ícones fixos
         gallery: Array.from({length: 12}, (_, i) => document.getElementById(`gimg${i}`).value).filter(v => v),
         services: [0,1,2].map(i => ({
           title: document.getElementById(`s${i}t`).value.toUpperCase(),
+          style: 'SERVIÇO', // Fixo
           image: document.getElementById(`s${i}i`).value,
           text: document.getElementById(`s${i}x`).value
         }))
       };
-      localStorage.setItem('karaoke_data', JSON.stringify(newData));
+      localStorage.setItem('karaoke_data', JSON.stringify(data));
       renderUI(); logoutAdmin();
-      alert("Tudo guardado!");
+      alert("Configurações atualizadas com sucesso!");
     }
 
     function logoutAdmin() { 
-      document.getElementById('adminSection').style.display = 'none'; 
-      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'none'; 
       document.getElementById('loginBox').style.display = 'block';
+      document.getElementById('adminSection').style.display = 'none';
     }
+    
+    function toggleAdminLogin() { document.getElementById('adminSection').style.display = 'block'; }
 
     async function loadVideos() {
-      try {
-        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
-        allVideos = await res.json(); renderVideos();
-      } catch(e){}
+      const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
+      allVideos = await res.json(); renderVideos();
     }
 
     function renderVideos() {
