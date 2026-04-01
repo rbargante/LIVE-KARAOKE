@@ -6,151 +6,53 @@
   <title>os canta agora karaoke</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    /* 1. UPGRADE: GLASSMORPHISM & DEPTH */
     html { scroll-behavior: smooth; }
     body { 
-      margin: 0; 
-      background: #000;
-      background-image: radial-gradient(circle at 50% 10%, #151515 0%, #000000 70%); /* Ligeiro gradiente */
-      color: #eee; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-      line-height: 1.6; 
+      margin: 0; background: #000;
+      background-image: radial-gradient(circle at 50% 10%, #151515 0%, #000000 70%);
+      color: #eee; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; line-height: 1.6; 
     }
     
-    /* 1. UPGRADE: GLASS NAVEGAÇÃO */
-    .top-nav { 
-      position: sticky; 
-      top: 0; 
-      z-index: 999; 
-      background: rgba(10, 10, 10, 0.75); /* Transparente */
-      backdrop-filter: blur(15px); /* Desfoque moderno */
-      border-bottom: 1px solid rgba(255,255,255,0.06); 
-    }
+    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.06); }
     .nav-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: flex-end; align-items: center; padding: 12px 16px; }
     .nav-links { display: flex; gap: 8px; }
     .nav-links a { color: #eee; text-decoration: none; font-size: 13px; font-weight: 700; padding: 8px 12px; border-radius: 10px; transition: 0.3s; }
     .nav-links a:hover { background: rgba(255,255,255,0.08); }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
-    
-    /* 3. UPGRADE: TIPOGRAFIA MAIS EQUILIBRADA */
-    h1 { 
-      font-size: 2.3rem; 
-      text-align: center; 
-      margin: 35px 0 20px; 
-      font-weight: 800; 
-      text-transform: uppercase; 
-      letter-spacing: 2.5px; 
-      color: #fff;
-    }
-
+    h1 { font-size: 2.3rem; text-align: center; margin: 35px 0 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px; color: #fff; }
     .section-title { margin-top: 50px; margin-bottom: 10px; font-size: 1.8rem; text-align: center; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
     .section-sub { text-align: center; color: #aaa; margin-bottom: 30px; font-size: 14px; padding: 0 10px; font-weight: 500; }
 
-    /* 1. UPGRADE: GLASS PLAYER */
-    .player { 
-      position: relative; 
-      width: 100%; 
-      aspect-ratio: 16 / 9; 
-      background: rgba(20, 20, 20, 0.5); 
-      backdrop-filter: blur(10px);
-      border-radius: 16px; 
-      overflow: hidden; 
-      border: 1px solid rgba(255,255,255,0.08); 
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
-      transition: box-shadow 0.3s ease;
-    }
+    .player { position: relative; width: 100%; aspect-ratio: 16 / 9; background: rgba(20, 20, 20, 0.5); backdrop-filter: blur(10px); border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
     .player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     
     .controls { position: absolute; bottom: 12px; right: 12px; z-index: 20; display: flex; gap: 8px; }
-    .control-btn { 
-      background: rgba(0,0,0,0.7); 
-      color: #fff; 
-      border: 1px solid rgba(255,255,255,0.15); 
-      padding: 10px 18px; 
-      border-radius: 12px; 
-      font-size: 14px; 
-      cursor: pointer; 
-      font-weight: 700; 
-      backdrop-filter: blur(5px); 
-      text-decoration: none; 
-      transition: 0.2s;
-    }
-    .control-btn:hover { background: rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
+    .control-btn { background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.15); padding: 10px 18px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 700; backdrop-filter: blur(5px); text-decoration: none; transition: 0.2s; }
 
-    /* Estilo Projeto com Botão */
-    .project-box { background: rgba(13, 13, 13, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 35px 24px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .project-box { background: rgba(13, 13, 13, 0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 35px 24px; margin: 40px 0; text-align: center; }
     .project-text { color: #ccc; font-size: 16px; max-width: 850px; margin: 0 auto 28px; white-space: pre-wrap; font-weight: 500; }
-    
-    .project-wa-btn { 
-      background: #25d366; 
-      color: #fff; 
-      text-decoration: none; 
-      padding: 16px 28px; 
-      border-radius: 14px; 
-      font-weight: 800; 
-      font-size: 14px; 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 10px; 
-      transition: 0.3s; 
-      text-transform: uppercase;
-      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-    }
-    .project-wa-btn:hover { background: #1ebe57; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); }
+    .project-wa-btn { background: #25d366; color: #fff; text-decoration: none; padding: 16px 28px; border-radius: 14px; font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; text-transform: uppercase; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
     
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 1.8rem; letter-spacing: 1.5px; }
-      .nav-links a { padding: 6px 10px; font-size: 12px; }
-    }
+    @media (max-width: 600px) { .grid, .gallery-grid { grid-template-columns: 1fr; } h1 { font-size: 1.8rem; } }
 
-    /* 2. UPGRADE: INTERAÇÕES NOS CARDS */
-    .card { 
-      background: #0d0d0d; 
-      border-radius: 20px; 
-      overflow: hidden; 
-      border: 1px solid rgba(255,255,255,0.06); 
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; 
-      display: flex; 
-      flex-direction: column; 
-    }
-    .card:hover { 
-      transform: translateY(-5px) scale(1.02); /* Leve zoom e sobe */
-      border-color: rgba(245, 42, 31, 0.4); /* Borda acende em vermelho */
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 15px rgba(245, 42, 31, 0.1); /* Brilho suave */
-    }
-    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .card { background: #0d0d0d; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); transition: 0.3s ease; display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-5px) scale(1.02); border-color: rgba(245, 42, 31, 0.4); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
     .card-content { padding: 20px; text-align: center; flex-grow: 1; }
-    .card h3 { margin: 0; font-size: 1.25rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; color: #fff; }
-    .card p { margin: 8px 0 0; color: #bbb; font-size: 14px; font-weight: 500; }
-
-    .replay-card { cursor: pointer; }
+    
+    .gallery-item { border-radius: 16px; overflow: hidden; aspect-ratio: 1 / 1; border: 1px solid rgba(255,255,255,0.06); }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+    .gallery-item:hover img { transform: scale(1.1); }
 
     .admin-input { padding: 14px; border-radius: 12px; border: 1px solid #333; font-size: 16px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; margin-bottom: 12px; }
-    .admin-input:focus { border-color: #f52a1f; outline: none; background: rgba(255,255,255,0.1); }
     
-    /* 4. UPGRADE: NOVO WHATSAPP FLUTUANTE */
-    #wa-popup { 
-      position: fixed; 
-      bottom: 25px; 
-      right: 25px; 
-      z-index: 1000; 
-      background: #25D366;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(37, 211, 102, 0.2);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-    #wa-popup:hover { transform: scale(1.1) rotate(5deg); box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 20px rgba(37, 211, 102, 0.3); }
-    #wa-popup img { width: 32px; height: 32px; filter: invert(1); /* Ícone branco */ }
+    #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: 0.3s; }
+    #wa-popup:hover { transform: scale(1.1); }
+    #wa-popup img { width: 32px; height: 32px; filter: invert(1); }
 
     .site-footer { margin-top: 80px; padding: 50px 16px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; color: #555; font-size: 13px; font-weight: 600; }
   </style>
@@ -158,11 +60,13 @@
 <body>
   
   <div id="wa-popup">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram Icon" style="display:none;"> <img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" alt="WhatsApp"> </div>
+      <img src="https://static-00.iconduck.com/assets.00/whatsapp-icon-1024x1024-5gy9m41o.png" alt="WhatsApp">
+  </div>
 
   <nav class="top-nav">
     <div class="nav-inner">
       <div class="nav-links">
+        <a href="#momentos">Momentos</a>
         <a href="#videos">Vídeos</a>
         <a href="#eventos">Serviços</a>
         <a href="#" onclick="toggleAdminLogin(); return false;">Admin</a>
@@ -177,7 +81,6 @@
       <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
       <div class="controls">
         <button class="control-btn" id="unmuteBtn">🔊 SOM</button>
-        <button class="control-btn" id="backToLiveBtn" style="display:none;">⬅ VOLTAR</button>
       </div>
     </div>
 
@@ -186,6 +89,10 @@
       <div id="projectDisplay" class="project-text"></div>
       <div id="projectWaButtonWrap"></div>
     </div>
+
+    <h2 class="section-title" id="momentos">Momentos</h2>
+    <p class="section-sub">O ambiente das nossas festas e eventos</p>
+    <div id="galleryGrid" class="gallery-grid"></div>
 
     <h2 class="section-title" id="videos">VÍDEOS</h2>
     <p class="section-sub" id="replaysStatus">A carregar momentos especiais...</p>
@@ -203,25 +110,27 @@
         <button class="control-btn" onclick="loginAdmin()" style="width:100%; background:#f52a1f; border:none;">ENTRAR</button>
       </div>
 
-      <div id="adminPanel" style="display:none; max-width:650px; margin: 0 auto;">
+      <div id="adminPanel" style="display:none; max-width:700px; margin: 0 auto;">
         <div class="card" style="padding: 24px; margin-bottom: 24px;">
-          <h3 style="margin-top:0">Configurações Gerais</h3>
-          <label style="color:#ccc; font-size: 13px; font-weight: 600;">WhatsApp (apenas números com indicativo, ex: 35191...):</label>
-          <input id="adminWhatsApp" placeholder="Ex: 351912345678" class="admin-input">
-          <label style="color:#ccc; font-size: 13px; font-weight: 600;">Descrição do Projeto:</label>
-          <textarea id="adminProjectText" class="admin-input" rows="6" placeholder="Descreve a tua empresa de karaoke..."></textarea>
+          <h3 style="margin:0 0 15px">Geral & Momentos (Fotos)</h3>
+          <input id="adminWhatsApp" placeholder="WhatsApp (ex: 351912345678)" class="admin-input">
+          <textarea id="adminProjectText" class="admin-input" rows="4" placeholder="Descrição do Projeto"></textarea>
+          <p style="font-size:12px; color:#aaa;">Links das fotos da galeria (4 fotos):</p>
+          <input id="img1" placeholder="Link Foto 1" class="admin-input">
+          <input id="img2" placeholder="Link Foto 2" class="admin-input">
+          <input id="img3" placeholder="Link Foto 3" class="admin-input">
+          <input id="img4" placeholder="Link Foto 4" class="admin-input">
         </div>
         <div id="servicesEditList"></div>
         <div style="display:flex; gap:12px; margin-top:25px;">
-          <button class="control-btn" onclick="saveAdminData()" style="flex:1; background:#28a745; border:none; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);">GUARDAR TUDO</button>
+          <button class="control-btn" onclick="saveAdminData()" style="flex:1; background:#28a745; border:none;">GUARDAR TUDO</button>
           <button class="control-btn" onclick="logoutAdmin()" style="flex:1;">SAIR</button>
         </div>
       </div>
     </div>
 
     <footer class="site-footer">
-      <strong>os canta agora karaoke</strong><br>
-      © 2026 • Todos os direitos reservados
+      <strong>os canta agora karaoke</strong><br>© 2026 • Todos os direitos reservados
     </footer>
   </div>
 
@@ -232,11 +141,17 @@
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Somos uma empresa de karaoke especializada em festas privadas, eventos corporativos e animação de bares. Levamos a música e a diversão onde quer que seja necessário!",
+      project: "Empresa especializada em karaoke e animação de eventos.",
+      gallery: [
+        "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500",
+        "https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500",
+        "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500",
+        "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500"
+      ],
       services: [
-        { title: 'KARAOKE AO VIVO', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação garantida para o seu bar ou restaurante.' },
-        { title: 'FESTAS PRIVADAS', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Tornamos o seu dia especial inesquecível com muita música.' },
-        { title: 'LIVE STREAM', style: 'Entretenimento Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Acompanhe as nossas sessões em direto a partir de qualquer lugar.' }
+        { title: 'KARAOKE AO VIVO', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total no local.' },
+        { title: 'FESTAS PRIVADAS', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },
+        { title: 'LIVE STREAM', style: 'Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Direto na web.' }
       ]
     };
 
@@ -247,28 +162,24 @@
 
     function renderUI() {
       const data = loadData();
-      
-      // Render Projeto
       document.getElementById('projectDisplay').textContent = data.project;
-
-      // WhatsApp Dinâmico (Pop e Botão Projeto)
+      
+      // WhatsApp
       const waUrl = `https://wa.me/${data.whatsapp}`;
-      
-      const waPop = document.getElementById('wa-popup');
-      waPop.onclick = () => window.open(waUrl, '_blank');
-      
-      document.getElementById('projectWaButtonWrap').innerHTML = `
-        <a href="${waUrl}" target="_blank" class="project-wa-btn">
-          💬 CONTACTO WHATSAPP
-        </a>`;
+      document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
+      document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 CONTACTO WHATSAPP</a>`;
+
+      // Gallery
+      const galleryGrid = document.getElementById('galleryGrid');
+      galleryGrid.innerHTML = data.gallery.map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
 
       // Services
       const grid = document.getElementById('servicesGrid');
       grid.innerHTML = data.services.map(s => `
         <div class="card">
-          <img src="${s.image}" alt="${s.title}">
+          <img src="${s.image}">
           <div class="card-content">
-            <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing: 1px;">${s.style}</div>
+            <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase;">${s.style}</div>
             <h3>${s.title}</h3>
             <p>${s.text}</p>
           </div>
@@ -288,21 +199,22 @@
         const data = loadData();
         document.getElementById('adminWhatsApp').value = data.whatsapp;
         document.getElementById('adminProjectText').value = data.project;
+        data.gallery.forEach((url, i) => document.getElementById(`img${i+1}`).value = url);
+        
         document.getElementById('servicesEditList').innerHTML = data.services.map((s, i) => `
           <div class="card" style="margin-top:15px; padding: 20px;">
-            <h4 style="margin:0 0 12px; font-weight:800;">Editar Serviço ${i+1}</h4>
-            <input id="s${i}t" value="${s.title}" class="admin-input" placeholder="Título">
-            <input id="s${i}i" value="${s.image}" class="admin-input" placeholder="Link da Imagem">
-            <textarea id="s${i}x" class="admin-input" rows="3" placeholder="Descrição">${s.text}</textarea>
+            <input id="s${i}t" value="${s.title}" class="admin-input">
+            <input id="s${i}i" value="${s.image}" class="admin-input">
+            <textarea id="s${i}x" class="admin-input">${s.text}</textarea>
           </div>`).join('');
-      } else { alert('Dados incorretos (admin / 1234)'); }
+      } else { alert('Admin / 1234'); }
     }
 
     function saveAdminData() {
       const data = loadData();
-      // Sanitizar WhatsApp: manter apenas números
       data.whatsapp = document.getElementById('adminWhatsApp').value.replace(/\D/g, '');
       data.project = document.getElementById('adminProjectText').value;
+      data.gallery = [1,2,3,4].map(i => document.getElementById(`img${i}`).value);
       data.services = data.services.map((s, i) => ({
         title: document.getElementById(`s${i}t`).value.toUpperCase(),
         style: s.style,
@@ -311,7 +223,6 @@
       }));
       localStorage.setItem('karaoke_data', JSON.stringify(data));
       renderUI();
-      alert('Tudo guardado com sucesso!');
       logoutAdmin();
     }
 
@@ -327,7 +238,7 @@
         allVideos = await res.json();
         document.getElementById('replaysStatus').textContent = `Assista a ${allVideos.length} momentos gravados`;
         renderVideos();
-      } catch (e) { document.getElementById('replaysStatus').textContent = 'Vídeos indisponíveis de momento.'; }
+      } catch (e) { document.getElementById('replaysStatus').textContent = 'Erro vídeos.'; }
     }
 
     function renderVideos() {
@@ -335,10 +246,9 @@
       const grid = document.getElementById('videosGrid');
       grid.innerHTML = allVideos.slice(0, count).map(v => `
         <div class="card replay-card" onclick="loadReplay('${v.source}')">
-          <img src="${v.thumbnail.src}" alt="Video Replay">
-          <div style="padding:15px; font-weight:700; font-size:13px; color:#fff;">${v.session_title}</div>
+          <img src="${v.thumbnail.src}">
+          <div style="padding:15px; font-weight:700; font-size:13px;">${v.session_title}</div>
         </div>`).join('');
-
       const btnWrap = document.getElementById('viewMoreWrap');
       if(allVideos.length > replayBaseCount) {
         btnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()" style="background:none; color:#d8d8d8; border:none; padding:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:underline; width:100%;">${replayExpanded ? 'MOSTRAR MENOS' : 'VER TODOS OS VÍDEOS'}</button>`;
@@ -362,12 +272,8 @@
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    renderUI();
-    loadVideos();
-    
-    document.getElementById('unmuteBtn').onclick = () => { 
-        document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; 
-    };
+    renderUI(); loadVideos();
+    document.getElementById('unmuteBtn').onclick = () => { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; };
   </script>
 </body>
 </html>
