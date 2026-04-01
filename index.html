@@ -112,10 +112,9 @@
 
       <div id="adminPanel" style="display:none; max-width:700px; margin: 0 auto;">
         <div class="card" style="padding: 24px; margin-bottom: 24px;">
-          <h3 style="margin:0 0 15px">Geral & Momentos (Fotos)</h3>
+          <h3 style="margin:0 0 15px">Geral & Momentos</h3>
           <input id="adminWhatsApp" placeholder="WhatsApp (ex: 351912345678)" class="admin-input">
           <textarea id="adminProjectText" class="admin-input" rows="4" placeholder="Descrição do Projeto"></textarea>
-          <p style="font-size:12px; color:#aaa;">Links das fotos da galeria (4 fotos):</p>
           <input id="img1" placeholder="Link Foto 1" class="admin-input">
           <input id="img2" placeholder="Link Foto 2" class="admin-input">
           <input id="img3" placeholder="Link Foto 3" class="admin-input">
@@ -141,7 +140,7 @@
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Empresa especializada em karaoke e animação de eventos.",
+      project: "Oferecemos serviços de karaoke ao vivo para bares, festas privadas, aniversários e eventos especiais.",
       gallery: [
         "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500",
         "https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500",
@@ -157,25 +156,30 @@
 
     function loadData() {
       const saved = localStorage.getItem('karaoke_data');
-      return saved ? JSON.parse(saved) : defaultData;
+      if (!saved) return defaultData;
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        return defaultData;
+      }
     }
 
     function renderUI() {
       const data = loadData();
-      document.getElementById('projectDisplay').textContent = data.project;
       
-      // WhatsApp
-      const waUrl = `https://wa.me/${data.whatsapp}`;
+      document.getElementById('projectDisplay').textContent = data.project || defaultData.project;
+      
+      const waUrl = `https://wa.me/${data.whatsapp || defaultData.whatsapp}`;
       document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
       document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 CONTACTO WHATSAPP</a>`;
 
-      // Gallery
       const galleryGrid = document.getElementById('galleryGrid');
-      galleryGrid.innerHTML = data.gallery.map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+      const gallery = (data.gallery && data.gallery.length) ? data.gallery : defaultData.gallery;
+      galleryGrid.innerHTML = gallery.map(img => img ? `<div class="gallery-item"><img src="${img}"></div>` : '').join('');
 
-      // Services
       const grid = document.getElementById('servicesGrid');
-      grid.innerHTML = data.services.map(s => `
+      const services = (data.services && data.services.length) ? data.services : defaultData.services;
+      grid.innerHTML = services.map(s => `
         <div class="card">
           <img src="${s.image}">
           <div class="card-content">
@@ -197,31 +201,40 @@
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         const data = loadData();
-        document.getElementById('adminWhatsApp').value = data.whatsapp;
-        document.getElementById('adminProjectText').value = data.project;
-        data.gallery.forEach((url, i) => document.getElementById(`img${i+1}`).value = url);
+        document.getElementById('adminWhatsApp').value = data.whatsapp || defaultData.whatsapp;
+        document.getElementById('adminProjectText').value = data.project || defaultData.project;
+        const gallery = data.gallery || defaultData.gallery;
+        gallery.forEach((url, i) => { if(document.getElementById(`img${i+1}`)) document.getElementById(`img${i+1}`).value = url; });
         
-        document.getElementById('servicesEditList').innerHTML = data.services.map((s, i) => `
+        const services = data.services || defaultData.services;
+        document.getElementById('servicesEditList').innerHTML = services.map((s, i) => `
           <div class="card" style="margin-top:15px; padding: 20px;">
             <input id="s${i}t" value="${s.title}" class="admin-input">
             <input id="s${i}i" value="${s.image}" class="admin-input">
             <textarea id="s${i}x" class="admin-input">${s.text}</textarea>
           </div>`).join('');
-      } else { alert('Admin / 1234'); }
+      } else { alert('User: admin / Pass: 1234'); }
     }
 
     function saveAdminData() {
-      const data = loadData();
-      data.whatsapp = document.getElementById('adminWhatsApp').value.replace(/\D/g, '');
-      data.project = document.getElementById('adminProjectText').value;
-      data.gallery = [1,2,3,4].map(i => document.getElementById(`img${i}`).value);
-      data.services = data.services.map((s, i) => ({
-        title: document.getElementById(`s${i}t`).value.toUpperCase(),
-        style: s.style,
-        image: document.getElementById(`s${i}i`).value,
-        text: document.getElementById(`s${i}x`).value
-      }));
-      localStorage.setItem('karaoke_data', JSON.stringify(data));
+      const currentData = loadData();
+      const newData = {
+        whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
+        project: document.getElementById('adminProjectText').value,
+        gallery: [
+          document.getElementById('img1').value,
+          document.getElementById('img2').value,
+          document.getElementById('img3').value,
+          document.getElementById('img4').value
+        ],
+        services: currentData.services.map((s, i) => ({
+          title: document.getElementById(`s${i}t`).value.toUpperCase(),
+          style: s.style,
+          image: document.getElementById(`s${i}i`).value,
+          text: document.getElementById(`s${i}x`).value
+        }))
+      };
+      localStorage.setItem('karaoke_data', JSON.stringify(newData));
       renderUI();
       logoutAdmin();
     }
