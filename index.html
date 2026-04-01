@@ -7,62 +7,58 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎤</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    :root { --red: #f52a1f; --dark-bg: #000; --card-bg: #0a0a0a; --white: #ffffff; }
-    html { scroll-behavior: smooth; background: #000; }
+    /* RESET TOTAL PARA NÃO PARTIR */
+    * { box-sizing: border-box; }
+    html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; }
     body { 
-      margin: 0; background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
-      color: #eee; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
     }
     
-    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.06); height: 60px; display: flex; align-items: center; }
-    .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-    .menu-icon { cursor: pointer; font-size: 24px; color: #fff; background: none; border: none; }
+    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #222; height: 60px; display: flex; align-items: center; padding: 0 20px; }
+    .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .menu-btn { cursor: pointer; font-size: 20px; font-weight: bold; color: #fff; background: none; border: 1px solid #333; padding: 5px 12px; border-radius: 8px; }
 
-    .mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; background: #050505; z-index: 1000; transition: 0.4s ease; display: flex; flex-direction: column; padding: 40px 20px; border-left: 1px solid #222; }
-    .mobile-menu.active { right: 0; }
-    .mobile-menu a { color: #fff; text-decoration: none; font-size: 1.1rem; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; border-bottom: 1px solid #111; padding-bottom: 10px; }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 998; display: none; }
-    .overlay.active { display: block; }
-
-    .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; color: var(--white); }
+    .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
+    h1 { font-size: 1.6rem; text-align: center; margin: 20px 0; text-transform: uppercase; letter-spacing: 2px; }
     
-    .player-wrap { width: 100%; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-    .player { position: relative; width: 100%; aspect-ratio: 16 / 9; }
-    .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    /* PLAYER & INFO */
+    .video-section { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 20px; }
+    .player-container { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+    .player-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    .live-stats-bar { background: #0f0f0f; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; color: #bbb; }
-    .live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 11px; font-weight: bold; color: #888; }
+    .dot { width: 7px; height: 7px; background: #f52a1f; border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .chat-container { width: 100%; height: 350px; background: #000; border-top: 1px solid #222; }
-    .chat-container iframe { width: 100%; height: 100%; border: 0; }
+    .chat-box { width: 100%; height: 300px; border-top: 1px solid #222; background: #000; }
+    .chat-box iframe { width: 100%; height: 100%; border: 0; }
 
-    .btn { background: var(--red); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
-    .section-title { margin-top: 50px; margin-bottom: 25px; font-size: 1.4rem; text-align: center; text-transform: uppercase; font-weight: 900; color: var(--white); }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; text-align: center; padding-bottom: 15px; }
+    /* COMPONENTES */
+    .btn-action { background: #f52a1f; color: #fff; border: none; padding: 12px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+    .card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 15px; overflow: hidden; margin-bottom: 20px; text-align: center; padding-bottom: 15px; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-    .card h3 { color: var(--white); font-size: 1rem; margin: 15px 0 5px; text-transform: uppercase; }
-
+    
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-    .gallery-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; border: 1px solid #222; background: #111; }
+    .gallery-item { aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; border: 1px solid #222; background: #111; }
 
-    #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    #wa-popup svg { width: 30px; fill: white; }
+    /* MENU LATERAL */
+    .side-menu { position: fixed; top: 0; right: -100%; width: 260px; height: 100vh; background: #050505; z-index: 1000; transition: 0.3s; padding: 40px 20px; border-left: 1px solid #222; }
+    .side-menu.open { right: 0; }
+    .side-menu a { display: block; color: #fff; text-decoration: none; padding: 15px 0; border-bottom: 1px solid #111; font-weight: bold; text-transform: uppercase; }
 
-    .admin-box { background: #0a0a0a; border: 1px solid #333; border-radius: 20px; padding: 25px; margin-top: 40px; display: none; }
-    .admin-input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
-    .admin-label { font-size: 11px; color: var(--red); font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 5px; }
+    /* ADMIN */
+    .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 20px; padding: 20px; margin-top: 30px; }
+    .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; }
+    
+    #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 99; }
   </style>
 </head>
 <body>
 
-  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-  <div class="mobile-menu" id="mobileMenu">
-    <div style="text-align:right; padding-bottom: 20px; color: var(--red); cursor:pointer;" onclick="toggleMenu()">✕ FECHAR</div>
-    <a href="#top" onclick="toggleMenu()">Home</a>
+  <div id="sideMenu" class="side-menu">
+    <div style="color:#f52a1f; text-align:right; font-weight:bold; cursor:pointer;" onclick="toggleMenu()">✕ FECHAR</div>
+    <a href="#top" onclick="toggleMenu()">Início</a>
     <a href="#momentos" onclick="toggleMenu()">Momentos</a>
     <a href="#videos" onclick="toggleMenu()">Vídeos</a>
     <a href="#eventos" onclick="toggleMenu()">Serviços</a>
@@ -71,177 +67,123 @@
 
   <nav class="top-nav">
     <div class="nav-inner">
-      <div style="font-weight:900; color:#fff;">KARAOKE LIVE</div>
-      <button class="menu-icon" onclick="toggleMenu()">☰</button>
+      <div style="font-weight:900;">KARAOKE LIVE</div>
+      <div class="menu-btn" onclick="toggleMenu()">MENU</div>
     </div>
   </nav>
 
   <div class="container" id="top">
     <h1>OS CANTA AGORA KARAOKE</h1>
 
-    <div class="player-wrap">
-      <div class="player" id="playerTarget">
-        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
+    <div class="video-section">
+      <div class="player-container" id="mainPlayer">
+        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe>
       </div>
-      
-      <div class="live-stats-bar" id="statsBar" style="display:none;">
-        <div><div class="live-dot"></div> LIVE</div>
-        <div>👥 <span id="viewerCount">--</span></div>
-        <div>🕒 <span id="liveTime">00:00:00</span></div>
+      <div class="live-bar" id="liveBar">
+        <div><span class="dot"></span> LIVE</div>
+        <div>👥 <span id="vCount">--</span></div>
+        <div>🕒 <span id="vTime">00:00</span></div>
       </div>
-
-      <div class="chat-container" id="chatBox" style="display:none;">
+      <div class="chat-box" id="chatContainer" style="display:none;">
         <iframe src="https://kick.com/popout/carloskaraoke/chat"></iframe>
       </div>
     </div>
 
-    <div style="text-align:center; margin-top:20px;">
-      <button class="btn" id="unmuteBtn">🔊 ATIVAR SOM</button>
+    <div style="text-align:center; margin-bottom: 40px;">
+      <button class="btn-action" onclick="unmute()">🔊 ATIVAR SOM</button>
     </div>
 
-    <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; margin:40px 0; text-align:center; border: 1px solid #111;">
-        <h2 style="color:#fff; margin-top:0;">SOBRE NÓS</h2>
-        <p id="projText" style="color:#bbb; margin-bottom:20px;"></p>
-        <div id="waBtnWrap"></div>
+    <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:25px; text-align:center; border: 1px solid #111; margin-bottom: 40px;">
+      <h2 style="margin-top:0;">SOBRE NÓS</h2>
+      <p id="aboutText" style="color:#aaa; font-size: 14px;"></p>
+      <div id="waBtnArea"></div>
     </div>
 
-    <h2 class="section-title" id="momentos">Momentos</h2>
-    <div id="galleryGrid" class="gallery-grid"></div>
+    <h2 style="text-align:center; border-bottom: 2px solid #f52a1f; display: table; margin: 40px auto 20px; padding-bottom: 5px;" id="momentos">MOMENTOS</h2>
+    <div id="galGrid" class="gallery-grid"></div>
 
-    <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
-    <div id="videosGrid" class="grid"></div>
+    <h2 style="text-align:center; margin-top:50px;" id="videos">VÍDEOS</h2>
+    <div id="vidGrid" class="grid"></div>
 
-    <h2 class="section-title" id="eventos">Nossos Serviços</h2>
-    <div id="servicesGrid" class="grid"></div>
+    <h2 style="text-align:center; margin-top:50px;" id="eventos">SERVIÇOS</h2>
+    <div id="serGrid" class="grid"></div>
 
-    <div id="adminSection" class="admin-box">
-      <h2 style="text-align:center; color:#fff">PAINEL ADMIN</h2>
-      <div id="loginBox">
-        <input id="user" placeholder="User" class="admin-input">
-        <input id="pass" type="password" placeholder="Pass" class="admin-input">
-        <button class="btn" onclick="doLogin()" style="width:100%">ENTRAR</button>
+    <div id="adminArea" class="admin-panel">
+      <h3 style="text-align:center;">PAINEL ADMIN</h3>
+      <div id="loginForm">
+        <input id="u" placeholder="User" class="admin-input">
+        <input id="p" type="password" placeholder="Pass" class="admin-input">
+        <button class="btn-action" onclick="login()" style="width:100%">ENTRAR</button>
       </div>
-      <div id="adminControls" style="display:none">
-        <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333;">
-            <label style="display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer; margin-bottom:10px;">
-                <input type="checkbox" id="admShowStats"> MOSTRAR INFO LIVE
-            </label>
-            <label style="display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer;">
-                <input type="checkbox" id="admShowChat"> MOSTRAR CHAT LIVE
-            </label>
-        </div>
-        <span class="admin-label">WhatsApp</span>
-        <input id="admWa" class="admin-input">
-        <span class="admin-label">Texto Sobre Nós</span>
-        <textarea id="admProj" class="admin-input" rows="3"></textarea>
+      <div id="editForm" style="display:none;">
+        <label style="font-size:10px; color:#f52a1f;">WHATSAPP (351...)</label>
+        <input id="inWa" class="admin-input">
+        <label style="font-size:10px; color:#f52a1f;">SOBRE NÓS</label>
+        <textarea id="inAbout" class="admin-input" rows="3"></textarea>
+        <label style="color:#fff; display:flex; align-items:center; gap:10px; margin:10px 0;">
+          <input type="checkbox" id="inShowStats"> MOSTRAR STATS LIVE
+        </label>
+        <label style="color:#fff; display:flex; align-items:center; gap:10px; margin:10px 0;">
+          <input type="checkbox" id="inShowChat"> MOSTRAR CHAT
+        </label>
         <div id="galInputs"></div>
-        <div id="serInputs"></div>
-        <button class="btn" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:20px;">GUARDAR TUDO</button>
-        <button class="btn" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">SAIR</button>
+        <button class="btn-action" onclick="save()" style="background:#28a745; width:100%; margin-top:15px;">GUARDAR TUDO</button>
       </div>
     </div>
 
-    <footer style="margin-top:80px; padding:40px; text-align:center; color:#444; font-size:11px; border-top:1px solid #111;">
-      <strong>KARAOKELIVE.ONLINE</strong>
-    </footer>
+    <footer style="text-align:center; padding: 50px 0; color:#333; font-size:10px;">KARAOKELIVE.ONLINE © 2026</footer>
   </div>
 
-  <div id="wa-popup" onclick="openWa()"><svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg></div>
+  <a id="wa-float" href="#" target="_blank">
+    <svg style="width:30px; fill:#fff" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+  </a>
 
   <script>
-    let allVideos = [];
-    const defaultConfig = {
-      whatsapp: "351962839921", showStats: false, showChat: false,
-      project: "Karaoke profissional para bares e eventos privados. Diversão garantida!",
-      gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=400"],
-      services: [{ t: "KARAOKE LIVE", d: "Animação para bares.", i: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600" }]
+    const def = {
+      wa: "351962839921", about: "Karaoke profissional para os seus eventos!",
+      stats: true, chat: false,
+      gal: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400", "https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=400"],
+      ser: [{t:"KARAOKE", d:"Bares e Festas", i:"https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600"}]
     };
 
-    function loadData() {
-      const s = localStorage.getItem('karaoke_vFinal');
-      return s ? JSON.parse(s) : defaultConfig;
+    function load() { const s = localStorage.getItem('karaoke_live_v1'); return s ? JSON.parse(s) : def; }
+    function render() {
+      const d = load();
+      document.getElementById('aboutText').textContent = d.about;
+      const wURL = `https://wa.me/${d.wa.replace(/\D/g,'')}`;
+      document.getElementById('wa-float').href = wURL;
+      document.getElementById('waBtnArea').innerHTML = `<button class="btn-action" style="background:#25d366" onclick="window.open('${wURL}')">💬 WHATSAPP</button>`;
+      document.getElementById('liveBar').style.display = d.stats ? 'flex' : 'none';
+      document.getElementById('chatContainer').style.display = d.chat ? 'block' : 'none';
+      document.getElementById('galGrid').innerHTML = d.gal.map(img => `<div class="gallery-item"><img src="${img}" style="width:100%;height:100%;object-fit:cover;"></div>`).join('');
+      document.getElementById('serGrid').innerHTML = d.ser.map(s => `<div class="card"><img src="${s.i}"><h3>${s.t}</h3><p style="font-size:12px;color:#888">${s.d}</p></div>`).join('');
+      fetchVids();
     }
 
-    function renderUI() {
-      const d = loadData();
-      document.getElementById('projText').textContent = d.project;
-      document.getElementById('waBtnWrap').innerHTML = `<a href="https://wa.me/${d.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn" style="text-decoration:none; background:#25d366">💬 FALAR NO WHATSAPP</a>`;
-      
-      document.getElementById('statsBar').style.display = d.showStats ? 'flex' : 'none';
-      document.getElementById('chatBox').style.display = d.showChat ? 'block' : 'none';
-
-      document.getElementById('galleryGrid').innerHTML = d.gallery.map(img => `<div class="gallery-item"><img src="${img}" style="width:100%; height:100%; object-fit:cover;"></div>`).join('');
-      document.getElementById('servicesGrid').innerHTML = d.services.map(s => `<div class="card"><img src="${s.i}"><div class="card-body"><h3>${s.t}</h3><p style="font-size:13px; color:#888">${s.d}</p></div></div>`).join('');
-      renderVideos();
-    }
-
-    async function loadVideos() {
+    async function fetchVids() {
       try {
         const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
-        allVideos = await res.json(); renderVideos();
+        const vids = await res.json();
+        document.getElementById('vidGrid').innerHTML = vids.slice(0,4).map(v => `<div class="card" onclick="play('${v.source}')"><img src="${v.thumbnail.src}"><h3>${v.session_title}</h3></div>`).join('');
       } catch(e) {}
     }
 
-    function renderVideos() {
-      const vids = allVideos.slice(0, 4).map(v => `
-        <div class="card" onclick="playVid('${v.source}')" style="cursor:pointer">
-          <img src="${v.thumbnail.src}"><div class="card-body"><h3>${v.session_title}</h3></div>
-        </div>`).join('');
-      document.getElementById('videosGrid').innerHTML = vids || "<p style='grid-column:1/-1; text-align:center; color:#444'>Sem vídeos disponíveis.</p>";
-    }
-
-    function playVid(url) {
-      document.getElementById('playerTarget').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%; height:100%"></video>`;
-      const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('v'));
+    function play(u) {
+      document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`;
+      const hls = new Hls(); hls.loadSource(u); hls.attachMedia(document.getElementById('v'));
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-    function openWa() { window.open(`https://wa.me/${loadData().whatsapp.replace(/\D/g,'')}`, '_blank'); }
-    function showAdmin() { document.getElementById('adminSection').style.display='block'; }
-    function hideAdmin() { document.getElementById('adminSection').style.display='none'; }
-    
-    function doLogin() {
-      if(document.getElementById('user').value==='admin' && document.getElementById('pass').value==='1234') {
-        document.getElementById('loginBox').style.display='none';
-        document.getElementById('adminControls').style.display='block';
-        const d = loadData();
-        document.getElementById('admWa').value = d.whatsapp;
-        document.getElementById('admProj').value = d.project;
-        document.getElementById('admShowStats').checked = d.showStats;
-        document.getElementById('admShowChat').checked = d.showChat;
-        let gin = ""; for(let i=0; i<12; i++) gin += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1}" value="${d.gallery[i]||''}">`;
-        document.getElementById('galInputs').innerHTML = gin;
-        let sin = ""; for(let i=0; i<3; i++) {
-            const s = d.services[i] || {t:'', i:'', d:''};
-            sin += `<div style="border:1px solid #222; padding:10px; margin-bottom:10px;">
-              <input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}">
-              <input id="si${i}" class="admin-input" placeholder="Imagem" value="${s.i}">
-              <input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d}">
-            </div>`;
-        }
-        document.getElementById('serInputs').innerHTML = sin;
-      }
+    function toggleMenu() { document.getElementById('sideMenu').classList.toggle('open'); }
+    function showAdmin() { document.getElementById('adminArea').style.display = 'block'; window.scrollTo(0, document.body.scrollHeight); }
+    function login() { if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') { document.getElementById('loginForm').style.display='none'; document.getElementById('editForm').style.display='block'; const d=load(); document.getElementById('inWa').value=d.wa; document.getElementById('inAbout').value=d.about; document.getElementById('inShowStats').checked=d.stats; document.getElementById('inShowChat').checked=d.chat; } }
+    function save() {
+      const d = { wa: document.getElementById('inWa').value, about: document.getElementById('inAbout').value, stats: document.getElementById('inShowStats').checked, chat: document.getElementById('inShowChat').checked, gal: load().gal, ser: load().ser };
+      localStorage.setItem('karaoke_live_v1', JSON.stringify(d)); render(); alert("Guardado!");
     }
+    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; }
 
-    function saveAll() {
-      const g = []; for(let i=0; i<12; i++) { const v = document.getElementById(`g${i}`).value; if(v) g.push(v); }
-      const s = []; for(let i=0; i<3; i++) {
-        if(document.getElementById(`st${i}`).value) s.push({ t: document.getElementById(`st${i}`).value, i: document.getElementById(`si${i}`).value, d: document.getElementById(`sd${i}`).value });
-      }
-      const d = { 
-        whatsapp: document.getElementById('admWa').value, 
-        project: document.getElementById('admProj').value, 
-        showStats: document.getElementById('admShowStats').checked,
-        showChat: document.getElementById('admShowChat').checked,
-        gallery: g, services: s 
-      };
-      localStorage.setItem('karaoke_vFinal', JSON.stringify(d));
-      renderUI(); hideAdmin(); alert("Guardado!");
-    }
-
-    renderUI(); loadVideos();
-    document.getElementById('unmuteBtn').onclick = () => { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; };
+    render();
   </script>
 </body>
 </html>
