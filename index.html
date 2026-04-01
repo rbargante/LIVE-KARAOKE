@@ -48,13 +48,14 @@
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
     .gallery-item:hover img { transform: scale(1.1); }
 
-    .admin-input { padding: 14px; border-radius: 12px; border: 1px solid #333; font-size: 16px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; margin-bottom: 12px; }
+    .admin-input { padding: 12px; border-radius: 10px; border: 1px solid #333; font-size: 14px; background: rgba(255,255,255,0.05); color: #fff; width: 100%; margin-bottom: 8px; }
     
     #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); cursor: pointer; transition: 0.3s; }
     #wa-popup:hover { transform: scale(1.1); }
     #wa-popup img { width: 32px; height: 32px; filter: invert(1); }
 
     .site-footer { margin-top: 80px; padding: 50px 16px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; color: #555; font-size: 13px; font-weight: 600; }
+    .view-more-btn { background: none; color: #d8d8d8; border: none; padding: 10px; font-size: 14px; font-weight: 700; cursor: pointer; text-decoration: underline; width: 100%; margin-top: 15px; }
   </style>
 </head>
 <body>
@@ -93,6 +94,7 @@
     <h2 class="section-title" id="momentos">Momentos</h2>
     <p class="section-sub">O ambiente das nossas festas e eventos</p>
     <div id="galleryGrid" class="gallery-grid"></div>
+    <div id="viewMoreGalleryWrap"></div>
 
     <h2 class="section-title" id="videos">VÍDEOS</h2>
     <p class="section-sub" id="replaysStatus">A carregar momentos especiais...</p>
@@ -112,13 +114,13 @@
 
       <div id="adminPanel" style="display:none; max-width:700px; margin: 0 auto;">
         <div class="card" style="padding: 24px; margin-bottom: 24px;">
-          <h3 style="margin:0 0 15px">Geral & Momentos</h3>
+          <h3 style="margin:0 0 15px">Geral & Fotos</h3>
           <input id="adminWhatsApp" placeholder="WhatsApp (ex: 351912345678)" class="admin-input">
           <textarea id="adminProjectText" class="admin-input" rows="4" placeholder="Descrição do Projeto"></textarea>
-          <input id="img1" placeholder="Link Foto 1" class="admin-input">
-          <input id="img2" placeholder="Link Foto 2" class="admin-input">
-          <input id="img3" placeholder="Link Foto 3" class="admin-input">
-          <input id="img4" placeholder="Link Foto 4" class="admin-input">
+          
+          <p style="font-size:12px; color:#aaa; margin-top:10px;">Links das fotos (Cole os URLs aqui):</p>
+          <div id="adminPhotosInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            </div>
         </div>
         <div id="servicesEditList"></div>
         <div style="display:flex; gap:12px; margin-top:25px;">
@@ -136,11 +138,13 @@
   <script>
     let allVideos = [];
     let replayExpanded = false;
+    let galleryExpanded = false;
     const replayBaseCount = 8;
+    const galleryBaseCount = 4;
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Oferecemos serviços de karaoke ao vivo para bares, festas privadas, aniversários e eventos especiais.",
+      project: "Oferecemos serviços de karaoke ao vivo para bares, festas privadas e aniversários.",
       gallery: [
         "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500",
         "https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=500",
@@ -148,38 +152,43 @@
         "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500"
       ],
       services: [
-        { title: 'KARAOKE AO VIVO', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total no local.' },
-        { title: 'FESTAS PRIVADAS', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },
-        { title: 'LIVE STREAM', style: 'Digital', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Direto na web.' }
+        { title: 'KARAOKE AO VIVO', style: 'Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação total.' },
+        { title: 'FESTAS PRIVADAS', style: 'Especial', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Dias inesquecíveis.' },
+        { title: 'LIVE STREAM', style: 'Online', image: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600', text: 'Direto na web.' }
       ]
     };
 
     function loadData() {
       const saved = localStorage.getItem('karaoke_data');
       if (!saved) return defaultData;
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        return defaultData;
-      }
+      try { return JSON.parse(saved); } catch (e) { return defaultData; }
     }
 
     function renderUI() {
       const data = loadData();
-      
       document.getElementById('projectDisplay').textContent = data.project || defaultData.project;
       
-      const waUrl = `https://wa.me/${data.whatsapp || defaultData.whatsapp}`;
+      const numWa = data.whatsapp || defaultData.whatsapp;
+      const waUrl = `https://wa.me/${numWa}`;
       document.getElementById('wa-popup').onclick = () => window.open(waUrl, '_blank');
       document.getElementById('projectWaButtonWrap').innerHTML = `<a href="${waUrl}" target="_blank" class="project-wa-btn">💬 CONTACTO WHATSAPP</a>`;
 
+      // Gallery Logic
       const galleryGrid = document.getElementById('galleryGrid');
-      const gallery = (data.gallery && data.gallery.length) ? data.gallery : defaultData.gallery;
-      galleryGrid.innerHTML = gallery.map(img => img ? `<div class="gallery-item"><img src="${img}"></div>` : '').join('');
+      const fullGallery = data.gallery || defaultData.gallery;
+      const validGallery = fullGallery.filter(url => url && url.trim() !== "");
+      const visiblePhotos = galleryExpanded ? validGallery : validGallery.slice(0, galleryBaseCount);
+      
+      galleryGrid.innerHTML = visiblePhotos.map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
 
-      const grid = document.getElementById('servicesGrid');
-      const services = (data.services && data.services.length) ? data.services : defaultData.services;
-      grid.innerHTML = services.map(s => `
+      const gBtnWrap = document.getElementById('viewMoreGalleryWrap');
+      if (validGallery.length > galleryBaseCount) {
+        gBtnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleGallery()">${galleryExpanded ? 'MOSTRAR MENOS' : 'VER MAIS MOMENTOS'}</button>`;
+      } else { gBtnWrap.innerHTML = ''; }
+
+      // Services
+      const services = data.services || defaultData.services;
+      document.getElementById('servicesGrid').innerHTML = services.map(s => `
         <div class="card">
           <img src="${s.image}">
           <div class="card-content">
@@ -188,6 +197,12 @@
             <p>${s.text}</p>
           </div>
         </div>`).join('');
+    }
+
+    function toggleGallery() {
+      galleryExpanded = !galleryExpanded;
+      renderUI();
+      if(!galleryExpanded) document.getElementById('momentos').scrollIntoView({behavior: 'smooth'});
     }
 
     function toggleAdminLogin() {
@@ -201,10 +216,17 @@
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('adminPanel').style.display = 'block';
         const data = loadData();
+        
         document.getElementById('adminWhatsApp').value = data.whatsapp || defaultData.whatsapp;
         document.getElementById('adminProjectText').value = data.project || defaultData.project;
-        const gallery = data.gallery || defaultData.gallery;
-        gallery.forEach((url, i) => { if(document.getElementById(`img${i+1}`)) document.getElementById(`img${i+1}`).value = url; });
+        
+        // Gerar 12 inputs para fotos
+        let photoHtml = '';
+        for(let i=0; i<12; i++) {
+          const val = data.gallery && data.gallery[i] ? data.gallery[i] : '';
+          photoHtml += `<input id="gimg${i}" value="${val}" class="admin-input" placeholder="Foto ${i+1} URL">`;
+        }
+        document.getElementById('adminPhotosInputs').innerHTML = photoHtml;
         
         const services = data.services || defaultData.services;
         document.getElementById('servicesEditList').innerHTML = services.map((s, i) => `
@@ -213,20 +235,21 @@
             <input id="s${i}i" value="${s.image}" class="admin-input">
             <textarea id="s${i}x" class="admin-input">${s.text}</textarea>
           </div>`).join('');
-      } else { alert('User: admin / Pass: 1234'); }
+      } else { alert('Acesso negado'); }
     }
 
     function saveAdminData() {
       const currentData = loadData();
+      const newGallery = [];
+      for(let i=0; i<12; i++) {
+        const val = document.getElementById(`gimg${i}`).value;
+        if(val) newGallery.push(val);
+      }
+
       const newData = {
         whatsapp: document.getElementById('adminWhatsApp').value.replace(/\D/g, ''),
         project: document.getElementById('adminProjectText').value,
-        gallery: [
-          document.getElementById('img1').value,
-          document.getElementById('img2').value,
-          document.getElementById('img3').value,
-          document.getElementById('img4').value
-        ],
+        gallery: newGallery,
         services: currentData.services.map((s, i) => ({
           title: document.getElementById(`s${i}t`).value.toUpperCase(),
           style: s.style,
@@ -236,6 +259,7 @@
       };
       localStorage.setItem('karaoke_data', JSON.stringify(newData));
       renderUI();
+      alert('Dados guardados!');
       logoutAdmin();
     }
 
@@ -251,7 +275,7 @@
         allVideos = await res.json();
         document.getElementById('replaysStatus').textContent = `Assista a ${allVideos.length} momentos gravados`;
         renderVideos();
-      } catch (e) { document.getElementById('replaysStatus').textContent = 'Erro vídeos.'; }
+      } catch (e) { document.getElementById('replaysStatus').textContent = 'Vídeos indisponíveis.'; }
     }
 
     function renderVideos() {
@@ -264,7 +288,7 @@
         </div>`).join('');
       const btnWrap = document.getElementById('viewMoreWrap');
       if(allVideos.length > replayBaseCount) {
-        btnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()" style="background:none; color:#d8d8d8; border:none; padding:10px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:underline; width:100%;">${replayExpanded ? 'MOSTRAR MENOS' : 'VER TODOS OS VÍDEOS'}</button>`;
+        btnWrap.innerHTML = `<button class="view-more-btn" onclick="toggleVideos()">${replayExpanded ? 'MOSTRAR MENOS' : 'VER TODOS OS VÍDEOS'}</button>`;
       }
     }
 
