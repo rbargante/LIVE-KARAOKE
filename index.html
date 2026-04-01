@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     :root { --red: #f52a1f; --dark-bg: #000; --card-bg: #0a0a0a; --white: #ffffff; }
-    html { scroll-behavior: smooth; background: var(--dark-bg); }
+    html { scroll-behavior: smooth; background: #000; }
     body { 
       margin: 0; background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%);
       color: #eee; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -25,41 +25,36 @@
     .overlay.active { display: block; }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 16px; }
-    h1 { font-size: 2rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--white); }
+    h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; color: var(--white); }
     
-    .player-wrap { width: 100%; position: relative; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; }
+    .player-wrap { width: 100%; background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; }
     .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    .live-stats-bar { 
-      background: #0f0f0f; border-top: 1px solid #222; 
-      padding: 10px 20px; display: flex; justify-content: space-around; align-items: center;
-      font-size: 13px; font-weight: 700; color: #ccc;
-    }
-    .stat-item { display: flex; align-items: center; gap: 8px; }
-    .live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    .live-stats-bar { background: #0f0f0f; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; color: #bbb; }
+    .live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    /* CHAT BOX */
-    .chat-container { width: 100%; height: 400px; background: #000; border-top: 1px solid #222; display: none; }
+    .chat-container { width: 100%; height: 350px; background: #000; border-top: 1px solid #222; }
     .chat-container iframe { width: 100%; height: 100%; border: 0; }
 
     .btn { background: var(--red); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
-    .btn-view { background: none; border: 1px solid #333; color: #fff; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 11px; margin-top: 20px; transition: 0.3s; }
-
-    .section-title { margin-top: 50px; margin-bottom: 25px; font-size: 1.5rem; text-align: center; text-transform: uppercase; font-weight: 900; color: var(--white); }
+    .section-title { margin-top: 50px; margin-bottom: 25px; font-size: 1.4rem; text-align: center; text-transform: uppercase; font-weight: 900; color: var(--white); }
+    
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; text-align: center; }
+    .card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; text-align: center; padding-bottom: 15px; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-    .card-body { padding: 15px; }
-    .card h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 10px; text-transform: uppercase; }
+    .card h3 { color: var(--white); font-size: 1rem; margin: 15px 0 5px; text-transform: uppercase; }
 
-    #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); cursor: pointer; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .gallery-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; border: 1px solid #222; background: #111; }
+
+    #wa-popup { position: fixed; bottom: 25px; right: 25px; z-index: 1000; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     #wa-popup svg { width: 30px; fill: white; }
 
-    .admin-box { background: #0a0a0a; border: 1px solid #222; border-radius: 20px; padding: 25px; margin-top: 40px; display: none; }
+    .admin-box { background: #0a0a0a; border: 1px solid #333; border-radius: 20px; padding: 25px; margin-top: 40px; display: none; }
     .admin-input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
-    .admin-label { font-size: 11px; color: var(--red); font-weight: 800; display: block; margin-bottom: 5px; }
+    .admin-label { font-size: 11px; color: var(--red); font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -76,7 +71,7 @@
 
   <nav class="top-nav">
     <div class="nav-inner">
-      <div style="font-weight:900; color:var(--white); letter-spacing: 1px;">KARAOKE LIVE</div>
+      <div style="font-weight:900; color:#fff;">KARAOKE LIVE</div>
       <button class="menu-icon" onclick="toggleMenu()">☰</button>
     </div>
   </nav>
@@ -89,14 +84,14 @@
         <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
       </div>
       
-      <div class="live-stats-bar" id="statsBar">
-        <div class="stat-item"><div class="live-dot"></div> LIVE</div>
-        <div class="stat-item">👥 <span id="viewerCount">--</span></div>
-        <div class="stat-item">🕒 <span id="liveTime">00:00:00</span></div>
+      <div class="live-stats-bar" id="statsBar" style="display:none;">
+        <div><div class="live-dot"></div> LIVE</div>
+        <div>👥 <span id="viewerCount">--</span></div>
+        <div>🕒 <span id="liveTime">00:00:00</span></div>
       </div>
 
-      <div class="chat-container" id="chatBox">
-        <iframe src="https://kick.com/carloskaraoke/chatroom"></iframe>
+      <div class="chat-container" id="chatBox" style="display:none;">
+        <iframe src="https://kick.com/popout/carloskaraoke/chat"></iframe>
       </div>
     </div>
 
@@ -105,55 +100,49 @@
     </div>
 
     <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; margin:40px 0; text-align:center; border: 1px solid #111;">
-        <h2 style="color:var(--white); margin-top:0;">SOBRE NÓS</h2>
+        <h2 style="color:#fff; margin-top:0;">SOBRE NÓS</h2>
         <p id="projText" style="color:#bbb; margin-bottom:20px;"></p>
         <div id="waBtnWrap"></div>
     </div>
 
     <h2 class="section-title" id="momentos">Momentos</h2>
-    <div id="galleryGrid" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"></div>
-    <div style="text-align:center"><button class="btn-view" id="btnGal" onclick="toggleGal()">VER MAIS MOMENTOS</button></div>
+    <div id="galleryGrid" class="gallery-grid"></div>
 
     <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
     <div id="videosGrid" class="grid"></div>
-    <div style="text-align:center"><button class="btn-view" id="btnVid" onclick="toggleVid()">VER MAIS VÍDEOS</button></div>
 
     <h2 class="section-title" id="eventos">Nossos Serviços</h2>
     <div id="servicesGrid" class="grid"></div>
 
     <div id="adminSection" class="admin-box">
-      <h2 style="text-align:center; color:var(--white)">PAINEL ADMIN</h2>
+      <h2 style="text-align:center; color:#fff">PAINEL ADMIN</h2>
       <div id="loginBox">
-        <input id="user" placeholder="Utilizador" class="admin-input">
-        <input id="pass" type="password" placeholder="Senha" class="admin-input">
+        <input id="user" placeholder="User" class="admin-input">
+        <input id="pass" type="password" placeholder="Pass" class="admin-input">
         <button class="btn" onclick="doLogin()" style="width:100%">ENTRAR</button>
       </div>
       <div id="adminControls" style="display:none">
-        <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333; display:flex; flex-direction:column; gap:15px;">
-            <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                <input type="checkbox" id="admShowStats" style="width:20px; height:20px;"> 
-                <span style="font-weight:bold; color:var(--white)">MOSTRAR INFO LIVE (👥 🕒)</span>
+        <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333;">
+            <label style="display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer; margin-bottom:10px;">
+                <input type="checkbox" id="admShowStats"> MOSTRAR INFO LIVE
             </label>
-            <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                <input type="checkbox" id="admShowChat" style="width:20px; height:20px;"> 
-                <span style="font-weight:bold; color:var(--white)">MOSTRAR CHAT LIVE (💬)</span>
+            <label style="display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer;">
+                <input type="checkbox" id="admShowChat"> MOSTRAR CHAT LIVE
             </label>
         </div>
-
         <span class="admin-label">WhatsApp</span>
         <input id="admWa" class="admin-input">
         <span class="admin-label">Texto Sobre Nós</span>
         <textarea id="admProj" class="admin-input" rows="3"></textarea>
         <div id="galInputs"></div>
         <div id="serInputs"></div>
-
         <button class="btn" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:20px;">GUARDAR TUDO</button>
         <button class="btn" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">SAIR</button>
       </div>
     </div>
 
     <footer style="margin-top:80px; padding:40px; text-align:center; color:#444; font-size:11px; border-top:1px solid #111;">
-      <strong>KARAOKELIVE.ONLINE</strong><br>© 2026
+      <strong>KARAOKELIVE.ONLINE</strong>
     </footer>
   </div>
 
@@ -161,17 +150,15 @@
 
   <script>
     let allVideos = [];
-    let galShowAll = false;
-    let vidShowAll = false;
-
     const defaultConfig = {
-      whatsapp: "351962839921", showStats: true, showChat: false,
+      whatsapp: "351962839921", showStats: false, showChat: false,
       project: "Karaoke profissional para bares e eventos privados. Diversão garantida!",
-      gallery: [], services: []
+      gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=400"],
+      services: [{ t: "KARAOKE LIVE", d: "Animação para bares.", i: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600" }]
     };
 
     function loadData() {
-      const s = localStorage.getItem('karaoke_v6');
+      const s = localStorage.getItem('karaoke_vFinal');
       return s ? JSON.parse(s) : defaultConfig;
     }
 
@@ -183,18 +170,10 @@
       document.getElementById('statsBar').style.display = d.showStats ? 'flex' : 'none';
       document.getElementById('chatBox').style.display = d.showChat ? 'block' : 'none';
 
-      const galLimit = galShowAll ? d.gallery.length : 4;
-      document.getElementById('galleryGrid').innerHTML = d.gallery.slice(0, galLimit).map(img => `<div class="gallery-item"><img src="${img}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;"></div>`).join('');
-      
-      document.getElementById('servicesGrid').innerHTML = d.services.map(s => `
-        <div class="card"><img src="${s.i}"><div class="card-body"><h3>${s.t}</h3><p style="font-size:13px; color:#888">${s.d}</p></div></div>`).join('');
+      document.getElementById('galleryGrid').innerHTML = d.gallery.map(img => `<div class="gallery-item"><img src="${img}" style="width:100%; height:100%; object-fit:cover;"></div>`).join('');
+      document.getElementById('servicesGrid').innerHTML = d.services.map(s => `<div class="card"><img src="${s.i}"><div class="card-body"><h3>${s.t}</h3><p style="font-size:13px; color:#888">${s.d}</p></div></div>`).join('');
       renderVideos();
     }
-
-    function updateFakeStats() {
-        document.getElementById('viewerCount').textContent = Math.floor(Math.random() * (12 - 2 + 1)) + 2;
-    }
-    setInterval(updateFakeStats, 10000);
 
     async function loadVideos() {
       try {
@@ -204,12 +183,11 @@
     }
 
     function renderVideos() {
-      const vidLimit = vidShowAll ? allVideos.length : 4;
-      const vids = allVideos.slice(0, vidLimit).map(v => `
+      const vids = allVideos.slice(0, 4).map(v => `
         <div class="card" onclick="playVid('${v.source}')" style="cursor:pointer">
           <img src="${v.thumbnail.src}"><div class="card-body"><h3>${v.session_title}</h3></div>
         </div>`).join('');
-      document.getElementById('videosGrid').innerHTML = vids || "<p style='text-align:center; color:#444'>A carregar...</p>";
+      document.getElementById('videosGrid').innerHTML = vids || "<p style='grid-column:1/-1; text-align:center; color:#444'>Sem vídeos disponíveis.</p>";
     }
 
     function playVid(url) {
@@ -218,8 +196,6 @@
       window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    function toggleGal() { galShowAll = !galShowAll; renderUI(); }
-    function toggleVid() { vidShowAll = !vidShowAll; renderVideos(); }
     function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
     function openWa() { window.open(`https://wa.me/${loadData().whatsapp.replace(/\D/g,'')}`, '_blank'); }
     function showAdmin() { document.getElementById('adminSection').style.display='block'; }
@@ -234,14 +210,14 @@
         document.getElementById('admProj').value = d.project;
         document.getElementById('admShowStats').checked = d.showStats;
         document.getElementById('admShowChat').checked = d.showChat;
-        let gin = ""; for(let i=0; i<12; i++) gin += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1} URL" value="${d.gallery[i]||''}">`;
+        let gin = ""; for(let i=0; i<12; i++) gin += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1}" value="${d.gallery[i]||''}">`;
         document.getElementById('galInputs').innerHTML = gin;
         let sin = ""; for(let i=0; i<3; i++) {
             const s = d.services[i] || {t:'', i:'', d:''};
-            sin += `<div style="border:1px solid #222; padding:10px; margin-bottom:10px; border-radius:10px;">
+            sin += `<div style="border:1px solid #222; padding:10px; margin-bottom:10px;">
               <input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}">
-              <input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}">
-              <input id="sd${i}" class="admin-input" placeholder="Descrição" value="${s.d}">
+              <input id="si${i}" class="admin-input" placeholder="Imagem" value="${s.i}">
+              <input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d}">
             </div>`;
         }
         document.getElementById('serInputs').innerHTML = sin;
@@ -260,7 +236,7 @@
         showChat: document.getElementById('admShowChat').checked,
         gallery: g, services: s 
       };
-      localStorage.setItem('karaoke_v6', JSON.stringify(d));
+      localStorage.setItem('karaoke_vFinal', JSON.stringify(d));
       renderUI(); hideAdmin(); alert("Guardado!");
     }
 
