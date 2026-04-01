@@ -28,9 +28,25 @@
     .controls { position: absolute; bottom: 12px; right: 12px; z-index: 20; display: flex; gap: 8px; }
     .control-btn { background: rgba(0,0,0,.8); color: #fff; border: 1px solid rgba(255,255,255,.2); padding: 10px 16px; border-radius: 12px; font-size: 14px; cursor: pointer; font-weight: 700; backdrop-filter: blur(5px); text-decoration: none; }
 
-    /* Estilo da nova secção Projeto */
-    .project-box { background: #0d0d0d; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 24px; margin: 30px 0; text-align: center; }
-    .project-text { color: #ccc; font-size: 16px; max-width: 800px; margin: 0 auto; white-space: pre-wrap; }
+    /* Estilo Projeto com Botão */
+    .project-box { background: #0d0d0d; border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 30px 24px; margin: 30px 0; text-align: center; }
+    .project-text { color: #ccc; font-size: 16px; max-width: 800px; margin: 0 auto 24px; white-space: pre-wrap; }
+    
+    .project-wa-btn { 
+      background: #25d366; 
+      color: #fff; 
+      text-decoration: none; 
+      padding: 14px 24px; 
+      border-radius: 12px; 
+      font-weight: 800; 
+      font-size: 14px; 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 10px; 
+      transition: 0.3s; 
+      text-transform: uppercase;
+    }
+    .project-wa-btn:hover { background: #1ebe57; transform: translateY(-2px); }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     
@@ -42,12 +58,9 @@
 
     .card { background: #0d0d0d; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,.08); transition: 0.3s; display: flex; flex-direction: column; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
-    .card-content { padding: 16px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-content { padding: 16px; text-align: center; flex-grow: 1; }
     .card h3 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
-    .card p { margin: 8px 0 16px; color: #bbb; font-size: 14px; }
-
-    .wa-service-btn { background: #25d366; color: #fff; text-decoration: none; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 13px; display: inline-block; transition: 0.3s; }
-    .wa-service-btn:hover { background: #1ebe57; }
+    .card p { margin: 8px 0 0; color: #bbb; font-size: 14px; }
 
     .replay-card { cursor: pointer; }
     .replay-card:active { transform: scale(0.98); }
@@ -88,6 +101,7 @@
     <div class="project-box">
       <h2 style="text-transform: uppercase; margin-bottom: 15px; font-size: 1.4rem;">O Projeto</h2>
       <div id="projectDisplay" class="project-text"></div>
+      <div id="projectWaButtonWrap"></div>
     </div>
 
     <h2 class="section-title" id="videos">VÍDEOS</h2>
@@ -135,7 +149,7 @@
 
     const defaultData = {
       whatsapp: "351912345678",
-      project: "Somos uma empresa de karaoke especializada em festas privadas, eventos corporativos e animação de bares. Levamos a música e a diversão onde quer que seja necessário!",
+      project: "Oferecemos serviços de karaoke ao vivo para bares, festas privadas, aniversários e eventos especiais.",
       services: [
         { title: 'KARAOKE AO VIVO', style: 'Evento Presencial', image: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600', text: 'Animação garantida para o seu bar ou restaurante.' },
         { title: 'FESTAS PRIVADAS', style: 'Casamentos/Aniversários', image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600', text: 'Tornamos o seu dia especial inesquecível com muita música.' },
@@ -151,10 +165,14 @@
     function renderUI() {
       const data = loadData();
       
-      // Render Projeto
+      // Render Projeto e Botão WhatsApp
       document.getElementById('projectDisplay').textContent = data.project;
+      document.getElementById('projectWaButtonWrap').innerHTML = `
+        <a href="https://wa.me/${data.whatsapp}" target="_blank" class="project-wa-btn">
+          💬 CONTACTO WHATSAPP
+        </a>`;
 
-      // WhatsApp Pop
+      // WhatsApp Pop lateral
       const waPop = document.getElementById('wa-popup');
       waPop.innerHTML = `<a href="https://wa.me/${data.whatsapp}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"></a>`;
 
@@ -164,14 +182,9 @@
         <div class="card">
           <img src="${s.image}" alt="${s.title}">
           <div class="card-content">
-            <div>
-              <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase;">${s.style}</div>
-              <h3>${s.title}</h3>
-              <p>${s.text}</p>
-            </div>
-            <a href="https://wa.me/${data.whatsapp}?text=Olá! Gostaria de reservar o serviço: ${s.title}" target="_blank" class="wa-service-btn">
-              👉 RESERVAR NO WHATSAPP
-            </a>
+            <div style="color:#f52a1f; font-size:11px; font-weight:800; text-transform:uppercase;">${s.style}</div>
+            <h3>${s.title}</h3>
+            <p>${s.text}</p>
           </div>
         </div>`).join('');
     }
@@ -211,7 +224,7 @@
       }));
       localStorage.setItem('karaoke_data', JSON.stringify(data));
       renderUI();
-      alert('Tudo guardado com sucesso!');
+      alert('Tudo guardado!');
       logoutAdmin();
     }
 
@@ -264,7 +277,6 @@
 
     renderUI();
     loadVideos();
-    
     document.getElementById('unmuteBtn').onclick = () => { 
         document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; 
     };
