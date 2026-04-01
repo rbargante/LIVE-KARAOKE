@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -31,9 +31,8 @@
     .player { position: relative; width: 100%; aspect-ratio: 16 / 9; }
     .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    /* BARRA DE INFO LIVE */
     .live-stats-bar { 
-      display: none; background: #0f0f0f; border-top: 1px solid #222; 
+      background: #0f0f0f; border-top: 1px solid #222; 
       padding: 10px 20px; display: flex; justify-content: space-around; align-items: center;
       font-size: 13px; font-weight: 700; color: #ccc;
     }
@@ -41,12 +40,16 @@
     .live-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
+    /* CHAT BOX */
+    .chat-container { width: 100%; height: 400px; background: #000; border-top: 1px solid #222; display: none; }
+    .chat-container iframe { width: 100%; height: 100%; border: 0; }
+
     .btn { background: var(--red); color: #fff; border: none; padding: 12px 25px; border-radius: 12px; font-size: 13px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
     .btn-view { background: none; border: 1px solid #333; color: #fff; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-size: 11px; margin-top: 20px; transition: 0.3s; }
 
     .section-title { margin-top: 50px; margin-bottom: 25px; font-size: 1.5rem; text-align: center; text-transform: uppercase; font-weight: 900; color: var(--white); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; text-align: center; transition: 0.3s; }
+    .card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #1a1a1a; text-align: center; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
     .card-body { padding: 15px; }
     .card h3 { color: var(--white); font-size: 1.1rem; margin-bottom: 10px; text-transform: uppercase; }
@@ -85,10 +88,15 @@
       <div class="player" id="playerTarget">
         <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen" allowfullscreen="true"></iframe>
       </div>
+      
       <div class="live-stats-bar" id="statsBar">
         <div class="stat-item"><div class="live-dot"></div> LIVE</div>
         <div class="stat-item">👥 <span id="viewerCount">--</span></div>
         <div class="stat-item">🕒 <span id="liveTime">00:00:00</span></div>
+      </div>
+
+      <div class="chat-container" id="chatBox">
+        <iframe src="https://kick.com/carloskaraoke/chatroom"></iframe>
       </div>
     </div>
 
@@ -121,10 +129,14 @@
         <button class="btn" onclick="doLogin()" style="width:100%">ENTRAR</button>
       </div>
       <div id="adminControls" style="display:none">
-        <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333;">
+        <div style="background:#111; padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid #333; display:flex; flex-direction:column; gap:15px;">
             <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
                 <input type="checkbox" id="admShowStats" style="width:20px; height:20px;"> 
                 <span style="font-weight:bold; color:var(--white)">MOSTRAR INFO LIVE (👥 🕒)</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                <input type="checkbox" id="admShowChat" style="width:20px; height:20px;"> 
+                <span style="font-weight:bold; color:var(--white)">MOSTRAR CHAT LIVE (💬)</span>
             </label>
         </div>
 
@@ -132,9 +144,7 @@
         <input id="admWa" class="admin-input">
         <span class="admin-label">Texto Sobre Nós</span>
         <textarea id="admProj" class="admin-input" rows="3"></textarea>
-        <span class="admin-label">Links Galeria (12 URLs)</span>
         <div id="galInputs"></div>
-        <span class="admin-label">Serviços (3)</span>
         <div id="serInputs"></div>
 
         <button class="btn" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:20px;">GUARDAR TUDO</button>
@@ -155,14 +165,13 @@
     let vidShowAll = false;
 
     const defaultConfig = {
-      whatsapp: "351962839921", showStats: true,
+      whatsapp: "351962839921", showStats: true, showChat: false,
       project: "Karaoke profissional para bares e eventos privados. Diversão garantida!",
-      gallery: ["https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400","https://images.unsplash.com/photo-1514525253361-bee8718a300a?w=400","https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400","https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=400"],
-      services: [{ t: "KARAOKE LIVE", d: "Animação para bares.", i: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600" }]
+      gallery: [], services: []
     };
 
     function loadData() {
-      const s = localStorage.getItem('karaoke_v5');
+      const s = localStorage.getItem('karaoke_v6');
       return s ? JSON.parse(s) : defaultConfig;
     }
 
@@ -171,21 +180,19 @@
       document.getElementById('projText').textContent = d.project;
       document.getElementById('waBtnWrap').innerHTML = `<a href="https://wa.me/${d.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn" style="text-decoration:none; background:#25d366">💬 FALAR NO WHATSAPP</a>`;
       
-      // Mostrar ou esconder barra de stats
       document.getElementById('statsBar').style.display = d.showStats ? 'flex' : 'none';
+      document.getElementById('chatBox').style.display = d.showChat ? 'block' : 'none';
 
       const galLimit = galShowAll ? d.gallery.length : 4;
-      document.getElementById('galleryGrid').innerHTML = d.gallery.slice(0, galLimit).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('btnGal').textContent = galShowAll ? "VER MENOS" : "VER MAIS MOMENTOS";
-
+      document.getElementById('galleryGrid').innerHTML = d.gallery.slice(0, galLimit).map(img => `<div class="gallery-item"><img src="${img}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;"></div>`).join('');
+      
       document.getElementById('servicesGrid').innerHTML = d.services.map(s => `
         <div class="card"><img src="${s.i}"><div class="card-body"><h3>${s.t}</h3><p style="font-size:13px; color:#888">${s.d}</p></div></div>`).join('');
       renderVideos();
     }
 
-    // SIMULAÇÃO DE INFO REAL (O Kick não envia isto por iframe, mas podemos simular números reais)
     function updateFakeStats() {
-        document.getElementById('viewerCount').textContent = Math.floor(Math.random() * (15 - 2 + 1)) + 2;
+        document.getElementById('viewerCount').textContent = Math.floor(Math.random() * (12 - 2 + 1)) + 2;
     }
     setInterval(updateFakeStats, 10000);
 
@@ -202,8 +209,7 @@
         <div class="card" onclick="playVid('${v.source}')" style="cursor:pointer">
           <img src="${v.thumbnail.src}"><div class="card-body"><h3>${v.session_title}</h3></div>
         </div>`).join('');
-      document.getElementById('videosGrid').innerHTML = vids || "<p style='grid-column:1/-1; text-align:center; color:#444'>A carregar...</p>";
-      document.getElementById('btnVid').textContent = vidShowAll ? "VER MENOS" : "VER MAIS VÍDEOS";
+      document.getElementById('videosGrid').innerHTML = vids || "<p style='text-align:center; color:#444'>A carregar...</p>";
     }
 
     function playVid(url) {
@@ -227,6 +233,7 @@
         document.getElementById('admWa').value = d.whatsapp;
         document.getElementById('admProj').value = d.project;
         document.getElementById('admShowStats').checked = d.showStats;
+        document.getElementById('admShowChat').checked = d.showChat;
         let gin = ""; for(let i=0; i<12; i++) gin += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1} URL" value="${d.gallery[i]||''}">`;
         document.getElementById('galInputs').innerHTML = gin;
         let sin = ""; for(let i=0; i<3; i++) {
@@ -250,10 +257,10 @@
         whatsapp: document.getElementById('admWa').value, 
         project: document.getElementById('admProj').value, 
         showStats: document.getElementById('admShowStats').checked,
-        gallery: g, 
-        services: s 
+        showChat: document.getElementById('admShowChat').checked,
+        gallery: g, services: s 
       };
-      localStorage.setItem('karaoke_v5', JSON.stringify(d));
+      localStorage.setItem('karaoke_v6', JSON.stringify(d));
       renderUI(); hideAdmin(); alert("Guardado!");
     }
 
