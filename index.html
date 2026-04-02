@@ -21,8 +21,9 @@
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
     h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
     
-    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 10px; }
-    .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+    /* VÍDEO OTIMIZADO */
+    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 10px; width: 100%; }
+    .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
     .player-area iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
     .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; color: #888; }
@@ -32,7 +33,7 @@
     .chat-area { width: 100%; height: 500px; border-top: 1px solid #222; display: none; background: #000; }
     .chat-area iframe { width: 100%; height: 100%; border: 0; }
 
-    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); }
+    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); width: 90%; max-width: 300px; }
 
     .section-title { text-align: center; font-size: 1.4rem; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; border-bottom: 2px solid var(--red); display: table; margin-left: auto; margin-right: auto; padding-bottom: 5px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
@@ -73,9 +74,13 @@
     <h1>OS CANTA AGORA KARAOKE</h1>
 
     <div class="video-box">
-      <div class="player-area" id="mainPlayer"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allow="autoplay; fullscreen"></iframe></div>
+      <div class="player-area" id="mainPlayer">
+        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe>
+      </div>
       <div class="live-bar" id="liveBar"><div><span class="dot"></span> LIVE</div><div>👥 <span id="vCount">--</span></div><div>🕒 <span id="vTime">--:--</span></div></div>
-      <div style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;"><button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button></div>
+      <div style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;">
+        <button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button>
+      </div>
       <div class="chat-area" id="chatBox"><iframe id="chatFrame" src="" allow="clipboard-write"></iframe></div>
     </div>
 
@@ -199,13 +204,7 @@
     function showAdmin() { document.getElementById('adminArea').style.display = 'block'; window.scrollTo(0, document.body.scrollHeight); }
     function hideAdmin() { document.getElementById('adminArea').style.display = 'none'; }
     function openWa() { window.open(`https://wa.me/${currentData.wa.replace(/\D/g,'')}`, '_blank'); }
-    
-    // FUNÇÃO UNMUTE MELHORADA PARA MOBILE
-    function unmute() { 
-      const player = document.getElementById('livePlayer');
-      // Recarrega o player sem o "muted=true" para forçar o som
-      player.src = "https://player.kick.com/carloskaraoke?autoplay=true"; 
-    }
+    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; }
 
     function login() {
       if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
