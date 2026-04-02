@@ -32,8 +32,9 @@
     .chat-area { width: 100%; height: 500px; border-top: 1px solid #222; display: none; background: #000; }
     .chat-area iframe { width: 100%; height: 100%; border: 0; }
 
-    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
-    .section-title { text-align: center; font-size: 1.4rem; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; border-bottom: 2px solid var(--red); display: table; margin: 0 auto; padding-bottom: 5px; }
+    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); }
+
+    .section-title { text-align: center; font-size: 1.4rem; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; border-bottom: 2px solid var(--red); display: table; margin-left: auto; margin-right: auto; padding-bottom: 5px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
     .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 15px; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
@@ -47,7 +48,6 @@
     .admin-label { font-size: 11px; color: var(--red); font-weight: 800; text-transform: uppercase; display: block; margin-top: 15px; }
     
     #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; }
-    @media (max-width: 480px) { .nav-links { gap: 8px; } .nav-links a { font-size: 10px; } }
   </style>
 </head>
 <body>
@@ -71,7 +71,7 @@
       <div class="player-area" id="mainPlayer"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true"></iframe></div>
       <div class="live-bar" id="liveBar"><div><span class="dot"></span> LIVE</div><div>👥 <span id="vCount">--</span></div><div>🕒 <span id="vTime">--:--</span></div></div>
       <div style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;"><button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button></div>
-      <div class="chat-area" id="chatBox"><iframe id="chatFrame" src=""></iframe></div>
+      <div class="chat-area" id="chatBox"><iframe id="chatFrame" src="" allow="clipboard-write"></iframe></div>
     </div>
 
     <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; text-align:center; border: 1px solid #111; margin: 40px 0;">
@@ -87,7 +87,7 @@
     <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
     <div id="vidGrid" class="grid"></div>
 
-    <h2 class="section-title" id="eventos">Nossos Serviços</h2>
+    <h2 class="section-title">Nossos Serviços</h2>
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
@@ -98,13 +98,15 @@
       </div>
       <div id="editForm" style="display:none;">
         <label><input type="checkbox" id="inStats"> INFO LIVE</label> | <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
-        <span class="admin-label">Link do Chat Minnit (ou ID)</span>
-        <input id="inChatUrl" class="admin-input" placeholder="Ex: https://minnit.chat/SeuChat?embed">
+        <span class="admin-label">Link do Chat Minnit</span>
+        <input id="inChatUrl" class="admin-input" placeholder="https://minnit.chat/1772345192?embed">
         <span class="admin-label">WhatsApp (351...)</span>
         <input id="inWa" class="admin-input">
         <span class="admin-label">Texto Sobre Nós</span>
         <textarea id="inAbout" class="admin-input" rows="3"></textarea>
+        <span class="admin-label">Galeria (Fotos URLs)</span>
         <div id="galInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;"></div>
+        <span class="admin-label">Serviços</span>
         <div id="serInputs"></div>
         <button class="btn-red" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:30px;">GUARDAR TUDO</button>
         <button class="btn-red" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">FECHAR</button>
@@ -116,7 +118,7 @@
 
   <script>
     const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
-    let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
+    let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "https://minnit.chat/1772345192?embed", gal: [], ser: [] };
     let galAll = false;
 
     async function load() {
@@ -130,15 +132,14 @@
     }
 
     function renderUI() {
-      const d = currentData;
-      document.getElementById('aboutText').textContent = d.about;
+      document.getElementById('aboutText').textContent = currentData.about;
       document.getElementById('waBtnArea').innerHTML = `<button class="btn-red" style="background:#25d366" onclick="openWa()">💬 WHATSAPP</button>`;
-      document.getElementById('liveBar').style.display = d.stats ? 'flex' : 'none';
-      document.getElementById('chatBox').style.display = d.chat ? 'block' : 'none';
-      document.getElementById('chatFrame').src = d.chatUrl || "";
-      const lim = galAll ? d.gal.length : 4;
-      document.getElementById('galGrid').innerHTML = (d.gal || []).slice(0, lim).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-      document.getElementById('serGrid').innerHTML = (d.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;">${s.d}</p></div></div>`).join('');
+      document.getElementById('liveBar').style.display = currentData.stats ? 'flex' : 'none';
+      document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
+      document.getElementById('chatFrame').src = currentData.chatUrl || "";
+      const lim = galAll ? currentData.gal.length : 4;
+      document.getElementById('galGrid').innerHTML = (currentData.gal || []).slice(0, lim).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+      document.getElementById('serGrid').innerHTML = (currentData.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;">${s.d}</p></div></div>`).join('');
     }
 
     async function saveAll() {
@@ -146,7 +147,7 @@
       const s = []; for(let i=0; i<3; i++) { if(document.getElementById(`st${i}`).value) s.push({ t: document.getElementById(`st${i}`).value, i: document.getElementById(`si${i}`).value, d: document.getElementById(`sd${i}`).value }); }
       const data = { wa: document.getElementById('inWa').value, about: document.getElementById('inAbout').value, stats: document.getElementById('inStats').checked, chat: document.getElementById('inChat').checked, chatUrl: document.getElementById('inChatUrl').value, gal: g, ser: s };
       await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(data) });
-      alert("ATUALIZADO!"); location.reload();
+      alert("ATUALIZADO NA NUVEM!"); location.reload();
     }
 
     async function fetchVids() { try { const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev'); const vids = await res.json(); document.getElementById('vidGrid').innerHTML = vids.slice(0, 4).map(v => `<div class="card" onclick="play('${v.source}')" style="cursor:pointer;"><img src="${v.thumbnail.src}"><div style="padding:10px;"><b>${v.session_title}</b></div></div>`).join(''); } catch(e){} }
@@ -160,12 +161,12 @@
     function login() {
       if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
         document.getElementById('loginForm').style.display='none'; document.getElementById('editForm').style.display='block';
-        const d = currentData; document.getElementById('inWa').value = d.wa; document.getElementById('inAbout').value = d.about;
-        document.getElementById('inStats').checked = d.stats; document.getElementById('inChat').checked = d.chat;
-        document.getElementById('inChatUrl').value = d.chatUrl || "";
-        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1}" value="${d.gal[i]||''}">`;
+        document.getElementById('inWa').value = currentData.wa; document.getElementById('inAbout').value = currentData.about;
+        document.getElementById('inStats').checked = currentData.stats; document.getElementById('inChat').checked = currentData.chat;
+        document.getElementById('inChatUrl').value = currentData.chatUrl || "";
+        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto URL ${i+1}" value="${currentData.gal[i]||''}">`;
         document.getElementById('galInputs').innerHTML = gH;
-        let sH = ""; for(let i=0; i<3; i++) { const s = (d.ser && d.ser[i]) || {t:'', d:'', i:''}; sH += `<div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;"><input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}"><input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}"><input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d}"></div>`; }
+        let sH = ""; for(let i=0; i<3; i++) { const s = (currentData.ser && currentData.ser[i]) || {t:'', d:'', i:''}; sH += `<div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;"><input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}"><input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}"><input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d}"></div>`; }
         document.getElementById('serInputs').innerHTML = sH;
       }
     }
