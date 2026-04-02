@@ -21,19 +21,19 @@
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
     h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
     
-    /* VÍDEO OTIMIZADO */
-    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 10px; width: 100%; }
-    .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+    /* PLAYER MAIOR */
+    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; width: 100%; box-shadow: 0 0 30px rgba(245, 42, 31, 0.1); }
+    .player-area { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #000; }
     .player-area iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
-    .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 10px; display: flex; justify-content: space-around; font-size: 12px; font-weight: bold; color: #888; }
-    .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
+    .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 12px; display: flex; justify-content: space-around; font-size: 13px; font-weight: bold; color: #aaa; }
+    .dot { width: 10px; height: 10px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; margin-right: 5px; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
     .chat-area { width: 100%; height: 500px; border-top: 1px solid #222; display: none; background: #000; }
     .chat-area iframe { width: 100%; height: 100%; border: 0; }
 
-    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); width: 90%; max-width: 300px; }
+    .btn-red { background: var(--red); color: #fff; border: none; padding: 16px 30px; border-radius: 14px; font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.4); margin: 10px 0; }
 
     .section-title { text-align: center; font-size: 1.4rem; margin: 50px 0 25px; text-transform: uppercase; font-weight: 900; border-bottom: 2px solid var(--red); display: table; margin-left: auto; margin-right: auto; padding-bottom: 5px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
@@ -50,7 +50,6 @@
 
     .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 25px; padding: 25px; margin-top: 40px; }
     .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
-    .admin-label { font-size: 11px; color: var(--red); font-weight: 800; text-transform: uppercase; display: block; margin-top: 15px; }
     
     #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; }
     .btn-more { background:none; border:1px solid #333; color:#fff; padding:10px 20px; border-radius:30px; cursor:pointer; font-size:11px; margin-top:20px; text-transform: uppercase; font-weight: bold; }
@@ -74,19 +73,15 @@
     <h1>OS CANTA AGORA KARAOKE</h1>
 
     <div class="video-box">
-      <div class="player-area" id="mainPlayer">
-        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe>
-      </div>
-      <div class="live-bar" id="liveBar"><div><span class="dot"></span> LIVE</div><div>👥 <span id="vCount">--</span></div><div>🕒 <span id="vTime">--:--</span></div></div>
-      <div style="text-align:center; background:#0a0a0a; padding: 15px 0; border-top: 1px solid #222;">
-        <button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button>
-      </div>
+      <div class="player-area" id="mainPlayer"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe></div>
+      <div class="live-bar" id="liveBar"><div><span class="dot"></span> EM DIRETO</div><div>👥 <span id="vCount">--</span></div><div>🕒 <span id="vTime">--:--</span></div></div>
+      <div style="text-align:center; background:#0a0a0a; padding: 20px 0; border-top: 1px solid #222;"><button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button></div>
       <div class="chat-area" id="chatBox"><iframe id="chatFrame" src="" allow="clipboard-write"></iframe></div>
     </div>
 
-    <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:30px; text-align:center; border: 1px solid #111; margin: 40px 0;">
+    <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:40px; text-align:center; border: 1px solid #111; margin: 40px 0;">
       <h2 style="margin-top:0;">SOBRE NÓS</h2>
-      <p id="aboutText" style="color:#bbb; font-size: 15px;"></p>
+      <p id="aboutText" style="color:#bbb; font-size: 16px; line-height:1.6;"></p>
       <div id="waBtnArea"></div>
     </div>
 
@@ -109,15 +104,10 @@
       </div>
       <div id="editForm" style="display:none;">
         <label><input type="checkbox" id="inStats"> INFO LIVE</label> | <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
-        <span class="admin-label">Link do Chat Minnit</span>
-        <input id="inChatUrl" class="admin-input" placeholder="https://minnit.chat/1772345192?embed">
-        <span class="admin-label">WhatsApp (351...)</span>
-        <input id="inWa" class="admin-input">
-        <span class="admin-label">Texto Sobre Nós</span>
-        <textarea id="inAbout" class="admin-input" rows="3"></textarea>
-        <span class="admin-label">Galeria (Fotos URLs)</span>
+        <input id="inChatUrl" class="admin-input" placeholder="URL do Chat">
+        <input id="inWa" class="admin-input" placeholder="WhatsApp">
+        <textarea id="inAbout" class="admin-input" rows="3" placeholder="Sobre Nós"></textarea>
         <div id="galInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;"></div>
-        <span class="admin-label">Serviços</span>
         <div id="serInputs"></div>
         <button class="btn-red" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:30px;">GUARDAR TUDO</button>
         <button class="btn-red" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">FECHAR</button>
@@ -167,7 +157,6 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
 
       document.getElementById('serGrid').innerHTML = (currentData.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;">${s.d}</p></div></div>`).join('');
-      
       renderVids();
     }
 
