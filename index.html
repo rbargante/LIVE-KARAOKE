@@ -29,8 +29,15 @@
     .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .chat-area { width: 100%; height: 500px; border-top: 1px solid #222; display: none; background: #000; }
-    .chat-area iframe { width: 100%; height: 100%; border: 0; }
+    /* AJUSTE PARA ESCONDER A BARRA LATERAL DO MINNIT */
+    .chat-area { width: 100%; height: 500px; border-top: 1px solid #222; display: none; background: #000; overflow: hidden; position: relative; }
+    .chat-area iframe { 
+        position: absolute;
+        width: calc(100% + 190px) !important; /* Aumenta a largura para compensar o corte */
+        height: 100%; 
+        border: 0; 
+        margin-left: -190px !important; /* "Empurra" o painel lateral para fora */
+    }
 
     .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 25px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 42, 31, 0.3); }
 
