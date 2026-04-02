@@ -6,79 +6,79 @@
   <title>OS CANTA AGORA KARAOKE</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
-    /* RESET TOTAL PARA NÃO PARTIR */
-    :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; --white: #ffffff; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { background: #000 !important; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; font-family: -apple-system, system-ui, sans-serif; }
-    body { background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); min-height: 100vh; }
+    :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; }
+    * { box-sizing: border-box; }
+    html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; font-family: -apple-system, system-ui, sans-serif; }
+    body { background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); }
     
     .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #222; height: 60px; display: flex; align-items: center; padding: 0 20px; }
     .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .menu-btn { cursor: pointer; font-size: 13px; font-weight: 900; border: 1px solid #333; padding: 7px 15px; border-radius: 8px; text-transform: uppercase; color: #fff; }
+    .menu-btn { cursor: pointer; font-size: 13px; font-weight: 900; border: 1px solid #333; padding: 7px 15px; border-radius: 8px; text-transform: uppercase; }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
     h1 { font-size: 1.6rem; text-align: center; margin: 20px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* PLAYER FIXO */
-    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; }
     .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
-    .player-area iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .player-area iframe, .player-area video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
     .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 12px; display: none; justify-content: space-around; font-size: 12px; font-weight: bold; color: #888; }
     .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; margin-right: 5px; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; width: 100%; max-width: 300px; }
+    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
 
     .section-title { text-align: center; font-size: 1.3rem; margin: 40px 0 20px; text-transform: uppercase; font-weight: 900; color: var(--red); }
+    
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 15px; }
+    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 15px; transition: 0.3s; }
+    .card:hover { border-color: #333; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+    .card h3 { color: #fff; font-size: 0.9rem; margin: 10px; text-transform: uppercase; }
     
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
     .gallery-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; border: 1px solid #222; background: #111; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
 
-    .chat-area { width: 100%; height: 350px; border-top: 1px solid #222; display: none; background: #000; }
-
-    /* ADMIN */
     .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 25px; padding: 20px; margin-top: 40px; }
-    .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; font-size: 14px; }
+    .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
   </style>
 </head>
 <body>
 
   <nav class="top-nav">
     <div class="nav-inner">
-      <div style="font-weight:900; letter-spacing: 1px;">KARAOKE LIVE</div>
-      <div class="menu-btn" onclick="showAdmin()">ADMIN</div>
+      <div style="font-weight:900;">KARAOKE LIVE</div>
+      <div class="menu-btn" onclick="document.getElementById('adminArea').style.display='block'">ADMIN</div>
     </div>
   </nav>
 
-  <div class="container" id="top">
+  <div class="container">
     <h1>OS CANTA AGORA KARAOKE</h1>
 
     <div class="video-box">
       <div class="player-area" id="mainPlayer">
-        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true&parent=karaokelive.online" allowfullscreen="true"></iframe>
+        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true&parent=karaokelive.online"></iframe>
       </div>
       <div class="live-bar" id="liveBar">
-        <div><span class="dot"></span> LIVE</div>
+        <div><span class="dot"></span> EM DIRETO</div>
         <div>👥 <span id="vCount">--</span></div>
-        <div>🕒 <span id="vTime">00:00:00</span></div>
       </div>
       <div style="text-align:center; background:#0a0a0a; padding: 15px; border-top: 1px solid #222;">
         <button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM</button>
       </div>
-      <div class="chat-area" id="chatBox">
-        <iframe src="https://kick.com/popout/carloskaraoke/chat" width="100%" height="100%" frameborder="0"></iframe>
-      </div>
+      <div id="chatBox" style="height:350px; display:none;"><iframe src="https://kick.com/popout/carloskaraoke/chat" width="100%" height="100%"></iframe></div>
     </div>
 
     <div style="background:rgba(255,255,255,0.02); border-radius:20px; padding:25px; text-align:center; border: 1px solid #111; margin: 30px 0;">
-      <h2 style="font-size: 1.1rem; margin-bottom: 10px;">SOBRE NÓS</h2>
-      <p id="aboutText" style="color:#aaa; font-size: 14px; line-height: 1.5;"></p>
-      <div id="waArea" style="margin-top:15px;"></div>
+      <h2 style="font-size: 1.1rem;">SOBRE NÓS</h2>
+      <p id="aboutText" style="color:#aaa; font-size: 14px;"></p>
+      <div id="waArea"></div>
+    </div>
+
+    <h2 class="section-title">Arquivo de Vídeos (Kick)</h2>
+    <div id="vidGrid" class="grid">
+      <p style="text-align:center; color:#444; grid-column: 1/-1;">A carregar vídeos recentes...</p>
     </div>
 
     <h2 class="section-title">Momentos</h2>
@@ -88,29 +88,26 @@
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center; font-size: 1.2rem;">PAINEL GLOBAL</h2>
+      <h2 style="text-align:center;">PAINEL GLOBAL</h2>
       <div id="loginForm">
-        <input id="u" placeholder="User" class="admin-input">
-        <input id="p" type="password" placeholder="Pass" class="admin-input">
+        <input id="u" placeholder="User" class="admin-input"><input id="p" type="password" placeholder="Pass" class="admin-input">
         <button class="btn-red" style="width:100%" onclick="login()">ENTRAR</button>
       </div>
       <div id="editForm" style="display:none;">
-        <label style="display:block; margin: 10px 0;"><input type="checkbox" id="inStats"> MOSTRAR INFO LIVE</label>
-        <label style="display:block; margin: 10px 0;"><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
+        <label><input type="checkbox" id="inStats"> MOSTRAR INFO LIVE</label><br>
+        <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
         <input id="inWa" class="admin-input" placeholder="WhatsApp (351...)">
-        <textarea id="inAbout" class="admin-input" rows="3" placeholder="Texto Sobre Nós"></textarea>
-        <div id="galInputs"></div>
+        <textarea id="inAbout" class="admin-input" rows="3"></textarea>
+        <div id="galInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;"></div>
         <div id="serInputs"></div>
-        <button class="btn-red" style="background:#28a745; width:100%; margin-top:20px;" onclick="save()">GUARDAR TUDO</button>
-        <button class="btn-red" style="background:#444; width:100%; margin-top:10px;" onclick="location.reload()">SAIR</button>
+        <button class="btn-red" style="background:#28a745; width:100%; margin-top:20px;" onclick="save()">GUARDAR NO FIREBASE</button>
       </div>
     </div>
-
-    <footer style="text-align:center; padding: 40px 0; color:#333; font-size:10px;">KARAOKELIVE.ONLINE</footer>
   </div>
 
   <script>
     const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
+    let kickVideos = [];
 
     async function loadData() {
       try {
@@ -122,11 +119,34 @@
           document.getElementById('liveBar').style.display = d.stats ? 'flex' : 'none';
           document.getElementById('chatBox').style.display = d.chat ? 'block' : 'none';
           document.getElementById('galGrid').innerHTML = (d.gal || []).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-          document.getElementById('serGrid').innerHTML = (d.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:10px;"><h3>${s.t}</h3><p style="font-size:12px;color:#777">${s.d}</p></div></div>`).join('');
+          document.getElementById('serGrid').innerHTML = (d.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:12px;color:#777">${s.d}</p></div></div>`).join('');
           window.cfg = d;
         }
       } catch(e) {}
+      fetchKickVideos();
     }
+
+    // BUSCA OS VÍDEOS DIRETAMENTE DO KICK
+    async function fetchKickVideos() {
+      try {
+        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
+        kickVideos = await res.json();
+        document.getElementById('vidGrid').innerHTML = kickVideos.slice(0, 4).map(v => `
+          <div class="card" onclick="playVid('${v.source}')" style="cursor:pointer;">
+            <img src="${v.thumbnail.src}">
+            <h3>${v.session_title}</h3>
+          </div>
+        `).join('');
+      } catch(e) { document.getElementById('vidGrid').innerHTML = "Erro ao carregar vídeos."; }
+    }
+
+    function playVid(url) {
+      document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`;
+      const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('v'));
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true&muted=false&parent=karaokelive.online"; }
 
     async function save() {
       const g = []; for(let i=0; i<12; i++) { const v = document.getElementById('g'+i).value; if(v) g.push(v); }
@@ -136,20 +156,16 @@
       alert("Sincronizado!"); location.reload();
     }
 
-    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true&muted=false&parent=karaokelive.online"; }
-    function showAdmin() { document.getElementById('adminArea').style.display='block'; window.scrollTo(0, document.body.scrollHeight); }
     function login() {
       if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
         document.getElementById('loginForm').style.display='none'; document.getElementById('editForm').style.display='block';
         const d = window.cfg || {};
-        document.getElementById('inWa').value = d.wa || "";
-        document.getElementById('inAbout').value = d.about || "";
-        document.getElementById('inStats').checked = d.stats;
-        document.getElementById('inChat').checked = d.chat;
-        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1} URL" value="${(d.gal&&d.gal[i])?d.gal[i]:''}">`;
-        document.getElementById('galInputs').innerHTML = `<p style="font-size:10px; color:var(--red)">LINKS DAS FOTOS (MOMENTOS)</p>${gH}`;
+        document.getElementById('inWa').value = d.wa || ""; document.getElementById('inAbout').value = d.about || "";
+        document.getElementById('inStats').checked = d.stats; document.getElementById('inChat').checked = d.chat;
+        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1}" value="${(d.gal&&d.gal[i])?d.gal[i]:''}">`;
+        document.getElementById('galInputs').innerHTML = gH;
         let sH = ""; for(let i=0; i<3; i++) { const s=(d.ser&&d.ser[i])?d.ser[i]:{t:'',i:'',d:''}; sH += `<div style="border:1px solid #222; padding:10px; margin-top:10px;"><input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}"><input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}"><input id="sd${i}" class="admin-input" placeholder="Descrição" value="${s.d}"></div>`; }
-        document.getElementById('serInputs').innerHTML = `<p style="font-size:10px; color:var(--red); margin-top:20px;">SERVIÇOS (3 MÁX)</p>${sH}`;
+        document.getElementById('serInputs').innerHTML = sH;
       }
     }
     loadData();
