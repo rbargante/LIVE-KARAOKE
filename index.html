@@ -1,174 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>OS CANTA AGORA KARAOKE</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <style>
-    :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; }
-    * { box-sizing: border-box; }
-    html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; font-family: -apple-system, system-ui, sans-serif; }
-    body { background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaoke Live - Admin</title>
     
-    .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #222; height: 60px; display: flex; align-items: center; padding: 0 20px; }
-    .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .menu-btn { cursor: pointer; font-size: 13px; font-weight: 900; border: 1px solid #333; padding: 7px 15px; border-radius: 8px; text-transform: uppercase; }
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
 
-    .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
-    h1 { font-size: 1.6rem; text-align: center; margin: 20px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
-    
-    .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; }
-    .player-area { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
-    .player-area iframe, .player-area video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+        /* MENU SUPERIOR CORRIGIDO (FULL TEXT) */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border-bottom: 1px solid #222;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-    .live-bar { background: #0a0a0a; border-top: 1px solid #222; padding: 12px; display: none; justify-content: space-around; font-size: 12px; font-weight: bold; color: #888; }
-    .dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; display: inline-block; animation: blink 1.5s infinite; margin-right: 5px; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .logo { font-weight: 800; font-size: 1.1rem; letter-spacing: 1px; }
 
-    .btn-red { background: var(--red); color: #fff; border: none; padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+        nav { display: flex; align-items: center; gap: 15px; }
+        nav a { 
+            color: #efefef; 
+            text-decoration: none; 
+            font-size: 13px; 
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .btn-admin {
+            border: 1px solid #444;
+            padding: 6px 14px;
+            border-radius: 4px;
+            background: #1a1a1a;
+            color: #fff !important;
+        }
 
-    .section-title { text-align: center; font-size: 1.3rem; margin: 40px 0 20px; text-transform: uppercase; font-weight: 900; color: var(--red); }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 15px; transition: 0.3s; }
-    .card:hover { border-color: #333; }
-    .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-    .card h3 { color: #fff; font-size: 0.9rem; margin: 10px; text-transform: uppercase; }
-    
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-    .gallery-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; border: 1px solid #222; background: #111; }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        /* CONTEÚDO E CARDS */
+        .main-container { padding: 15px; max-width: 500px; margin: 0 auto; }
+        
+        .card {
+            background: #111;
+            border-radius: 18px;
+            padding: 30px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #222;
+            text-align: center;
+        }
 
-    .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 25px; padding: 20px; margin-top: 40px; }
-    .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
-  </style>
+        .img-banner {
+            width: 100%;
+            border-radius: 15px 15px 0 0;
+            display: block;
+            margin-bottom: -1px;
+        }
+
+        .painel-global { text-align: left; padding: 25px; }
+        .painel-global h2 { 
+            font-size: 1.4rem; 
+            margin-bottom: 25px; 
+            text-align: center; 
+            letter-spacing: 1px;
+        }
+        
+        .row-option {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #181818;
+            border-radius: 10px;
+        }
+
+        .row-option label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        input[type="checkbox"] { 
+            width: 22px; 
+            height: 22px; 
+            accent-color: #fff;
+            cursor: pointer; 
+        }
+
+        /* AJUSTE MOBILE PARA NÃO REBENTAR */
+        @media (max-width: 400px) {
+            nav { gap: 8px; }
+            nav a { font-size: 11px; }
+            .logo { font-size: 0.85rem; }
+            header { padding: 10px 12px; }
+        }
+    </style>
 </head>
 <body>
 
-  <nav class="top-nav">
-    <div class="nav-inner">
-      <div style="font-weight:900;">KARAOKE LIVE</div>
-      <div class="menu-btn" onclick="document.getElementById('adminArea').style.display='block'">ADMIN</div>
-    </div>
-  </nav>
+    <header>
+        <div class="logo">KARAOKE LIVE</div>
+        <nav>
+            <a href="/">HOME</a>
+            <a href="/dashboard">DASHBOARD</a>
+            <a href="/admin" class="btn-admin">ADMIN</a>
+        </nav>
+    </header>
 
-  <div class="container">
-    <h1>OS CANTA AGORA KARAOKE</h1>
+    <div class="main-container">
+        <div class="card" style="padding:0; overflow:hidden;">
+            <img src="https://via.placeholder.com/500x200/222/fff?text=KARAOKE+BANNER" class="img-banner" alt="Banner">
+            <div style="padding: 30px;">
+                <h2>TEST</h2>
+                <p style="color: #666; margin-top: 5px;">test</p>
+            </div>
+        </div>
 
-    <div class="video-box">
-      <div class="player-area" id="mainPlayer">
-        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true&parent=karaokelive.online"></iframe>
-      </div>
-      <div class="live-bar" id="liveBar">
-        <div><span class="dot"></span> EM DIRETO</div>
-        <div>👥 <span id="vCount">--</span></div>
-      </div>
-      <div style="text-align:center; background:#0a0a0a; padding: 15px; border-top: 1px solid #222;">
-        <button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM</button>
-      </div>
-      <div id="chatBox" style="height:350px; display:none;"><iframe src="https://kick.com/popout/carloskaraoke/chat" width="100%" height="100%"></iframe></div>
-    </div>
+        <div class="card painel-global">
+            <h2>PAINEL GLOBAL</h2>
+            
+            <div class="row-option">
+                <input type="checkbox" id="infoLiveCheck">
+                <label for="infoLiveCheck">MOSTRAR INFO LIVE</label>
+            </div>
 
-    <div style="background:rgba(255,255,255,0.02); border-radius:20px; padding:25px; text-align:center; border: 1px solid #111; margin: 30px 0;">
-      <h2 style="font-size: 1.1rem;">SOBRE NÓS</h2>
-      <p id="aboutText" style="color:#aaa; font-size: 14px;"></p>
-      <div id="waArea"></div>
-    </div>
-
-    <h2 class="section-title">Arquivo de Vídeos (Kick)</h2>
-    <div id="vidGrid" class="grid">
-      <p style="text-align:center; color:#444; grid-column: 1/-1;">A carregar vídeos recentes...</p>
+            <div class="row-option">
+                <input type="checkbox" id="chatCheck">
+                <label for="chatCheck">MOSTRAR CHAT</label>
+            </div>
+        </div>
     </div>
 
-    <h2 class="section-title">Momentos</h2>
-    <div id="galGrid" class="gallery-grid"></div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    <h2 class="section-title">Nossos Serviços</h2>
-    <div id="serGrid" class="grid"></div>
+        // Teu Firebase Config (mantendo o que já tinhas)
+        const firebaseConfig = {
+            databaseURL: "https://karaoke-live-online-default-rtdb.firebaseio.com/" 
+        };
 
-    <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center;">PAINEL GLOBAL</h2>
-      <div id="loginForm">
-        <input id="u" placeholder="User" class="admin-input"><input id="p" type="password" placeholder="Pass" class="admin-input">
-        <button class="btn-red" style="width:100%" onclick="login()">ENTRAR</button>
-      </div>
-      <div id="editForm" style="display:none;">
-        <label><input type="checkbox" id="inStats"> MOSTRAR INFO LIVE</label><br>
-        <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
-        <input id="inWa" class="admin-input" placeholder="WhatsApp (351...)">
-        <textarea id="inAbout" class="admin-input" rows="3"></textarea>
-        <div id="galInputs" style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;"></div>
-        <div id="serInputs"></div>
-        <button class="btn-red" style="background:#28a745; width:100%; margin-top:20px;" onclick="save()">GUARDAR NO FIREBASE</button>
-      </div>
-    </div>
-  </div>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-  <script>
-    const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
-    let kickVideos = [];
+        const infoCheck = document.getElementById('infoLiveCheck');
+        const chatCheck = document.getElementById('chatCheck');
 
-    async function loadData() {
-      try {
-        const res = await fetch(DB_URL);
-        const d = await res.json();
-        if(d) {
-          document.getElementById('aboutText').textContent = d.about || "";
-          document.getElementById('waArea').innerHTML = `<button class="btn-red" style="background:#25d366" onclick="window.open('https://wa.me/${d.wa}')">💬 WHATSAPP</button>`;
-          document.getElementById('liveBar').style.display = d.stats ? 'flex' : 'none';
-          document.getElementById('chatBox').style.display = d.chat ? 'block' : 'none';
-          document.getElementById('galGrid').innerHTML = (d.gal || []).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
-          document.getElementById('serGrid').innerHTML = (d.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:12px;color:#777">${s.d}</p></div></div>`).join('');
-          window.cfg = d;
-        }
-      } catch(e) {}
-      fetchKickVideos();
-    }
+        // Sincronizar estado inicial e mudanças remotas
+        onValue(ref(db, 'configuracoes'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                infoCheck.checked = data.mostrarInfoLive;
+                chatCheck.checked = data.mostrarChat;
+            }
+        });
 
-    // BUSCA OS VÍDEOS DIRETAMENTE DO KICK
-    async function fetchKickVideos() {
-      try {
-        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
-        kickVideos = await res.json();
-        document.getElementById('vidGrid').innerHTML = kickVideos.slice(0, 4).map(v => `
-          <div class="card" onclick="playVid('${v.source}')" style="cursor:pointer;">
-            <img src="${v.thumbnail.src}">
-            <h3>${v.session_title}</h3>
-          </div>
-        `).join('');
-      } catch(e) { document.getElementById('vidGrid').innerHTML = "Erro ao carregar vídeos."; }
-    }
+        // Gravar no Firebase ao clicar
+        infoCheck.addEventListener('change', () => {
+            set(ref(db, 'configuracoes/mostrarInfoLive'), infoCheck.checked);
+        });
 
-    function playVid(url) {
-      document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`;
-      const hls = new Hls(); hls.loadSource(url); hls.attachMedia(document.getElementById('v'));
-      window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-
-    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true&muted=false&parent=karaokelive.online"; }
-
-    async function save() {
-      const g = []; for(let i=0; i<12; i++) { const v = document.getElementById('g'+i).value; if(v) g.push(v); }
-      const s = []; for(let i=0; i<3; i++) { if(document.getElementById('st'+i).value) s.push({t:document.getElementById('st'+i).value, i:document.getElementById('si'+i).value, d:document.getElementById('sd'+i).value}); }
-      const data = { wa: document.getElementById('inWa').value, about: document.getElementById('inAbout').value, stats: document.getElementById('inStats').checked, chat: document.getElementById('inChat').checked, gal: g, ser: s };
-      await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(data) });
-      alert("Sincronizado!"); location.reload();
-    }
-
-    function login() {
-      if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
-        document.getElementById('loginForm').style.display='none'; document.getElementById('editForm').style.display='block';
-        const d = window.cfg || {};
-        document.getElementById('inWa').value = d.wa || ""; document.getElementById('inAbout').value = d.about || "";
-        document.getElementById('inStats').checked = d.stats; document.getElementById('inChat').checked = d.chat;
-        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto ${i+1}" value="${(d.gal&&d.gal[i])?d.gal[i]:''}">`;
-        document.getElementById('galInputs').innerHTML = gH;
-        let sH = ""; for(let i=0; i<3; i++) { const s=(d.ser&&d.ser[i])?d.ser[i]:{t:'',i:'',d:''}; sH += `<div style="border:1px solid #222; padding:10px; margin-top:10px;"><input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}"><input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}"><input id="sd${i}" class="admin-input" placeholder="Descrição" value="${s.d}"></div>`; }
-        document.getElementById('serInputs').innerHTML = sH;
-      }
-    }
-    loadData();
-  </script>
+        chatCheck.addEventListener('change', () => {
+            set(ref(db, 'configuracoes/mostrarChat'), chatCheck.checked);
+        });
+    </script>
 </body>
 </html>
