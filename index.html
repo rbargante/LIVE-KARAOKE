@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="pt">
 <head>
@@ -6,12 +7,15 @@
   <title>OS CANTA AGORA KARAOKE</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎤</text></svg>">
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
   <style>
     :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; }
     * { box-sizing: border-box; }
     html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; }
     body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); }
-    
+
     .top-nav { position: sticky; top: 0; z-index: 999; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #222; height: 60px; display: flex; align-items: center; padding: 0 20px; }
     .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .nav-links { display: flex; gap: 15px; align-items: center; }
@@ -20,8 +24,7 @@
 
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
     h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
-    
-    /* PLAYER MAIOR */
+
     .video-box { background: #000; border-radius: 20px; overflow: hidden; border: 1px solid #222; margin-bottom: 15px; width: 100%; box-shadow: 0 0 30px rgba(245, 42, 31, 0.1); }
     .player-area { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #000; }
     .player-area iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
@@ -50,13 +53,13 @@
 
     .admin-panel { display: none; background: #0a0a0a; border: 1px solid #333; border-radius: 25px; padding: 25px; margin-top: 40px; }
     .admin-input { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 10px; }
-    
+
     #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; }
     .btn-more { background:none; border:1px solid #333; color:#fff; padding:10px 20px; border-radius:30px; cursor:pointer; font-size:11px; margin-top:20px; text-transform: uppercase; font-weight: bold; }
   </style>
 </head>
-<body>
 
+<body>
   <nav class="top-nav">
     <div class="nav-inner">
       <div style="font-weight:900; color:var(--red);">KARAOKE LIVE</div>
@@ -73,10 +76,23 @@
     <h1>OS CANTA AGORA KARAOKE</h1>
 
     <div class="video-box">
-      <div class="player-area" id="mainPlayer"><iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe></div>
-      <div class="live-bar" id="liveBar"><div><span class="dot"></span> EM DIRETO</div><div>👥 <span id="vCount">--</span></div><div>🕒 <span id="vTime">--:--</span></div></div>
-      <div style="text-align:center; background:#0a0a0a; padding: 20px 0; border-top: 1px solid #222;"><button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button></div>
-      <div class="chat-area" id="chatBox"><iframe id="chatFrame" src="" allow="clipboard-write"></iframe></div>
+      <div class="player-area" id="mainPlayer">
+        <iframe id="livePlayer" src="https://player.kick.com/carloskaraoke?autoplay=true&muted=true" allowfullscreen="true"></iframe>
+      </div>
+
+      <div class="live-bar" id="liveBar">
+        <div><span class="dot"></span> EM DIRETO</div>
+        <div>👥 <span id="vCount">--</span></div>
+        <div>🕒 <span id="vTime">--:--</span></div>
+      </div>
+
+      <div style="text-align:center; background:#0a0a0a; padding: 20px 0; border-top: 1px solid #222;">
+        <button class="btn-red" onclick="unmute()">🔊 ATIVAR SOM EM DIRETO</button>
+      </div>
+
+      <div class="chat-area" id="chatBox">
+        <iframe id="chatFrame" src="" allow="clipboard-write"></iframe>
+      </div>
     </div>
 
     <div style="background:rgba(255,255,255,0.03); border-radius:20px; padding:40px; text-align:center; border: 1px solid #111; margin: 40px 0;">
@@ -87,29 +103,44 @@
 
     <h2 class="section-title" id="momentos">Momentos</h2>
     <div id="galGrid" class="gallery-grid"></div>
-    <div style="text-align:center;"><button class="btn-more" id="btnGal" onclick="toggleGal()">Ver Mais</button></div>
+    <div style="text-align:center;">
+      <button class="btn-more" id="btnGal" onclick="toggleGal()">Ver Mais</button>
+    </div>
 
     <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
     <div id="vidGrid" class="grid"></div>
-    <div style="text-align:center;"><button class="btn-more" id="btnVid" onclick="toggleVids()">Ver Mais Vídeos</button></div>
+    <div style="text-align:center;">
+      <button class="btn-more" id="btnVid" onclick="toggleVids()">Ver Mais Vídeos</button>
+    </div>
 
     <h2 class="section-title">Nossos Serviços</h2>
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
       <h2 style="text-align:center; color:var(--red);">GLOBAL ADMIN</h2>
+
       <div id="loginForm">
-        <input id="u" placeholder="User" class="admin-input"><input id="p" type="password" placeholder="Pass" class="admin-input">
+        <input id="u" type="email" placeholder="Email" class="admin-input">
+        <input id="p" type="password" placeholder="Password" class="admin-input">
         <button class="btn-red" onclick="login()" style="width:100%; margin-top:10px;">ENTRAR</button>
       </div>
+
       <div id="editForm" style="display:none;">
-        <label><input type="checkbox" id="inStats"> INFO LIVE</label> | <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
+        <p id="adminUser" style="color:#888; font-size:12px; text-align:center;"></p>
+
+        <label><input type="checkbox" id="inStats"> INFO LIVE</label>
+        |
+        <label><input type="checkbox" id="inChat"> MOSTRAR CHAT</label>
+
         <input id="inChatUrl" class="admin-input" placeholder="URL do Chat">
         <input id="inWa" class="admin-input" placeholder="WhatsApp">
         <textarea id="inAbout" class="admin-input" rows="3" placeholder="Sobre Nós"></textarea>
+
         <div id="galInputs" style="display:grid; grid-template-columns:1fr 1fr; gap:5px;"></div>
         <div id="serInputs"></div>
+
         <button class="btn-red" onclick="saveAll()" style="background:#28a745; width:100%; margin-top:30px;">GUARDAR TUDO</button>
+        <button class="btn-red" onclick="logout()" style="background:#8a1f1f; width:100%; margin-top:10px;">SAIR DO ADMIN</button>
         <button class="btn-red" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">FECHAR</button>
       </div>
     </div>
@@ -126,10 +157,29 @@
     </div>
   </footer>
 
-  <div id="wa-float" onclick="openWa()"><svg style="width:30px; fill:#fff" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg></div>
+  <div id="wa-float" onclick="openWa()">
+    <svg style="width:30px; fill:#fff" viewBox="0 0 448 512">
+      <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.1 0-65.6-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.8 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7 1-6.9-.5-9.8-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+    </svg>
+  </div>
 
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4rGfgK7QYndZ6lWfOEwQ5kwaJvdNGoks",
+      authDomain: "karaokelive-ca58e.firebaseapp.com",
+      databaseURL: "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "karaokelive-ca58e",
+      storageBucket: "karaokelive-ca58e.firebasestorage.app",
+      messagingSenderId: "544688414020",
+      appId: "1:544688414020:web:60858209513ce651124b11",
+      measurementId: "G-SYJ4ETTWG5"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
     const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
+    const ADMIN_EMAIL = "ricardobargante@live.com";
+
     let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
     let galAll = false;
     let vidsAll = false;
@@ -139,75 +189,255 @@
       try {
         const res = await fetch(DB_URL);
         const d = await res.json();
-        if(d) currentData = d;
+        if (d) currentData = d;
         renderUI();
-      } catch(e) {}
+      } catch (e) {
+        console.error("Erro ao carregar Firebase Database:", e);
+      }
+
       fetchVids();
     }
 
     function renderUI() {
-      document.getElementById('aboutText').textContent = currentData.about;
+      document.getElementById('aboutText').textContent = currentData.about || "";
       document.getElementById('waBtnArea').innerHTML = `<button class="btn-red" style="background:#25d366" onclick="openWa()">💬 WHATSAPP</button>`;
       document.getElementById('liveBar').style.display = currentData.stats ? 'flex' : 'none';
       document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
       document.getElementById('chatFrame').src = currentData.chatUrl || "";
-      
-      const limGal = galAll ? currentData.gal.length : 4;
-      document.getElementById('galGrid').innerHTML = (currentData.gal || []).slice(0, limGal).map(img => `<div class="gallery-item"><img src="${img}"></div>`).join('');
+
+      const gal = currentData.gal || [];
+      const limGal = galAll ? gal.length : 4;
+
+      document.getElementById('galGrid').innerHTML = gal
+        .slice(0, limGal)
+        .map(img => `<div class="gallery-item"><img src="${img}" loading="lazy"></div>`)
+        .join('');
+
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
 
-      document.getElementById('serGrid').innerHTML = (currentData.ser || []).map(s => `<div class="card"><img src="${s.i}"><div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;">${s.d}</p></div></div>`).join('');
+      const ser = currentData.ser || [];
+
+      document.getElementById('serGrid').innerHTML = ser
+        .map(s => `
+          <div class="card">
+            <img src="${s.i}" loading="lazy">
+            <div style="padding:15px;">
+              <h3>${s.t}</h3>
+              <p style="font-size:13px;color:#888;">${s.d}</p>
+            </div>
+          </div>
+        `)
+        .join('');
+
       renderVids();
     }
 
-    async function fetchVids() { 
-        try { 
-            const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev'); 
-            allFetchedVids = await res.json(); 
-            renderVids();
-        } catch(e){} 
+    async function fetchVids() {
+      try {
+        const res = await fetch('https://karaoke-videos.ricardobargante.workers.dev');
+        allFetchedVids = await res.json();
+        renderVids();
+      } catch (e) {
+        console.error("Erro ao carregar vídeos:", e);
+      }
     }
 
     function renderVids() {
-        const limVid = vidsAll ? allFetchedVids.length : 4;
-        document.getElementById('vidGrid').innerHTML = allFetchedVids.slice(0, limVid).map(v => `
-            <div class="card" onclick="play('${v.source}')" style="cursor:pointer;">
-                <img src="${v.thumbnail.src}">
-                <div style="padding:10px;"><b>${v.session_title}</b></div>
-            </div>`).join('');
-        document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
+      const limVid = vidsAll ? allFetchedVids.length : 4;
+
+      document.getElementById('vidGrid').innerHTML = allFetchedVids
+        .slice(0, limVid)
+        .map(v => `
+          <div class="card" onclick="play('${v.source}')" style="cursor:pointer;">
+            <img src="${v.thumbnail.src}" loading="lazy">
+            <div style="padding:10px;"><b>${v.session_title}</b></div>
+          </div>
+        `)
+        .join('');
+
+      document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
     }
 
-    function toggleVids() { vidsAll = !vidsAll; renderVids(); }
-    function toggleGal() { galAll = !galAll; renderUI(); }
+    function toggleVids() {
+      vidsAll = !vidsAll;
+      renderVids();
+    }
+
+    function toggleGal() {
+      galAll = !galAll;
+      renderUI();
+    }
 
     async function saveAll() {
-      const g = []; for(let i=0; i<12; i++) { const v=document.getElementById(`g${i}`).value; if(v) g.push(v); }
-      const s = []; for(let i=0; i<3; i++) { if(document.getElementById(`st${i}`).value) s.push({ t: document.getElementById(`st${i}`).value, i: document.getElementById(`si${i}`).value, d: document.getElementById(`sd${i}`).value }); }
-      const data = { wa: document.getElementById('inWa').value, about: document.getElementById('inAbout').value, stats: document.getElementById('inStats').checked, chat: document.getElementById('inChat').checked, chatUrl: document.getElementById('inChatUrl').value, gal: g, ser: s };
-      await fetch(DB_URL, { method: 'PUT', body: JSON.stringify(data) });
-      alert("ATUALIZADO!"); location.reload();
-    }
+      const user = firebase.auth().currentUser;
 
-    function play(u) { document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`; const hls = new Hls(); hls.loadSource(u); hls.attachMedia(document.getElementById('v')); window.scrollTo({top: 0, behavior: 'smooth'}); }
-    function showAdmin() { document.getElementById('adminArea').style.display = 'block'; window.scrollTo(0, document.body.scrollHeight); }
-    function hideAdmin() { document.getElementById('adminArea').style.display = 'none'; }
-    function openWa() { window.open(`https://wa.me/${currentData.wa.replace(/\D/g,'')}`, '_blank'); }
-    function unmute() { document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true"; }
+      if (!user || user.email !== ADMIN_EMAIL) {
+        alert("Sem autorização. Faz login com o email de administrador.");
+        return;
+      }
 
-    function login() {
-      if(document.getElementById('u').value==='admin' && document.getElementById('p').value==='1234') {
-        document.getElementById('loginForm').style.display='none'; document.getElementById('editForm').style.display='block';
-        document.getElementById('inWa').value = currentData.wa; document.getElementById('inAbout').value = currentData.about;
-        document.getElementById('inStats').checked = currentData.stats; document.getElementById('inChat').checked = currentData.chat;
-        document.getElementById('inChatUrl').value = currentData.chatUrl || "";
-        let gH = ""; for(let i=0; i<12; i++) gH += `<input id="g${i}" class="admin-input" placeholder="Foto URL ${i+1}" value="${currentData.gal[i]||''}">`;
-        document.getElementById('galInputs').innerHTML = gH;
-        let sH = ""; for(let i=0; i<3; i++) { const s = (currentData.ser && currentData.ser[i]) || {t:'', d:'', i:''}; sH += `<div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;"><input id="st${i}" class="admin-input" placeholder="Título" value="${s.t}"><input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i}"><input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d}"></div>`; }
-        document.getElementById('serInputs').innerHTML = sH;
+      const g = [];
+
+      for (let i = 0; i < 12; i++) {
+        const v = document.getElementById(`g${i}`).value.trim();
+        if (v) g.push(v);
+      }
+
+      const s = [];
+
+      for (let i = 0; i < 3; i++) {
+        const title = document.getElementById(`st${i}`).value.trim();
+        const image = document.getElementById(`si${i}`).value.trim();
+        const desc = document.getElementById(`sd${i}`).value.trim();
+
+        if (title) {
+          s.push({ t: title, i: image, d: desc });
+        }
+      }
+
+      const data = {
+        wa: document.getElementById('inWa').value.trim(),
+        about: document.getElementById('inAbout').value.trim(),
+        stats: document.getElementById('inStats').checked,
+        chat: document.getElementById('inChat').checked,
+        chatUrl: document.getElementById('inChatUrl').value.trim(),
+        gal: g,
+        ser: s
+      };
+
+      try {
+        const token = await user.getIdToken(true);
+
+        const res = await fetch(`${DB_URL}?auth=${token}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro Firebase: " + res.status);
+        }
+
+        alert("ATUALIZADO!");
+        location.reload();
+      } catch (e) {
+        console.error("Erro ao guardar:", e);
+        alert("Erro ao guardar. Confirma as regras da Firebase e o login.");
       }
     }
+
+    function play(u) {
+      document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`;
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(u);
+        hls.attachMedia(document.getElementById('v'));
+      } else {
+        document.getElementById('v').src = u;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showAdmin() {
+      document.getElementById('adminArea').style.display = 'block';
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function hideAdmin() {
+      document.getElementById('adminArea').style.display = 'none';
+    }
+
+    function openWa() {
+      window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}`, '_blank');
+    }
+
+    function unmute() {
+      document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true";
+    }
+
+    async function login() {
+      const email = document.getElementById('u').value.trim();
+      const password = document.getElementById('p').value;
+
+      if (!email || !password) {
+        alert("Mete o email e a password.");
+        return;
+      }
+
+      try {
+        const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = cred.user;
+
+        if (!user || user.email !== ADMIN_EMAIL) {
+          await firebase.auth().signOut();
+          alert("Este email não tem autorização para o Admin.");
+          return;
+        }
+
+        openEditForm(user.email);
+      } catch (e) {
+        console.error("Erro no login:", e);
+        alert("Login falhou. Verifica email e password.");
+      }
+    }
+
+    function openEditForm(email) {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('editForm').style.display = 'block';
+      document.getElementById('adminUser').textContent = `Ligado como: ${email}`;
+
+      document.getElementById('inWa').value = currentData.wa || "";
+      document.getElementById('inAbout').value = currentData.about || "";
+      document.getElementById('inStats').checked = !!currentData.stats;
+      document.getElementById('inChat').checked = !!currentData.chat;
+      document.getElementById('inChatUrl').value = currentData.chatUrl || "";
+
+      let gH = "";
+
+      for (let i = 0; i < 12; i++) {
+        gH += `<input id="g${i}" class="admin-input" placeholder="Foto URL ${i + 1}" value="${(currentData.gal && currentData.gal[i]) || ''}">`;
+      }
+
+      document.getElementById('galInputs').innerHTML = gH;
+
+      let sH = "";
+
+      for (let i = 0; i < 3; i++) {
+        const s = (currentData.ser && currentData.ser[i]) || { t: '', d: '', i: '' };
+
+        sH += `
+          <div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;">
+            <input id="st${i}" class="admin-input" placeholder="Título" value="${s.t || ''}">
+            <input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i || ''}">
+            <input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d || ''}">
+          </div>
+        `;
+      }
+
+      document.getElementById('serInputs').innerHTML = sH;
+    }
+
+    async function logout() {
+      await firebase.auth().signOut();
+      document.getElementById('editForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('u').value = "";
+      document.getElementById('p').value = "";
+      alert("Sessão terminada.");
+    }
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user && user.email === ADMIN_EMAIL) {
+        openEditForm(user.email);
+      }
+    });
+
     load();
   </script>
 </body>
 </html>
+```
