@@ -8,8 +8,6 @@
   
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
 
   <style>
     :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; }
@@ -21,7 +19,7 @@
     .nav-inner { max-width: 1120px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .nav-links { display: flex; gap: 15px; align-items: center; }
     .nav-links a { color: #fff; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    .btn-admin-nav { border: 1px solid #444; padding: 6px 12px; border-radius: 8px; background: #111; }
+    .btn-admin-nav { border: 1px solid #444; padding: 6px 12px; border-radius: 8px; background: #111; cursor: pointer; }
 
     .container { max-width: 1120px; margin: 0 auto; padding: 15px; }
     h1 { font-size: 1.8rem; text-align: center; margin: 25px 0; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
@@ -118,16 +116,16 @@
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center; color:var(--red);">GLOBAL ADMIN</h2>
+      <h2 style="text-align:center; color:var(--red);">GLOBAL ADMIN SIMPLE</h2>
 
       <div id="loginForm">
-        <input id="u" type="email" placeholder="Email" class="admin-input">
-        <input id="p" type="password" placeholder="Password" class="admin-input">
+        <p style="text-align:center; color:#888; font-size:13px;">Insere a palavra-passe do administrador para editar.</p>
+        <input id="p" type="password" placeholder="Palavra-passe do Painel" class="admin-input">
         <button class="btn-red" onclick="login()" style="width:100%; margin-top:10px;">ENTRAR</button>
       </div>
 
       <div id="editForm" style="display:none;">
-        <p id="adminUser" style="color:#888; font-size:12px; text-align:center;"></p>
+        <p style="color:#28a745; font-size:12px; text-align:center; font-weight:bold;">Acesso Autorizado</p>
 
         <label><input type="checkbox" id="inStats"> INFO LIVE</label>
         |
@@ -165,26 +163,28 @@
   </div>
 
   <script>
+    // Inicialização simples da Firebase (apenas a app base)
     const firebaseConfig = {
-      apiKey: "AIzaSyB4rGfgK7QYndZ6lWfOEwQ5kwaJvdNGoks",
-      authDomain: "karaokelive-ca58e.firebaseapp.com",
-      databaseURL: "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "karaokelive-ca58e",
-      storageBucket: "karaokelive-ca58e.firebasestorage.app",
-      messagingSenderId: "544688414020",
-      appId: "1:544688414020:web:60858209513ce651124b11",
-      measurementId: "G-SYJ4ETTWG5"
+      databaseURL: "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app"
     };
-
     firebase.initializeApp(firebaseConfig);
 
     const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
-    const ADMIN_EMAIL = "ricardobargante@live.com";
+    
+    // Hash SHA-256 gerado para a password "CantaAgora2026" para segurança básica
+    const PASS_HASH = "7c13a01490214c776097dfbd0a10819777556a31cbe572dcd911e25e9828fa6b";
 
     let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
     let galAll = false;
     let vidsAll = false;
     let allFetchedVids = [];
+
+    // Função auxiliar para encriptar a senha introduzida no input e comparar
+    async function sha256(str) {
+      const buf = new TextEncoder().encode(str);
+      const hash = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
     async function load() {
       try {
@@ -196,6 +196,11 @@
         console.error("Erro ao carregar Firebase Database:", e);
       }
       fetchVids();
+      
+      // Auto-login se já tiver entrado antes neste PC/Telemóvel
+      if (localStorage.getItem('admin_logged') === 'true') {
+        openEditForm();
+      }
     }
 
     function renderUI() {
@@ -216,7 +221,6 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
 
       const ser = currentData.ser || [];
-
       document.getElementById('serGrid').innerHTML = ser
         .map(s => `
           <div class="card">
@@ -244,7 +248,6 @@
 
     function renderVids() {
       const limVid = vidsAll ? allFetchedVids.length : 4;
-
       document.getElementById('vidGrid').innerHTML = allFetchedVids
         .slice(0, limVid)
         .map(v => `
@@ -268,11 +271,57 @@
       renderUI();
     }
 
-    async function saveAll() {
-      const user = firebase.auth().currentUser;
+    async function login() {
+      const passwordInput = document.getElementById('p').value;
+      if (!passwordInput) {
+        alert("Insere a palavra-passe.");
+        return;
+      }
 
-      if (!user || user.email !== ADMIN_EMAIL) {
-        alert("Sem autorização. Faz login com o email de administrador.");
+      const inputHash = await sha256(passwordInput);
+      if (inputHash === PASS_HASH) {
+        localStorage.setItem('admin_logged', 'true');
+        openEditForm();
+      } else {
+        alert("Palavra-passe errada!");
+      }
+    }
+
+    function openEditForm() {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('editForm').style.display = 'block';
+
+      document.getElementById('inWa').value = currentData.wa || "";
+      document.getElementById('inAbout').value = currentData.about || "";
+      document.getElementById('inStats').checked = !!currentData.stats;
+      document.getElementById('inChat').checked = !!currentData.chat;
+      document.getElementById('inChatUrl').value = currentData.chatUrl || "";
+
+      let gH = "";
+      const galData = currentData.gal || [];
+      for (let i = 0; i < 12; i++) {
+        gH += `<input id="g${i}" class="admin-input" placeholder="Foto URL ${i + 1}" value="${galData[i] || ''}">`;
+      }
+      document.getElementById('galInputs').innerHTML = gH;
+
+      let sH = "";
+      const serData = currentData.ser || [];
+      for (let i = 0; i < 3; i++) {
+        const s = serData[i] || { t: '', d: '', i: '' };
+        sH += `
+          <div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;">
+            <input id="st${i}" class="admin-input" placeholder="Título" value="${s.t || ''}">
+            <input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i || ''}">
+            <input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d || ''}">
+          </div>
+        `;
+      }
+      document.getElementById('serInputs').innerHTML = sH;
+    }
+
+    async function saveAll() {
+      if (localStorage.getItem('admin_logged') !== 'true') {
+        alert("Não tens sessão iniciada.");
         return;
       }
 
@@ -309,31 +358,33 @@
       };
 
       try {
-        const token = await user.getIdToken(true);
-
-        const res = await fetch(`${DB_URL}?auth=${token}`, {
+        // Envia os dados diretamente à Database sem tokens de Auth complexos
+        const res = await fetch(DB_URL, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
-        if (!res.ok) {
-          throw new Error("Erro Firebase: " + res.status);
-        }
+        if (!res.ok) throw new Error("Erro ao gravar: " + res.status);
 
-        alert("ATUALIZADO!");
+        alert("ATUALIZADO COM SUCESSO!");
         location.reload();
       } catch (e) {
         console.error("Erro ao guardar:", e);
-        alert("Erro ao guardar. Confirma as regras da Firebase e o login.");
+        alert("Erro ao guardar. Verifica as regras de escrita na tua Realtime Database.");
       }
+    }
+
+    function logout() {
+      localStorage.removeItem('admin_logged');
+      document.getElementById('editForm').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('p').value = "";
+      alert("Sessão terminada.");
     }
 
     function play(u) {
       document.getElementById('mainPlayer').innerHTML = `<video id="v" controls autoplay playsinline style="width:100%;height:100%"></video>`;
-
       if (Hls.isSupported()) {
         const hls = new Hls();
         hls.loadSource(u);
@@ -341,7 +392,6 @@
       } else {
         document.getElementById('v').src = u;
       }
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -361,80 +411,6 @@
     function unmute() {
       document.getElementById('livePlayer').src = "https://player.kick.com/carloskaraoke?autoplay=true";
     }
-
-    async function login() {
-      const email = document.getElementById('u').value.trim();
-      const password = document.getElementById('p').value;
-
-      if (!email || !password) {
-        alert("Mete o email e a password.");
-        return;
-      }
-
-      try {
-        const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
-        const user = cred.user;
-
-        if (!user || user.email !== ADMIN_EMAIL) {
-          await firebase.auth().signOut();
-          alert("Este email não tem autorização para o Admin.");
-          return;
-        }
-
-        openEditForm(user.email);
-      } catch (e) {
-        console.error("Erro no login:", e);
-        alert("Login falhou. Verifica email e password.");
-      }
-    }
-
-    function openEditForm(email) {
-      document.getElementById('loginForm').style.display = 'none';
-      document.getElementById('editForm').style.display = 'block';
-      document.getElementById('adminUser').textContent = `Ligado como: ${email}`;
-
-      document.getElementById('inWa').value = currentData.wa || "";
-      document.getElementById('inAbout').value = currentData.about || "";
-      document.getElementById('inStats').checked = !!currentData.stats;
-      document.getElementById('inChat').checked = !!currentData.chat;
-      document.getElementById('inChatUrl').value = currentData.chatUrl || "";
-
-      let gH = "";
-      const galData = currentData.gal || [];
-      for (let i = 0; i < 12; i++) {
-        gH += `<input id="g${i}" class="admin-input" placeholder="Foto URL ${i + 1}" value="${galData[i] || ''}">`;
-      }
-      document.getElementById('galInputs').innerHTML = gH;
-
-      let sH = "";
-      const serData = currentData.ser || [];
-      for (let i = 0; i < 3; i++) {
-        const s = serData[i] || { t: '', d: '', i: '' };
-        sH += `
-          <div style="border:1px solid #222; padding:10px; margin-top:10px; border-radius:10px;">
-            <input id="st${i}" class="admin-input" placeholder="Título" value="${s.t || ''}">
-            <input id="si${i}" class="admin-input" placeholder="Imagem URL" value="${s.i || ''}">
-            <input id="sd${i}" class="admin-input" placeholder="Texto" value="${s.d || ''}">
-          </div>
-        `;
-      }
-      document.getElementById('serInputs').innerHTML = sH;
-    }
-
-    async function logout() {
-      await firebase.auth().signOut();
-      document.getElementById('editForm').style.display = 'none';
-      document.getElementById('loginForm').style.display = 'block';
-      document.getElementById('u').value = "";
-      document.getElementById('p').value = "";
-      alert("Sessão terminada.");
-    }
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user && user.email === ADMIN_EMAIL) {
-        openEditForm(user.email);
-      }
-    });
 
     load();
   </script>
