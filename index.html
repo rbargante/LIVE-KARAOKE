@@ -115,16 +115,17 @@
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center; color:var(--red);">PAINEL DE CONTROLO</h2>
+      <h2 style="text-align:center; color:var(--red);">GLOBAL ADMIN PANEL</h2>
 
       <div id="loginForm">
-        <p style="text-align:center; color:#888; font-size:13px;">Insere a palavra-passe do administrador para editar.</p>
-        <input id="p" type="password" placeholder="Palavra-passe" class="admin-input">
-        <button class="btn-red" onclick="login()" style="width:100%; margin-top:10px;">ENTRAR</button>
+        <p style="text-align:center; color:#888; font-size:13px; margin-bottom: 15px;">Acede com as tuas credenciais de administrador.</p>
+        <input id="u" type="text" placeholder="Utilizador" class="admin-input" autocomplete="username">
+        <input id="p" type="password" placeholder="Palavra-passe" class="admin-input" autocomplete="current-password">
+        <button class="btn-red" onclick="login()" style="width:100%; margin-top:10px;">ENTRAR NO PAINEL</button>
       </div>
 
       <div id="editForm" style="display:none;">
-        <p style="color:#28a745; font-size:12px; text-align:center; font-weight:bold;">Sessão Ativa</p>
+        <p id="activeSessionText" style="color:#28a745; font-size:12px; text-align:center; font-weight:bold;"></p>
 
         <label><input type="checkbox" id="inStats"> INFO LIVE</label>
         |
@@ -162,10 +163,11 @@
   </div>
 
   <script>
-    // URL direta do endpoint JSON (substitui pelo teu link de base de dados REST real ou Worker se alterares no futuro)
+    // Configuração do URL da base de dados (Substituir pelo link REST correto se necessário)
     const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
     
-    // Hash SHA-256 para a password "CantaAgora2026"
+    // Hashes de proteção SHA-256 (User: admin / Pass: CantaAgora2026)
+    const USER_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
     const PASS_HASH = "7c13a01490214c776097dfbd0a10819777556a31cbe572dcd911e25e9828fa6b";
 
     let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
@@ -173,7 +175,7 @@
     let vidsAll = false;
     let allFetchedVids = [];
 
-    // Função nativa para encriptação segura da senha
+    // Função de encriptação
     async function sha256(str) {
       const buf = new TextEncoder().encode(str);
       const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -187,12 +189,13 @@
         if (d) currentData = d;
         renderUI();
       } catch (e) {
-        console.error("Erro ao carregar dados do servidor:", e);
+        console.error("Erro ao ler base de dados:", e);
       }
       fetchVids();
       
+      // Valida se o utilizador já efetuou login neste dispositivo anteriormente
       if (localStorage.getItem('admin_logged') === 'true') {
-        openEditForm();
+        openEditForm(localStorage.getItem('admin_user_display') || 'admin');
       }
     }
 
@@ -235,7 +238,7 @@
         allFetchedVids = await res.json();
         renderVids();
       } catch (e) {
-        console.error("Erro ao carregar vídeos do worker:", e);
+        console.error("Erro ao obter vídeos:", e);
       }
     }
 
@@ -265,24 +268,30 @@
     }
 
     async function login() {
+      const userInput = document.getElementById('u').value.trim();
       const passwordInput = document.getElementById('p').value;
-      if (!passwordInput) {
-        alert("Insere a palavra-passe.");
+
+      if (!userInput || !passwordInput) {
+        alert("Preenche o utilizador e a palavra-passe.");
         return;
       }
 
-      const inputHash = await sha256(passwordInput);
-      if (inputHash === PASS_HASH) {
+      const encodedUser = await sha256(userInput);
+      const encodedPass = await sha256(passwordInput);
+
+      if (encodedUser === USER_HASH && encodedPass === PASS_HASH) {
         localStorage.setItem('admin_logged', 'true');
-        openEditForm();
+        localStorage.setItem('admin_user_display', userInput);
+        openEditForm(userInput);
       } else {
-        alert("Palavra-passe errada!");
+        alert("Utilizador ou Palavra-passe incorretos!");
       }
     }
 
-    function openEditForm() {
+    function openEditForm(username) {
       document.getElementById('loginForm').style.display = 'none';
       document.getElementById('editForm').style.display = 'block';
+      document.getElementById('activeSessionText').textContent = `Sessão Iniciada: ${username}`;
 
       document.getElementById('inWa').value = currentData.wa || "";
       document.getElementById('inAbout').value = currentData.about || "";
@@ -314,7 +323,7 @@
 
     async function saveAll() {
       if (localStorage.getItem('admin_logged') !== 'true') {
-        alert("Sessão não autorizada.");
+        alert("Sessão expirada ou inválida.");
         return;
       }
 
@@ -357,22 +366,24 @@
           body: JSON.stringify(data)
         });
 
-        if (!res.ok) throw new Error("Erro na gravação: " + res.status);
+        if (!res.ok) throw new Error("Erro de rede ao salvar: " + res.status);
 
-        alert("CONTEÚDO ATUALIZADO!");
+        alert("ATUALIZADO COM SUCESSO!");
         location.reload();
       } catch (e) {
-        console.error("Erro ao guardar:", e);
-        alert("Erro ao guardar dados. Confirma a configuração do endpoint REST.");
+        console.error("Erro ao guardar modificações:", e);
+        alert("Erro ao processar gravação. Verifica o estado do teu servidor/base de dados REST.");
       }
     }
 
     function logout() {
       localStorage.removeItem('admin_logged');
+      localStorage.removeItem('admin_user_display');
       document.getElementById('editForm').style.display = 'none';
       document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('u').value = "";
       document.getElementById('p').value = "";
-      alert("Sessão terminada.");
+      alert("Desconectado com sucesso.");
     }
 
     function play(u) {
