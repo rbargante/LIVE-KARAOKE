@@ -76,11 +76,15 @@
     .section-title { text-align: center; font-size: 1.5rem; margin: 60px 0 30px; text-transform: uppercase; font-weight: 900; border-bottom: 3px solid var(--primary-color); display: table; margin-left: auto; margin-right: auto; padding-bottom: 6px; letter-spacing: 1px; }
     
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
-    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 20px; transition: transform 0.3s, border-color 0.3s; position: relative; }
+    
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+    @media (max-width: 900px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .services-grid { grid-template-columns: 1fr; } }
+
+    .card { background: var(--card); border: 1px solid #1a1a1a; border-radius: 20px; overflow: hidden; text-align: center; padding-bottom: 20px; transition: transform 0.3s, border-color 0.3s; position: relative; display: flex; flex-direction: column; }
     .card:hover { transform: translateY(-5px); border-color: #333; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 
-    /* Ajustado: Player agora ocupa 100% do espaço vertical do card sem botões extra embaixo */
     .card-player-wrap { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; }
     .card-player-wrap video, .card-player-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
 
@@ -124,8 +128,11 @@
     .admin-input:focus { border-color: var(--primary-color); outline: none; }
     .admin-checkbox-group { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; background: #000; padding: 12px; border-radius: 10px; border: 1px solid #232329; }
     .admin-checkbox-group label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #fff; }
-    #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 99; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+    
+    #wa-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 999; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
     #wa-float:hover { transform: scale(1.1); }
+    #wa-float svg { width: 30px; height: 30px; fill: #fff; }
+    
     .btn-more { background:none; border:1px solid #333; color:#fff; padding:10px 24px; border-radius:30px; cursor:pointer; font-size:11px; margin-top:25px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; transition: all 0.2s; }
     .btn-more:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(245, 42, 31, 0.05); }
   </style>
@@ -214,8 +221,10 @@
       <button class="btn-more" id="btnGal" onclick="toggleGal()">Ver Mais</button>
     </div>
 
-    <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
-    <div id="vidGrid" class="grid"></div>
+    <h2 class="section-title" id="videos">Arquivo de Vídeos (Archive.org)</h2>
+    <div id="vidGrid" class="grid">
+      <p style="text-align:center; color:#888; grid-column: 1/-1;">A carregar vídeos do arquivo...</p>
+    </div>
     <div style="text-align:center;">
       <button class="btn-more" id="btnVid" onclick="toggleVids()">Ver Mais Vídeos</button>
     </div>
@@ -224,7 +233,7 @@
     <div class="partners-grid" id="partnersGrid"></div>
 
     <h2 class="section-title">Nossos Serviços</h2>
-    <div id="serGrid" class="grid"></div>
+    <div id="serGrid" class="services-grid"></div>
 
     <div id="adminArea" class="admin-panel">
       <h2 style="text-align:center; color:var(--primary-color); margin-top:0; margin-bottom:25px; font-weight:900;">GLOBAL ADMIN PANEL</h2>
@@ -331,10 +340,6 @@
             <textarea id="inGalUrls" class="admin-input" rows="4"></textarea>
           </div>
           <div class="admin-group">
-            <label>Vídeos do Arquivo</label>
-            <textarea id="inVidUrls" class="admin-input" rows="4"></textarea>
-          </div>
-          <div class="admin-group">
             <label>Logótipos de Parceiros</label>
             <textarea id="inPartnerUrls" class="admin-input" rows="3"></textarea>
           </div>
@@ -350,6 +355,12 @@
         <button class="btn-red" onclick="hideAdmin()" style="background:#444; width:100%; margin-top:10px;">FECHAR PAINEL</button>
       </div>
     </div>
+  </div>
+
+  <div id="wa-float" onclick="openWa()" title="Contacte-nos pelo WhatsApp">
+    <svg viewBox="0 0 32 32">
+      <path d="M16 2a13 13 0 0 0-11.3 19.4L3 29l7.8-2A13 13 0 1 0 16 2zm6.7 18.7c-.3.8-1.7 1.6-2.4 1.7-.6.1-1.3.2-3.8-.8a15.3 15.3 0 0 1-6.3-5.5 6.7 6.7 0 0 1 2.5-3.9l1.1-.7c.6-.4.8-.5 1-.1l1.4 3.4c.1.3 0 .7-.2 1l-.5.6c-.2.3-.3.4 0 .8a9.4 9.4 0 0 0 3.8 3.8c.4.2.5.2.8 0l.6-.7c.3-.3.6-.4 1-.2l3.5 1.7c.3.1.4.3.4.7z"/>
+    </svg>
   </div>
 
   <footer>
@@ -372,11 +383,12 @@
     let currentData = { 
       streamUrl: "", wa: "", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [],
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
-      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], vids: [], partners: [],
+      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
       neonActive: false, maintenanceActive: false, budgetActive: false
     };
 
+    let archiveVideos = []; // Armazena a lista de vídeos vindos diretamente do Archive.org
     let galAll = false; let vidsAll = false;
 
     function initVisitorCounter() {
@@ -390,18 +402,55 @@
       document.getElementById('visitorCount').textContent = String(currentVisits).padStart(6, '0');
     }
 
+    // NOVA FUNÇÃO: Procura no Archive.org os itens que têm a tag 'karaokelive.online'
+    async function fetchArchiveVideos() {
+      try {
+        const tag = "karaokelive.online";
+        // Query de pesquisa filtrando pela tag e por tipo de ficheiro de vídeo
+        const searchUrl = `https://archive.org/advancedsearch.php?q=subject%3A%28${tag}%29&fl[]=identifier,title,description&sort[]=downloads+desc&output=json`;
+        
+        const res = await fetch(searchUrl);
+        const searchData = await res.json();
+        
+        if (searchData.response && searchData.response.docs) {
+          const docs = searchData.response.docs;
+          let loadedVideos = [];
+          
+          for (let item of docs) {
+            // Para cada item, vamos adivinhar o link do ficheiro de vídeo .mp4
+            // No archive.org a convenção padrão é: https://archive.org/download/{identifier}/{identifier}.mp4
+            const videoUrl = `https://archive.org/download/${item.identifier}/${item.identifier}.mp4`;
+            const title = item.title || `Gravação Karaoke`;
+            loadedVideos.push({ url: videoUrl, title: title });
+          }
+          
+          archiveVideos = loadedVideos;
+        }
+      } catch (error) {
+        console.error("Erro ao procurar vídeos no Archive.org:", error);
+      }
+    }
+
     async function load() {
       initVisitorCounter();
       try {
-        const res = await fetch(DATA_URL);
-        const d = await res.json();
+        // Corre em paralelo: configurações do Firebase e vídeos dinâmicos do Archive.org
+        const [resFirebase] = await Promise.all([
+          fetch(DATA_URL),
+          fetchArchiveVideos()
+        ]);
+        
+        const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
         
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
         document.getElementById('livePlayer').src = currentData.streamUrl || "";
         
         renderUI();
-      } catch (e) { console.error(e); }
+      } catch (e) { 
+        console.error(e); 
+        renderUI(); // Renderiza com o que conseguir
+      }
       
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm(localStorage.getItem('admin_user_display') || 'admin');
@@ -460,26 +509,27 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      const vids = currentData.vids || [];
-      const limVid = vidsAll ? vids.length : 4;
-      document.getElementById('vidGrid').innerHTML = vids.slice(0, limVid).map((v, i) => {
-        if(!v) return '';
-        const ytId = extractYoutubeId(v);
-        const thumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
-        return `
-          <div class="card" id="vidCard-${i}">
-            <div id="vidPlayerArea-${i}">
-              <div style="width:100%; aspect-ratio:16/9; background:#111; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #222; position:relative; cursor:pointer;" onclick="playInCard('${v}', ${i})">
-                ${thumb ? `<img src="${thumb}" style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0; opacity:0.4;">` : ''}
-                <span style="font-size:40px; z-index:2; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.7));">▶️</span>
+      // MODIFICADO: Renderiza os vídeos dinâmicos vindos da API do Archive.org
+      const limVid = vidsAll ? archiveVideos.length : 4;
+      if (archiveVideos.length === 0) {
+        document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Nenhum vídeo público encontrado com a tag do site.</p>`;
+        document.getElementById('btnVid').style.display = 'none';
+      } else {
+        document.getElementById('vidGrid').innerHTML = archiveVideos.slice(0, limVid).map((v, i) => {
+          return `
+            <div class="card" id="vidCard-${i}">
+              <div id="vidPlayerArea-${i}">
+                <div style="width:100%; aspect-ratio:16/9; background:#111; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #222; position:relative; cursor:pointer;" onclick="playInCard('${v.url}', ${i})">
+                  <span style="font-size:40px; z-index:2; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.7));">▶️</span>
+                </div>
               </div>
+              <div style="padding:12px;"><b>${v.title}</b></div>
             </div>
-            <div style="padding:12px;"><b>Gravação Karaoke #${i+1}</b></div>
-          </div>
-        `;
-      }).join('');
-      document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
-      document.getElementById('btnVid').style.display = vids.length <= 4 ? 'none' : 'inline-block';
+          `;
+        }).join('');
+        document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
+        document.getElementById('btnVid').style.display = archiveVideos.length <= 4 ? 'none' : 'inline-block';
+      }
 
       const partners = currentData.partners || [];
       document.getElementById('partnersGrid').innerHTML = partners.map(p => {
@@ -502,7 +552,6 @@
       `).join('');
     }
 
-    // Corrigido: O iframe agora preenche o wrap vertical perfeitamente sem o botão vermelho obsoleto por baixo
     function playInCard(url, index) {
       const targetArea = document.getElementById(`vidPlayerArea-${index}`);
       const ytId = extractYoutubeId(url);
@@ -543,7 +592,6 @@
       document.getElementById('inNeonActive').checked = !!currentData.neonActive;
       document.getElementById('inMaintenanceActive').checked = !!currentData.maintenanceActive;
       
-      // Corrigido: O ID agora bate perfeitamente com a chave para ler os dados guardados
       document.getElementById('inStreamUrl').value = currentData.streamUrl || "";
       document.getElementById('inWa').value = currentData.wa || "";
       document.getElementById('inAbout').value = currentData.about || "";
@@ -558,7 +606,6 @@
 
       document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
       document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
-      document.getElementById('inVidUrls').value = (currentData.vids || []).join('\n');
       document.getElementById('inPartnerUrls').value = (currentData.partners || []).join('\n');
 
       const soc = currentData.socials || {};
@@ -607,7 +654,6 @@
         numAnos: document.getElementById('inNumAnos').value.trim(),
         agenda: document.getElementById('inAgendaText').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         gal: document.getElementById('inGalUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
-        vids: document.getElementById('inVidUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         partners: document.getElementById('inPartnerUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         ser: [],
         socials: {
