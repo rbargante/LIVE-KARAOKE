@@ -221,7 +221,7 @@
       <button class="btn-more" id="btnGal" onclick="toggleGal()">Ver Mais</button>
     </div>
 
-    <h2 class="section-title" id="videos">Arquivo de Vídeos (Archive.org)</h2>
+    <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
     <div id="vidGrid" class="grid">
       <p style="text-align:center; color:#888; grid-column: 1/-1;">A carregar vídeos do arquivo...</p>
     </div>
@@ -388,7 +388,7 @@
       neonActive: false, maintenanceActive: false, budgetActive: false
     };
 
-    let archiveVideos = []; // Armazena a lista de vídeos vindos diretamente do Archive.org
+    let archiveVideos = []; 
     let galAll = false; let vidsAll = false;
 
     function initVisitorCounter() {
@@ -402,11 +402,9 @@
       document.getElementById('visitorCount').textContent = String(currentVisits).padStart(6, '0');
     }
 
-    // NOVA FUNÇÃO: Procura no Archive.org os itens que têm a tag 'karaokelive.online'
     async function fetchArchiveVideos() {
       try {
         const tag = "karaokelive.online";
-        // Query de pesquisa filtrando pela tag e por tipo de ficheiro de vídeo
         const searchUrl = `https://archive.org/advancedsearch.php?q=subject%3A%28${tag}%29&fl[]=identifier,title,description&sort[]=downloads+desc&output=json`;
         
         const res = await fetch(searchUrl);
@@ -417,8 +415,6 @@
           let loadedVideos = [];
           
           for (let item of docs) {
-            // Para cada item, vamos adivinhar o link do ficheiro de vídeo .mp4
-            // No archive.org a convenção padrão é: https://archive.org/download/{identifier}/{identifier}.mp4
             const videoUrl = `https://archive.org/download/${item.identifier}/${item.identifier}.mp4`;
             const title = item.title || `Gravação Karaoke`;
             loadedVideos.push({ url: videoUrl, title: title });
@@ -434,7 +430,6 @@
     async function load() {
       initVisitorCounter();
       try {
-        // Corre em paralelo: configurações do Firebase e vídeos dinâmicos do Archive.org
         const [resFirebase] = await Promise.all([
           fetch(DATA_URL),
           fetchArchiveVideos()
@@ -449,7 +444,7 @@
         renderUI();
       } catch (e) { 
         console.error(e); 
-        renderUI(); // Renderiza com o que conseguir
+        renderUI(); 
       }
       
       if (localStorage.getItem('admin_logged') === 'true') {
@@ -509,7 +504,6 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      // MODIFICADO: Renderiza os vídeos dinâmicos vindos da API do Archive.org
       const limVid = vidsAll ? archiveVideos.length : 4;
       if (archiveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Nenhum vídeo público encontrado com a tag do site.</p>`;
