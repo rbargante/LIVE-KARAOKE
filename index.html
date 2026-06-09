@@ -211,7 +211,7 @@
     </div>
 
     <div id="agendaSection" style="display:none; margin: 50px 0;">
-      <h2 class="section-title">Próximas Datas</h2>
+      <h2 class="section-title">Próximas Dates</h2>
       <div class="agenda-list" id="agendaGrid"></div>
     </div>
 
@@ -223,7 +223,7 @@
 
     <h2 class="section-title" id="videos">Arquivo de Vídeos</h2>
     <div id="vidGrid" class="grid">
-      <p style="text-align:center; color:#888; grid-column: 1/-1;">A carregar vídeos do arquivo...</p>
+      <p style="text-align:center; color:#888; grid-column: 1/-1;">A carregar vídeos do Google Drive...</p>
     </div>
     <div style="text-align:center;">
       <button class="btn-more" id="btnVid" onclick="toggleVids()">Ver Mais Vídeos</button>
@@ -282,11 +282,23 @@
         </div>
 
         <div class="admin-section">
-          <h3>📺 Transmissão & Ferramentas de Orçamento</h3>
+          <h3>📺 Transmissão, Orçamentos & Configuração da Conta Google Drive</h3>
           <div class="admin-group">
             <label>Link do Player da Live</label>
             <input id="inStreamUrl" class="admin-input">
           </div>
+          
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+            <div class="admin-group">
+              <label>Google Drive Folder ID (ID da Pasta Pública)</label>
+              <input id="inDriveFolderId" class="admin-input" placeholder="Ex: 1aBcDeFgHiJkLmNoP...">
+            </div>
+            <div class="admin-group">
+              <label>Google Drive API Key (Chave da Conta)</label>
+              <input id="inDriveApiKey" class="admin-input" type="password" placeholder="Chave secreta da API do Google">
+            </div>
+          </div>
+
           <div class="admin-checkbox-group">
             <label><input type="checkbox" id="inStats"> Mostrar Barra "EM DIRETO"</label>
             <label><input type="checkbox" id="inChat"> Ativar Chat Integrado</label>
@@ -385,10 +397,11 @@
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
       numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
-      neonActive: false, maintenanceActive: false, budgetActive: false
+      neonActive: false, maintenanceActive: false, budgetActive: false,
+      driveFolderId: "", driveApiKey: "" // Chaves guardadas remotamente no Firebase para controlo total
     };
 
-    let archiveVideos = []; 
+    let driveVideos = []; 
     let galAll = false; let vidsAll = false;
 
     function initVisitorCounter() {
@@ -402,41 +415,45 @@
       document.getElementById('visitorCount').textContent = String(currentVisits).padStart(6, '0');
     }
 
-    async function fetchArchiveVideos() {
+    // MODIFICADO: Função lê dinamicamente a partir dos dados configurados no Painel Admin (Firebase)
+    async function fetchGoogleDriveVideos() {
+      const folderId = currentData.driveFolderId;
+      const apiKey = currentData.driveApiKey;
+      
+      if (!folderId || !apiKey) {
+        console.warn("Configurações do Google Drive em falta no Painel Admin.");
+        return;
+      }
+      
       try {
-        const tag = "karaokelive.online";
-        const searchUrl = `https://archive.org/advancedsearch.php?q=subject%3A%28${tag}%29&fl[]=identifier,title,description&sort[]=downloads+desc&output=json`;
+        // Liga-se à API Oficial do Google Drive v3 listando ficheiros de vídeo contidos na pasta alvo
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`;
         
-        const res = await fetch(searchUrl);
-        const searchData = await res.json();
+        const res = await fetch(url);
+        const data = await res.json();
         
-        if (searchData.response && searchData.response.docs) {
-          const docs = searchData.response.docs;
-          let loadedVideos = [];
-          
-          for (let item of docs) {
-            const videoUrl = `https://archive.org/download/${item.identifier}/${item.identifier}.mp4`;
-            const title = item.title || `Gravação Karaoke`;
-            loadedVideos.push({ url: videoUrl, title: title });
-          }
-          
-          archiveVideos = loadedVideos;
+        if (data.files) {
+          // Mapeia e gera os links universais de reprodução direta do Google Drive
+          driveVideos = data.files.map(file => ({
+            url: `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${apiKey}`,
+            title: file.name.replace(/\.[^/.]+$/, "") // Remove extensões do título (.mp4, etc)
+          }));
         }
       } catch (error) {
-        console.error("Erro ao procurar vídeos no Archive.org:", error);
+        console.error("Erro ao ler vídeos da conta do Google Drive:", error);
       }
     }
 
     async function load() {
       initVisitorCounter();
       try {
-        const [resFirebase] = await Promise.all([
-          fetch(DATA_URL),
-          fetchArchiveVideos()
-        ]);
-        
+        // Primeiro puxamos as configurações do Firebase (para saber qual é a pasta e chave ativa)
+        const resFirebase = await fetch(DATA_URL);
         const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
+        
+        // Com as credenciais lidas do painel, disparamos a procura dos vídeos
+        await fetchGoogleDriveVideos();
         
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
         document.getElementById('livePlayer').src = currentData.streamUrl || "";
@@ -504,12 +521,13 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      const limVid = vidsAll ? archiveVideos.length : 4;
-      if (archiveVideos.length === 0) {
-        document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Nenhum vídeo público encontrado com a tag do site.</p>`;
+      // Renderização Dinâmica a partir do Google Drive
+      const limVid = vidsAll ? driveVideos.length : 4;
+      if (driveVideos.length === 0) {
+        document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
         document.getElementById('btnVid').style.display = 'none';
       } else {
-        document.getElementById('vidGrid').innerHTML = archiveVideos.slice(0, limVid).map((v, i) => {
+        document.getElementById('vidGrid').innerHTML = driveVideos.slice(0, limVid).map((v, i) => {
           return `
             <div class="card" id="vidCard-${i}">
               <div id="vidPlayerArea-${i}">
@@ -522,7 +540,7 @@
           `;
         }).join('');
         document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
-        document.getElementById('btnVid').style.display = archiveVideos.length <= 4 ? 'none' : 'inline-block';
+        document.getElementById('btnVid').style.display = driveVideos.length <= 4 ? 'none' : 'inline-block';
       }
 
       const partners = currentData.partners || [];
@@ -587,6 +605,11 @@
       document.getElementById('inMaintenanceActive').checked = !!currentData.maintenanceActive;
       
       document.getElementById('inStreamUrl').value = currentData.streamUrl || "";
+      
+      // Carrega os valores das chaves nos inputs do painel
+      document.getElementById('inDriveFolderId').value = currentData.driveFolderId || "";
+      document.getElementById('inDriveApiKey').value = currentData.driveApiKey || "";
+
       document.getElementById('inWa').value = currentData.wa || "";
       document.getElementById('inAbout').value = currentData.about || "";
       document.getElementById('inStats').checked = !!currentData.stats;
@@ -637,6 +660,11 @@
         neonActive: document.getElementById('inNeonActive').checked,
         maintenanceActive: document.getElementById('inMaintenanceActive').checked,
         streamUrl: document.getElementById('inStreamUrl').value.trim(),
+        
+        // Guarda os dados novos diretamente na base de dados Firebase ao clicar no botão verde
+        driveFolderId: document.getElementById('inDriveFolderId').value.trim(),
+        driveApiKey: document.getElementById('inDriveApiKey').value.trim(),
+
         wa: document.getElementById('inWa').value.trim(),
         about: document.getElementById('inAbout').value.trim(),
         stats: document.getElementById('inStats').checked,
