@@ -7,7 +7,6 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎤</text></svg>">
   
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 
   <style>
     :root { --red: #f52a1f; --dark: #000; --card: #0a0a0a; }
@@ -116,16 +115,16 @@
     <div id="serGrid" class="grid"></div>
 
     <div id="adminArea" class="admin-panel">
-      <h2 style="text-align:center; color:var(--red);">GLOBAL ADMIN SIMPLE</h2>
+      <h2 style="text-align:center; color:var(--red);">PAINEL DE CONTROLO</h2>
 
       <div id="loginForm">
         <p style="text-align:center; color:#888; font-size:13px;">Insere a palavra-passe do administrador para editar.</p>
-        <input id="p" type="password" placeholder="Palavra-passe do Painel" class="admin-input">
+        <input id="p" type="password" placeholder="Palavra-passe" class="admin-input">
         <button class="btn-red" onclick="login()" style="width:100%; margin-top:10px;">ENTRAR</button>
       </div>
 
       <div id="editForm" style="display:none;">
-        <p style="color:#28a745; font-size:12px; text-align:center; font-weight:bold;">Acesso Autorizado</p>
+        <p style="color:#28a745; font-size:12px; text-align:center; font-weight:bold;">Sessão Ativa</p>
 
         <label><input type="checkbox" id="inStats"> INFO LIVE</label>
         |
@@ -163,15 +162,10 @@
   </div>
 
   <script>
-    // Inicialização simples da Firebase (apenas a app base)
-    const firebaseConfig = {
-      databaseURL: "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app"
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    const DB_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
+    // URL direta do endpoint JSON (substitui pelo teu link de base de dados REST real ou Worker se alterares no futuro)
+    const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
     
-    // Hash SHA-256 gerado para a password "CantaAgora2026" para segurança básica
+    // Hash SHA-256 para a password "CantaAgora2026"
     const PASS_HASH = "7c13a01490214c776097dfbd0a10819777556a31cbe572dcd911e25e9828fa6b";
 
     let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
@@ -179,7 +173,7 @@
     let vidsAll = false;
     let allFetchedVids = [];
 
-    // Função auxiliar para encriptar a senha introduzida no input e comparar
+    // Função nativa para encriptação segura da senha
     async function sha256(str) {
       const buf = new TextEncoder().encode(str);
       const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -188,16 +182,15 @@
 
     async function load() {
       try {
-        const res = await fetch(DB_URL);
+        const res = await fetch(DATA_URL);
         const d = await res.json();
         if (d) currentData = d;
         renderUI();
       } catch (e) {
-        console.error("Erro ao carregar Firebase Database:", e);
+        console.error("Erro ao carregar dados do servidor:", e);
       }
       fetchVids();
       
-      // Auto-login se já tiver entrado antes neste PC/Telemóvel
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm();
       }
@@ -242,7 +235,7 @@
         allFetchedVids = await res.json();
         renderVids();
       } catch (e) {
-        console.error("Erro ao carregar vídeos:", e);
+        console.error("Erro ao carregar vídeos do worker:", e);
       }
     }
 
@@ -321,7 +314,7 @@
 
     async function saveAll() {
       if (localStorage.getItem('admin_logged') !== 'true') {
-        alert("Não tens sessão iniciada.");
+        alert("Sessão não autorizada.");
         return;
       }
 
@@ -358,20 +351,19 @@
       };
 
       try {
-        // Envia os dados diretamente à Database sem tokens de Auth complexos
-        const res = await fetch(DB_URL, {
+        const res = await fetch(DATA_URL, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
-        if (!res.ok) throw new Error("Erro ao gravar: " + res.status);
+        if (!res.ok) throw new Error("Erro na gravação: " + res.status);
 
-        alert("ATUALIZADO COM SUCESSO!");
+        alert("CONTEÚDO ATUALIZADO!");
         location.reload();
       } catch (e) {
         console.error("Erro ao guardar:", e);
-        alert("Erro ao guardar. Verifica as regras de escrita na tua Realtime Database.");
+        alert("Erro ao guardar dados. Confirma a configuração do endpoint REST.");
       }
     }
 
