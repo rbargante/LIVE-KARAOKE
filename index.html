@@ -19,7 +19,6 @@
     html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; position: relative; overflow-x: hidden; }
     body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); min-height: 100vh; }
 
-    /* EFEITO NEON/DISCOTECA DE FUNDO (Esferas de Luz suaves em movimento) */
     .disco-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(245,42,31,0.06) 0%, rgba(0,0,0,0) 70%); filter: blur(60px); z-index: -1; pointer-events: none; display: none; }
     .glow-1 { top: -10%; left: -10%; animation: floatGlow 15s ease-in-out infinite alternate; }
     .glow-2 { bottom: -10%; right: -10%; animation: floatGlow 20s ease-in-out infinite alternate-reverse; }
@@ -28,7 +27,6 @@
       100% { transform: translate(80px, 50px) scale(1.2); }
     }
 
-    /* MODO MANUTENÇÃO / BREVEMENTE */
     #maintenanceScreen { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
     #maintenanceScreen h2 { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; color: var(--primary-color); margin-bottom: 10px; letter-spacing: 1px; }
 
@@ -59,7 +57,6 @@
     .btn-red { background: var(--primary-color); color: #fff; border: none; padding: 16px 32px; border-radius: 14px; font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 20px rgba(245, 42, 31, 0.3); margin: 10px 0; transition: transform 0.2s, background 0.2s, box-shadow 0.2s; }
     .btn-red:hover { opacity: 0.9; transform: translateY(-2px); }
 
-    /* BOTÃO PEDIR ORÇAMENTO FLOATING/ANIMADO */
     .budget-btn-wrap { text-align: center; margin: 20px 0; display: none; }
     .btn-budget { background: #25d366; animation: pulseGlow 2s infinite; }
     @keyframes pulseGlow {
@@ -83,8 +80,9 @@
     .card:hover { transform: translateY(-5px); border-color: #333; }
     .card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 
-    .card-player-wrap { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .card-player-wrap video, .card-player-wrap iframe { width: 100%; height: 100%; border: 0; }
+    /* Ajustado: Player agora ocupa 100% do espaço vertical do card sem botões extra embaixo */
+    .card-player-wrap { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; }
+    .card-player-wrap video, .card-player-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
 
     .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
     .gallery-item { aspect-ratio: 1/1; border-radius: 14px; overflow: hidden; border: 1px solid #222; background: #111; transition: transform 0.3s; }
@@ -117,7 +115,6 @@
     .footer-info { color: #666; font-size: 13px; line-height: 1.8; }
     .footer-copy { margin-top: 25px; font-size: 11px; color: #444; border-top: 1px solid #111; padding-top: 20px; }
 
-    /* Painel Admin */
     .admin-panel { display: none; background: #0d0d0f; border: 2px solid #222; border-radius: 25px; padding: 30px; margin-top: 50px; box-shadow: 0 15px 50px rgba(0,0,0,0.9); position: relative; z-index: 100000; }
     .admin-section { background: #141417; border: 1px solid #292930; border-radius: 15px; padding: 20px; margin-bottom: 25px; }
     .admin-section h3 { margin-top: 0; margin-bottom: 15px; color: var(--primary-color); font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #292930; padding-bottom: 8px; }
@@ -263,7 +260,7 @@
             <label><input type="checkbox" id="inAlertActive"> Ativar Barra de Aviso (Topo)</label>
             <label><input type="checkbox" id="inMarqueeActive"> Ativar Letreiro Digital em Movimento</label>
             <label><input type="checkbox" id="inNeonActive"> Ativar Efeito Luzes Neon de Fundo</label>
-            <label><input type="checkbox" id="inMaintenanceActive"> ⚠️ ATIVAR MODO MANUTENÇÃO (Bloqueia o site)</label>
+            <label><input type="checkbox" id="inMaintenanceActive"> ⚠️ ATIVAR MODO MANUTENÇÃO</label>
           </div>
           <div class="admin-group">
             <label>Texto da Barra de Aviso</label>
@@ -293,7 +290,7 @@
         </div>
 
         <div class="admin-section">
-          <h3>📅 Gestor de Datas (Agenda Pública)</h3>
+          <h3>📅 Gestor de Dates (Agenda Pública)</h3>
           <div class="admin-group">
             <label>Lista de Próximas Datas (1 por linha. Ex: 21 Junho - Bar X (Lisboa))</label>
             <textarea id="inAgendaText" class="admin-input" rows="4"></textarea>
@@ -418,24 +415,19 @@
     }
 
     function renderUI() {
-      // Modo Manutenção
       document.getElementById('maintenanceScreen').style.display = currentData.maintenanceActive ? 'flex' : 'none';
 
-      // Efeito Luzes Neon
       const displayNeon = currentData.neonActive ? 'block' : 'none';
       document.getElementById('neon1').style.display = displayNeon;
       document.getElementById('neon2').style.display = displayNeon;
 
-      // Botão Orçamento WhatsApp
       document.getElementById('budgetArea').style.display = currentData.budgetActive ? 'block' : 'none';
 
-      // Alert Bar
       const alertEl = document.getElementById('topAlert');
       if (currentData.alertActive && currentData.alertText) {
         alertEl.textContent = currentData.alertText; alertEl.style.display = 'block';
       } else { alertEl.style.display = 'none'; }
 
-      // Letreiro Digital
       const tickerEl = document.getElementById('tickerWrap');
       if (currentData.marqueeActive && currentData.marqueeText) {
         const content = `<span>${currentData.marqueeText}</span>`.repeat(6);
@@ -443,7 +435,6 @@
         tickerEl.style.display = 'block';
       } else { tickerEl.style.display = 'none'; }
 
-      // Agenda
       const agenda = currentData.agenda || [];
       if (agenda.length > 0) {
         document.getElementById('agendaSection').style.display = 'block';
@@ -455,7 +446,6 @@
         }).join('');
       } else { document.getElementById('agendaSection').style.display = 'none'; }
 
-      // Sobre Nós e Restantes Elementos
       document.getElementById('aboutText').textContent = currentData.about || "";
       document.getElementById('liveBar').style.display = currentData.stats ? 'flex' : 'none';
       document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
@@ -464,14 +454,12 @@
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
 
-      // Galeria
       const gal = currentData.gal || [];
       const limGal = galAll ? gal.length : 4;
       document.getElementById('galGrid').innerHTML = gal.slice(0, limGal).map(img => img ? `<div class="gallery-item"><img src="${img}" loading="lazy"></div>` : '').join('');
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      // Vídeos
       const vids = currentData.vids || [];
       const limVid = vidsAll ? vids.length : 4;
       document.getElementById('vidGrid').innerHTML = vids.slice(0, limVid).map((v, i) => {
@@ -493,13 +481,11 @@
       document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
       document.getElementById('btnVid').style.display = vids.length <= 4 ? 'none' : 'inline-block';
 
-      // Parceiros
       const partners = currentData.partners || [];
       document.getElementById('partnersGrid').innerHTML = partners.map(p => {
         return p ? `<img src="${p}" loading="lazy" onerror="this.style.display='none';">` : '';
       }).join('');
 
-      // Redes Sociais
       const soc = currentData.socials || {};
       let socHtml = "";
       if (soc.ig) socHtml += `<a href="${soc.ig}" target="_blank" class="social-icon">IG</a>`;
@@ -508,7 +494,6 @@
       if (soc.yt) socHtml += `<a href="${soc.yt}" target="_blank" class="social-icon">YT</a>`;
       document.getElementById('footerSocials').innerHTML = socHtml;
 
-      // Serviços
       document.getElementById('serGrid').innerHTML = (currentData.ser || []).map(s => `
         <div class="card">
           <img src="${s.i}" loading="lazy">
@@ -517,18 +502,12 @@
       `).join('');
     }
 
+    // Corrigido: O iframe agora preenche o wrap vertical perfeitamente sem o botão vermelho obsoleto por baixo
     function playInCard(url, index) {
       const targetArea = document.getElementById(`vidPlayerArea-${index}`);
       const ytId = extractYoutubeId(url);
       if (ytId) {
-        targetArea.innerHTML = `
-          <div class="card-player-wrap" style="padding:15px; text-align:center;">
-            <iframe id="ytIframe-${index}" src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay" style="width:100%; height:100%; max-height:150px;"></iframe>
-            <a href="${url}" target="_blank" class="btn-red" style="padding:8px 16px; font-size:11px; margin-top:8px; display:inline-block; text-shadow:none; text-decoration:none;">
-              🎥 ASSISTIR NO YOUTUBE
-            </a>
-          </div>
-        `;
+        targetArea.innerHTML = `<div class="card-player-wrap"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay"></iframe></div>`;
       } else {
         targetArea.innerHTML = `<div class="card-player-wrap"><video id="inlineVideo-${index}" controls autoplay playsinline></video></div>`;
         const videoElement = document.getElementById(`inlineVideo-${index}`);
@@ -564,7 +543,7 @@
       document.getElementById('inNeonActive').checked = !!currentData.neonActive;
       document.getElementById('inMaintenanceActive').checked = !!currentData.maintenanceActive;
       
-      // SOLUÇÃO CRÍTICA: Agora o id mapeia perfeitamente para puxar a info guardada
+      // Corrigido: O ID agora bate perfeitamente com a chave para ler os dados guardados
       document.getElementById('inStreamUrl').value = currentData.streamUrl || "";
       document.getElementById('inWa').value = currentData.wa || "";
       document.getElementById('inAbout').value = currentData.about || "";
