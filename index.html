@@ -163,24 +163,16 @@
   </div>
 
   <script>
-    // Configuração do URL da base de dados (Substituir pelo link REST correto se necessário)
     const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
     
-    // Hashes de proteção SHA-256 (User: admin / Pass: CantaAgora2026)
-    const USER_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
-    const PASS_HASH = "7c13a01490214c776097dfbd0a10819777556a31cbe572dcd911e25e9828fa6b";
+    // Credenciais limpas em texto direto dentro do JS
+    const CORRECT_USER = "admin";
+    const CORRECT_PASS = "CantaAgora2026";
 
     let currentData = { wa: "351962839921", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [] };
     let galAll = false;
     let vidsAll = false;
     let allFetchedVids = [];
-
-    // Função de encriptação
-    async function sha256(str) {
-      const buf = new TextEncoder().encode(str);
-      const hash = await crypto.subtle.digest('SHA-256', buf);
-      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
 
     async function load() {
       try {
@@ -193,7 +185,6 @@
       }
       fetchVids();
       
-      // Valida se o utilizador já efetuou login neste dispositivo anteriormente
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm(localStorage.getItem('admin_user_display') || 'admin');
       }
@@ -267,7 +258,7 @@
       renderUI();
     }
 
-    async function login() {
+    function login() {
       const userInput = document.getElementById('u').value.trim();
       const passwordInput = document.getElementById('p').value;
 
@@ -276,10 +267,8 @@
         return;
       }
 
-      const encodedUser = await sha256(userInput);
-      const encodedPass = await sha256(passwordInput);
-
-      if (encodedUser === USER_HASH && encodedPass === PASS_HASH) {
+      // Comparação direta e simples de texto
+      if (userInput === CORRECT_USER && passwordInput === CORRECT_PASS) {
         localStorage.setItem('admin_logged', 'true');
         localStorage.setItem('admin_user_display', userInput);
         openEditForm(userInput);
@@ -372,7 +361,7 @@
         location.reload();
       } catch (e) {
         console.error("Erro ao guardar modificações:", e);
-        alert("Erro ao processar gravação. Verifica o estado do teu servidor/base de dados REST.");
+        alert("Erro ao processar gravação. Verifica o estado da tua base de dados.");
       }
     }
 
