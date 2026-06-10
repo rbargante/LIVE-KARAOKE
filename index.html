@@ -104,9 +104,10 @@
     .stat-number { font-size: 2.5rem; font-weight: 900; color: var(--primary-color); margin-bottom: 5px; }
     .stat-label { font-size: 13px; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-    .partners-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 30px; margin: 30px 0; padding: 10px; }
-    .partners-grid img { max-height: 50px; max-width: 130px; object-fit: contain; filter: grayscale(1) brightness(0.8); opacity: 0.6; transition: all 0.3s; }
-    .partners-grid img:hover { filter: grayscale(0) brightness(1); opacity: 1; transform: scale(1.05); }
+    /* MODIFICADO: Aumentado o tamanho máximo dos logótipos e o espaçamento para ficarem maiores e mais imponentes */
+    .partners-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin: 40px 0; padding: 15px; }
+    .partners-grid img { max-height: 75px; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(0.9); opacity: 0.6; transition: all 0.3s; }
+    .partners-grid img:hover { filter: grayscale(0) brightness(1.1); opacity: 1; transform: scale(1.08); }
 
     .footer-socials { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
     .social-icon { background: #111; border: 1px solid #222; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 14px; font-weight: bold; transition: all 0.2s; }
@@ -398,7 +399,7 @@
       numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
       neonActive: false, maintenanceActive: false, budgetActive: false,
-      driveFolderId: "", driveApiKey: "" // Chaves guardadas remotamente no Firebase para controlo total
+      driveFolderId: "", driveApiKey: ""
     };
 
     let driveVideos = []; 
@@ -415,7 +416,6 @@
       document.getElementById('visitorCount').textContent = String(currentVisits).padStart(6, '0');
     }
 
-    // MODIFICADO: Função lê dinamicamente a partir dos dados configurados no Painel Admin (Firebase)
     async function fetchGoogleDriveVideos() {
       const folderId = currentData.driveFolderId;
       const apiKey = currentData.driveApiKey;
@@ -426,17 +426,15 @@
       }
       
       try {
-        // Liga-se à API Oficial do Google Drive v3 listando ficheiros de vídeo contidos na pasta alvo
         const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`;
         
         const res = await fetch(url);
         const data = await res.json();
         
         if (data.files) {
-          // Mapeia e gera os links universais de reprodução direta do Google Drive
           driveVideos = data.files.map(file => ({
             url: `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${apiKey}`,
-            title: file.name.replace(/\.[^/.]+$/, "") // Remove extensões do título (.mp4, etc)
+            title: file.name.replace(/\.[^/.]+$/, "")
           }));
         }
       } catch (error) {
@@ -447,12 +445,10 @@
     async function load() {
       initVisitorCounter();
       try {
-        // Primeiro puxamos as configurações do Firebase (para saber qual é a pasta e chave ativa)
         const resFirebase = await fetch(DATA_URL);
         const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
         
-        // Com as credenciais lidas do painel, disparamos a procura dos vídeos
         await fetchGoogleDriveVideos();
         
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
@@ -521,7 +517,6 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      // Renderização Dinâmica a partir do Google Drive
       const limVid = vidsAll ? driveVideos.length : 4;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
@@ -606,7 +601,6 @@
       
       document.getElementById('inStreamUrl').value = currentData.streamUrl || "";
       
-      // Carrega os valores das chaves nos inputs do painel
       document.getElementById('inDriveFolderId').value = currentData.driveFolderId || "";
       document.getElementById('inDriveApiKey').value = currentData.driveApiKey || "";
 
@@ -661,7 +655,6 @@
         maintenanceActive: document.getElementById('inMaintenanceActive').checked,
         streamUrl: document.getElementById('inStreamUrl').value.trim(),
         
-        // Guarda os dados novos diretamente na base de dados Firebase ao clicar no botão verde
         driveFolderId: document.getElementById('inDriveFolderId').value.trim(),
         driveApiKey: document.getElementById('inDriveApiKey').value.trim(),
 
