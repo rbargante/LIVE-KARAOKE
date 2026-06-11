@@ -212,7 +212,7 @@
     </div>
 
     <div id="agendaSection" style="display:none; margin: 50px 0;">
-      <h2 class="section-title">Próximas Datas</h2>
+      <h2 class="section-title">Próximas Dates</h2>
       <div class="agenda-list" id="agendaGrid"></div>
     </div>
 
@@ -437,6 +437,7 @@
          
         if (data.files) {
           driveVideos = data.files.map(file => ({
+            id: file.id,
             url: `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${apiKey}`,
             title: file.name.replace(/\.[^/.]+$/, "")
           }));
@@ -515,20 +516,21 @@
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
 
+      // AJUSTE: MÓDULO DE MOMENTOS LIMITADO A 6 IMAGENS INICIAIS
       const gal = currentData.gal || [];
-      const limGal = galAll ? gal.length : 4;
+      const limGal = galAll ? gal.length : 6;
       document.getElementById('galGrid').innerHTML = gal.slice(0, limGal).map(img => img ? `<div class="gallery-item"><img src="${img}" loading="lazy"></div>` : '').join('');
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
-      document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
+      document.getElementById('btnGal').style.display = gal.length <= 6 ? 'none' : 'inline-block';
 
-      const limVid = vidsAll ? driveVideos.length : 4;
+      // AJUSTE: MÓDULO DE VÍDEOS LIMITADO A 3 ITENS E COM ENDPOINT DE CAPAS ATUALIZADO
+      const limVid = vidsAll ? driveVideos.length : 3;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
         document.getElementById('btnVid').style.display = 'none';
       } else {
         document.getElementById('vidGrid').innerHTML = driveVideos.slice(0, limVid).map((v, i) => {
-          const fileId = v.url.split('/files/')[1]?.split('?')[0];
-          const thumbnailUrl = fileId ? `https://lh3.googleusercontent.com/d/${fileId}` : '';
+          const thumbnailUrl = v.id ? `https://drive.google.com/thumbnail?id=${v.id}&sz=w1280` : '';
 
           return `
             <div class="card" id="vidCard-${i}">
@@ -545,10 +547,9 @@
           `;
         }).join('');
         document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
-        document.getElementById('btnVid').style.display = driveVideos.length <= 4 ? 'none' : 'inline-block';
+        document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
       }
 
-      // --- SECÇÃO ATUALIZADA COM LINKS DE DESTINO NOS PARCEIROS ---
       const partners = currentData.partners || [];
       const partnerLinks = currentData.partnerLinks || [];
       document.getElementById('partnersGrid').innerHTML = partners.map((p, idx) => {
@@ -561,7 +562,6 @@
         }
         return imgTag;
       }).join('');
-      // -------------------------------------------------------------
 
       const soc = currentData.socials || {};
       let socHtml = "";
@@ -585,7 +585,7 @@
       if (ytId) {
         targetArea.innerHTML = `<div class="card-player-wrap"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay"></iframe></div>`;
       } else {
-        targetArea.innerHTML = `<div class="card-player-wrap"><video id="inlineVideo-${index}" controls autoplay playsinline></video></div>`;
+        targetArea.innerHTML = `<div class="card-player-wrap"><video id="inlineVideo-${index}" controls autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video></div>`;
         const videoElement = document.getElementById(`inlineVideo-${index}`);
         if (Hls.isSupported() && url.includes('.m3u8')) {
           const hls = new Hls(); hls.loadSource(url); hls.attachMedia(videoElement);
