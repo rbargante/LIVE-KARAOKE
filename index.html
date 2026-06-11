@@ -441,7 +441,6 @@
       document.getElementById('visitorCount').textContent = String(currentVisits).padStart(6, '0');
     }
 
-    // NOVA FUNÇÃO: Atualiza o relógio da live em tempo real
     function updateLiveClock() {
       const now = new Date();
       const hours = String(now.getHours()).padStart(2, '0');
@@ -556,7 +555,6 @@
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
       
-      // VINCULAÇÃO REAL: Mostra o valor de visualizadores definido no Admin
       document.getElementById('vCount').textContent = currentData.liveViewers || "0";
 
       const gal = currentData.gal || [];
@@ -787,9 +785,10 @@
         }
       };
 
+      // CORRIGIDO: Vinculação exata das chaves dos 3 blocos de serviços principais (si em vez de sixs)
       for (let i = 0; i < 3; i++) {
         const title = document.getElementById(`st${i}`).value.trim();
-        if (title) data.ser.push({ t: title, i: document.getElementById(`sixs${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
+        if (title) data.ser.push({ t: title, i: document.getElementById(`si${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
       }
 
       try {
