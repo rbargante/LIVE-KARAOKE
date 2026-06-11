@@ -785,6 +785,7 @@
         }
       };
 
+      // CORRIGIDO DE VEZ: Mapeamento dos blocos de serviço com a chave correta (si em vez de sixs)
       for (let i = 0; i < 3; i++) {
         const title = document.getElementById(`st${i}`).value.trim();
         if (title) data.ser.push({ t: title, i: document.getElementById(`si${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
