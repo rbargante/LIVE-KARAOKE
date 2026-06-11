@@ -57,6 +57,14 @@
     .btn-red { background: var(--primary-color); color: #fff; border: none; padding: 16px 32px; border-radius: 14px; font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 20px rgba(245, 42, 31, 0.3); margin: 10px 0; transition: transform 0.2s, background 0.2s, box-shadow 0.2s; }
     .btn-red:hover { opacity: 0.9; transform: translateY(-2px); }
 
+    /* ESTILO DO BOTÃO EXCLUSIVO DE MARCAÇÕES */
+    .btn-booking { background: #25d366 !important; animation: bookingPulse 2s infinite; font-size: 15px !important; letter-spacing: 1px; }
+    @keyframes bookingPulse {
+      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
     .budget-btn-wrap { text-align: center; margin: 20px 0; display: none; }
     .btn-budget { background: #25d366; animation: pulseGlow 2s infinite; }
     @keyframes pulseGlow {
@@ -143,7 +151,6 @@
     .btn-more { background:none; border:1px solid #333; color:#fff; padding:10px 24px; border-radius:30px; cursor:pointer; font-size:11px; margin-top:25px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; transition: all 0.2s; }
     .btn-more:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(245, 42, 31, 0.05); }
 
-    /* ESTILOS DA SECCAO ADMIN DE PATROCINADORES DINAMICOS */
     .sponsor-row { background: #050505; border: 1px solid #222; padding: 15px; margin-bottom: 15px; border-radius: 12px; position: relative; }
     .sponsor-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
     @media (max-width: 768px) { .sponsor-fields { grid-template-columns: 1fr; } }
@@ -194,6 +201,10 @@
       <div class="chat-area" id="chatBox">
         <iframe id="chatFrame" src="" allow="clipboard-write"></iframe>
       </div>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn-red btn-booking" onclick="openWaBooking()">🗓️ MARCA A TUA FESTA AGORA!</button>
     </div>
 
     <div class="budget-btn-wrap" id="budgetArea">
@@ -568,7 +579,6 @@
         document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
       }
 
-      // LEITURA DOS PATROCINADORES DA ESTRUTURA DO FORMULÁRIO DINÂMICO
       const sponsorsArray = currentData.listSponsors || [];
       if (sponsorsArray.length === 0) {
         document.getElementById('partnersGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Adicione patrocinadores no Painel Admin.</p>`;
@@ -627,7 +637,6 @@
       } else { alert("Dados de Login incorretos!"); }
     }
 
-    // GESTÃO DINÂMICA: Funções para criar as linhas com inputs independentes no Admin
     function addSponsorRow(name = "", image = "", link = "") {
       const container = document.getElementById('dynamicSponsorsContainer');
       const row = document.createElement('div');
@@ -684,7 +693,6 @@
       document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
       document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
       
-      // Carrega os patrocinadores guardados gerando as linhas automaticamente
       document.getElementById('dynamicSponsorsContainer').innerHTML = "";
       const savedSponsors = currentData.listSponsors || [];
       savedSponsors.forEach(s => {
@@ -711,7 +719,6 @@
     async function saveAll() {
       if (localStorage.getItem('admin_logged') !== 'true') return;
 
-      // Recolha dinâmica das linhas criadas pelo utilizador
       const sponsorsToSave = [];
       const nameInputs = document.querySelectorAll('.sp-name');
       const imageInputs = document.querySelectorAll('.sp-image');
@@ -787,6 +794,11 @@
     function hideAdmin() { document.getElementById('adminArea').style.display = 'none'; }
     function openWa() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}`, '_blank'); }
     function openWaBudget() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá,%20vi%20o%20vosso%20site%20e%20gostaria%20de%20pedir%20um%20orçamento%20para%20um%20evento!`, '_blank'); }
+    
+    // NOVA FUNÇÃO: Dispara a mensagem personalizada de marcação de festas no WhatsApp
+    function openWaBooking() { 
+      window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá!%20Vi%20o%20vosso%20site%20e%20gostaria%20de%20verificar%20a%20vossa%20disponibilidade%20e%20pedir%20um%20orçamento%20para%20uma%20festa!`, '_blank'); 
+    }
 
     load();
   </script>
