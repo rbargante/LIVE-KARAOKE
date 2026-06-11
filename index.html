@@ -88,7 +88,6 @@
     .card-player-wrap { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; }
     .card-player-wrap video, .card-player-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    /* RESOLVIDO: Grelha flexível ajustada para alinhar perfeitamente 6 fotos na mesma linha */
     .gallery-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
     @media (max-width: 900px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -108,10 +107,14 @@
     .stat-number { font-size: 2.5rem; font-weight: 900; color: var(--primary-color); margin-bottom: 5px; }
     .stat-label { font-size: 13px; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-    .partners-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin: 40px 0; padding: 15px; }
-    .partners-grid a { display: block; transition: all 0.3s; }
-    .partners-grid img { max-height: 75px; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(0.9); opacity: 0.6; transition: all 0.3s; cursor: pointer; }
-    .partners-grid img:hover { filter: grayscale(0) brightness(1.1); opacity: 1; transform: scale(1.08); }
+    /* NOVA GRELHA MODERNA DE PATROCINADORES / PARCEIROS */
+    .partners-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; margin: 40px 0; padding: 10px; }
+    .partner-card-link { text-decoration: none; color: inherit; display: block; }
+    .partner-card { background: #0a0a0a; border: 1px solid #1c1c22; border-radius: 16px; padding: 15px; text-align: center; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .partner-card:hover { border-color: var(--primary-color); transform: translateY(-4px); background: #111; }
+    .partner-card img { max-height: 65px; max-width: 100%; object-fit: contain; margin-bottom: 10px; transition: filter 0.3s; }
+    .partner-card span { font-size: 12px; font-weight: bold; color: #888; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .partner-card:hover span { color: #fff; }
 
     .footer-socials { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
     .social-icon { background: #111; border: 1px solid #222; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; text-decoration: none; font-size: 14px; font-weight: bold; transition: all 0.2s; }
@@ -234,7 +237,7 @@
       <button class="btn-more" id="btnVid" onclick="toggleVids()">Ver Mais Vídeos</button>
     </div>
 
-    <h2 class="section-title">Onde Já Atuámos (Parceiros)</h2>
+    <h2 class="section-title">Parceiros & Patrocinadores Oficiais</h2>
     <div class="partners-grid" id="partnersGrid"></div>
 
     <h2 class="section-title">Nossos Serviços</h2>
@@ -356,14 +359,11 @@
             <label>Fotos da Galeria (Momentos)</label>
             <textarea id="inGalUrls" class="admin-input" rows="4"></textarea>
           </div>
-          <div class="admin-group">
-            <label>Logótipos de Parceiros (Imagens)</label>
-            <textarea id="inPartnerUrls" class="admin-input" rows="3" placeholder="http://link-da-imagem.com/foto.jpg"></textarea>
-          </div>
-          <div class="admin-group" style="margin-top:10px;">
-            <label>Links de Destino dos Parceiros (Canais/Sites - 1 por linha correspondente)</label>
-            <textarea id="inPartnerDestinations" class="admin-input" rows="3" placeholder="https://instagram.com/nome_do_parceiro"></textarea>
-          </div>
+        </div>
+
+        <div class="admin-section">
+          <h3>🤝 Gestor de Patrocinadores & Parceiros Oficiais (Até 6 Blocos)</h3>
+          <div id="partnerInputs"></div>
         </div>
 
         <div class="admin-section">
@@ -404,7 +404,7 @@
     let currentData = { 
       streamUrl: "", wa: "", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [],
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
-      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [], partnerLinks: [],
+      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], sponsors: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
       neonActive: false, maintenanceActive: false, budgetActive: false,
       driveFolderId: "", driveApiKey: ""
@@ -520,14 +520,12 @@
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
 
-      // LÓGICA ATUALIZADA: Mostra 6 fotos iniciais antes do botão "Ver Mais"
       const gal = currentData.gal || [];
       const limGal = galAll ? gal.length : 6;
       document.getElementById('galGrid').innerHTML = gal.slice(0, limGal).map(img => img ? `<div class="gallery-item"><img src="${img}" loading="lazy"></div>` : '').join('');
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 6 ? 'none' : 'inline-block';
 
-      // LÓGICA ATUALIZADA: Mostra 3 vídeos iniciais antes do botão "Ver Mais"
       const limVid = vidsAll ? driveVideos.length : 3;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
@@ -554,18 +552,21 @@
         document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
       }
 
-      const partners = currentData.partners || [];
-      const partnerLinks = currentData.partnerLinks || [];
-      document.getElementById('partnersGrid').innerHTML = partners.map((p, idx) => {
-        if (!p) return '';
-        const destination = partnerLinks[idx] ? partnerLinks[idx].trim() : '';
-        const imgTag = `<img src="${p}" loading="lazy" onerror="this.style.display='none';">`;
-        
-        if (destination) {
-          return `<a href="${destination}" target="_blank" title="Visitar parceiro">${imgTag}</a>`;
-        }
-        return imgTag;
-      }).join('');
+      // RENDER DAS NOVAS CAIXAS DE PATROCINADORES CONSTRUÍDAS NO ADMIN
+      const sponsorsList = currentData.sponsors || [];
+      if (sponsorsList.length === 0) {
+        document.getElementById('partnersGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Adicione patrocinadores no Painel Admin.</p>`;
+      } else {
+        document.getElementById('partnersGrid').innerHTML = sponsorsList.map(s => {
+          const cardHtml = `
+            <div class="partner-card">
+              <img src="${s.i}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23222%22/><text y=%2250%25%22 x=%2250%25%22 font-size=%2210%22 text-anchor=%22middle%22 fill=%22%23555%22>Sem Imagem</text></svg>';">
+              <span>${s.n}</span>
+            </div>
+          `;
+          return s.l ? `<a href="${s.l}" target="_blank" class="partner-card-link" title="Visitar ${s.n}">${cardHtml}</a>` : cardHtml;
+        }).join('');
+      }
 
       const soc = currentData.socials || {};
       let socHtml = "";
@@ -641,14 +642,28 @@
 
       document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
       document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
-      document.getElementById('inPartnerUrls').value = (currentData.partners || []).join('\n');
-      document.getElementById('inPartnerDestinations').value = (currentData.partnerLinks || []).join('\n');
 
       const soc = currentData.socials || {};
       document.getElementById('inLinkIg').value = soc.ig || "";
       document.getElementById('inLinkFb').value = soc.fb || "";
       document.getElementById('inLinkTk').value = soc.tk || "";
       document.getElementById('inLinkYt').value = soc.yt || "";
+
+      // CONSTRUÇÃO CAMPOS ADMIN INDIVIDUAIS DOS 6 BLOCOS DE PATROCINADORES
+      let pHTML = "";
+      const spData = currentData.sponsors || [];
+      for (let i = 0; i < 6; i++) {
+        const s = spData[i] || { n: '', i: '', l: '' };
+        pHTML += `
+          <div style="background: #000; border: 1px dashed #333; padding: 12px; margin-top: 10px; border-radius: 10px;">
+            <strong style="font-size:11px; color:var(--primary-color); text-transform:uppercase; display:block; margin-bottom:5px;">Patrocinador ${i+1}</strong>
+            <input id="spn${i}" class="admin-input" style="margin-bottom:5px;" placeholder="Nome do Patrocinador / Local" value="${s.n || ''}">
+            <input id="spi${i}" class="admin-input" style="margin-bottom:5px;" placeholder="URL do Logótipo (Imagem)" value="${s.i || ''}">
+            <input id="spl${i}" class="admin-input" placeholder="Link de Destino (Site, Instagram, Facebook)" value="${s.l || ''}">
+          </div>
+        `;
+      }
+      document.getElementById('partnerInputs').innerHTML = pHTML;
 
       let sH = "";
       const serData = currentData.ser || [];
@@ -694,8 +709,7 @@
         numAnos: document.getElementById('inNumAnos').value.trim(),
         agenda: document.getElementById('inAgendaText').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         gal: document.getElementById('inGalUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
-        partners: document.getElementById('inPartnerUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
-        partnerLinks: document.getElementById('inPartnerDestinations').value.split('\n').map(l => l.trim()),
+        sponsors: [],
         ser: [],
         socials: {
           ig: document.getElementById('inLinkIg').value.trim(),
@@ -704,6 +718,16 @@
           yt: document.getElementById('inLinkYt').value.trim()
         }
       };
+
+      // GUARDAR DADOS DOS BLOCOS DE PATROCINADORES
+      for (let i = 0; i < 6; i++) {
+        const name = document.getElementById(`spn${i}`).value.trim();
+        const img = document.getElementById(`spi${i}`).value.trim();
+        const link = document.getElementById(`spl${i}`).value.trim();
+        if (name || img) {
+          data.sponsors.push({ n: name, i: img, l: link });
+        }
+      }
 
       for (let i = 0; i < 3; i++) {
         const title = document.getElementById(`st${i}`).value.trim();
