@@ -105,7 +105,8 @@
     .stat-label { font-size: 13px; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
     .partners-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin: 40px 0; padding: 15px; }
-    .partners-grid img { max-height: 75px; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(0.9); opacity: 0.6; transition: all 0.3s; }
+    .partners-grid a { display: block; transition: all 0.3s; }
+    .partners-grid img { max-height: 75px; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(0.9); opacity: 0.6; transition: all 0.3s; cursor: pointer; }
     .partners-grid img:hover { filter: grayscale(0) brightness(1.1); opacity: 1; transform: scale(1.08); }
 
     .footer-socials { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
@@ -211,7 +212,7 @@
     </div>
 
     <div id="agendaSection" style="display:none; margin: 50px 0;">
-      <h2 class="section-title">Próximas Dates</h2>
+      <h2 class="section-title">Próximas Datas</h2>
       <div class="agenda-list" id="agendaGrid"></div>
     </div>
 
@@ -352,8 +353,12 @@
             <textarea id="inGalUrls" class="admin-input" rows="4"></textarea>
           </div>
           <div class="admin-group">
-            <label>Logótipos de Parceiros</label>
-            <textarea id="inPartnerUrls" class="admin-input" rows="3"></textarea>
+            <label>Logótipos de Parceiros (Imagens)</label>
+            <textarea id="inPartnerUrls" class="admin-input" rows="3" placeholder="http://link-da-imagem.com/foto.jpg"></textarea>
+          </div>
+          <div class="admin-group" style="margin-top:10px;">
+            <label>Links de Destino dos Parceiros (Canais/Sites - 1 por linha correspondente)</label>
+            <textarea id="inPartnerDestinations" class="admin-input" rows="3" placeholder="https://instagram.com/nome_do_parceiro"></textarea>
           </div>
         </div>
 
@@ -383,7 +388,7 @@
         <span>Visitas ao Website:</span>
         <span class="visitor-badge" id="visitorCount">000000</span>
       </div>
-      <div class="footer-copy">&copy; 2026 OS CANTA AGORA. Todos os direitos reservados.</div>
+      <div class="footer-copy">© 2026 OS CANTA AGORA. Todos os direitos reservados.</div>
     </div>
   </footer>
 
@@ -395,7 +400,7 @@
     let currentData = { 
       streamUrl: "", wa: "", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [],
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
-      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [],
+      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], partners: [], partnerLinks: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
       neonActive: false, maintenanceActive: false, budgetActive: false,
       driveFolderId: "", driveApiKey: ""
@@ -516,16 +521,13 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
-      // --- SECÇÃO CORRIGIDA COM ENDPOINT LH3 DO GOOGLE DRIVE PARA EXTRAIR MINIATURA REAL ---
       const limVid = vidsAll ? driveVideos.length : 4;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
         document.getElementById('btnVid').style.display = 'none';
       } else {
         document.getElementById('vidGrid').innerHTML = driveVideos.slice(0, limVid).map((v, i) => {
-          // Extrai o ID público do ficheiro do URL gerado
           const fileId = v.url.split('/files/')[1]?.split('?')[0];
-          // Novo endpoint público direto para thumbnails geradas do Drive
           const thumbnailUrl = fileId ? `https://lh3.googleusercontent.com/d/${fileId}` : '';
 
           return `
@@ -545,12 +547,21 @@
         document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
         document.getElementById('btnVid').style.display = driveVideos.length <= 4 ? 'none' : 'inline-block';
       }
-      // ------------------------------------------------------------------------------------
 
+      // --- SECÇÃO ATUALIZADA COM LINKS DE DESTINO NOS PARCEIROS ---
       const partners = currentData.partners || [];
-      document.getElementById('partnersGrid').innerHTML = partners.map(p => {
-        return p ? `<img src="${p}" loading="lazy" onerror="this.style.display='none';">` : '';
+      const partnerLinks = currentData.partnerLinks || [];
+      document.getElementById('partnersGrid').innerHTML = partners.map((p, idx) => {
+        if (!p) return '';
+        const destination = partnerLinks[idx] ? partnerLinks[idx].trim() : '';
+        const imgTag = `<img src="${p}" loading="lazy" onerror="this.style.display='none';">`;
+        
+        if (destination) {
+          return `<a href="${destination}" target="_blank" title="Visitar parceiro">${imgTag}</a>`;
+        }
+        return imgTag;
       }).join('');
+      // -------------------------------------------------------------
 
       const soc = currentData.socials || {};
       let socHtml = "";
@@ -627,6 +638,7 @@
       document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
       document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
       document.getElementById('inPartnerUrls').value = (currentData.partners || []).join('\n');
+      document.getElementById('inPartnerDestinations').value = (currentData.partnerLinks || []).join('\n');
 
       const soc = currentData.socials || {};
       document.getElementById('inLinkIg').value = soc.ig || "";
@@ -679,6 +691,7 @@
         agenda: document.getElementById('inAgendaText').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         gal: document.getElementById('inGalUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         partners: document.getElementById('inPartnerUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
+        partnerLinks: document.getElementById('inPartnerDestinations').value.split('\n').map(l => l.trim()),
         ser: [],
         socials: {
           ig: document.getElementById('inLinkIg').value.trim(),
