@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+
+    load();
+  </script>
+</body>
+</html>
+    </script>
+</body><!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -57,14 +63,20 @@
     .btn-red { background: var(--primary-color); color: #fff; border: none; padding: 16px 32px; border-radius: 14px; font-size: 14px; font-weight: 800; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 20px rgba(245, 42, 31, 0.3); margin: 10px 0; transition: transform 0.2s, background 0.2s, box-shadow 0.2s; }
     .btn-red:hover { opacity: 0.9; transform: translateY(-2px); }
 
-    .btn-budget { background: #25d366 !important; animation: pulseGlow 2s infinite; font-size: 15px !important; letter-spacing: 1px; width: 100%; max-width: 400px; }
+    .btn-booking { background: #25d366 !important; animation: bookingPulse 2s infinite; font-size: 15px !important; letter-spacing: 1px; }
+    @keyframes bookingPulse {
+      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+    }
+
+    .budget-btn-wrap { text-align: center; margin: 20px 0; display: none; }
+    .btn-budget { background: #25d366; animation: pulseGlow 2s infinite; }
     @keyframes pulseGlow {
       0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
       70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
       100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
     }
-
-    .budget-btn-wrap { text-align: center; margin: 30px 0; }
 
     .ticker-wrap { width: 100%; overflow: hidden; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; padding: 12px 0; margin: 15px 0 35px; display: none; }
     .marquee { display: flex; white-space: nowrap; animation: marquee 25s linear infinite; }
@@ -192,6 +204,10 @@
       <div class="chat-area" id="chatBox">
         <iframe id="chatFrame" src="" allow="clipboard-write"></iframe>
       </div>
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn-red btn-booking" onclick="openWaBooking()">🗓️ MARCA A TUA FESTA AGORA!</button>
     </div>
 
     <div class="budget-btn-wrap" id="budgetArea">
@@ -404,6 +420,7 @@
 
   <script>
     const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
+    // URL secundário para gerir utilizadores ligados em tempo real no Firebase REST API
     const ATTENDANCE_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/onlineUsers";
     
     const CORRECT_USER = "admin";
@@ -442,8 +459,10 @@
     }
     setInterval(updateLiveClock, 1000);
 
+    // SISTEMA AUTOMÁTICO: Regista a sessão do utilizador e conta quantos estão no site
     async function setupAutomaticAttendance() {
       try {
+        // Regista a presença atual
         const res = await fetch(`${ATTENDANCE_URL}.json`, {
           method: 'POST',
           body: JSON.stringify({ timestamp: Date.now() })
@@ -451,11 +470,14 @@
         const data = await res.json();
         if (data && data.name) {
           myPresenceId = data.name;
+          // Se fechar ou atualizar a página, limpa a sessão no Firebase de imediato
           window.addEventListener('beforeunload', () => {
             navigator.sendBeacon(`${ATTENDANCE_URL}/${myPresenceId}.json?x-http-method-override=DELETE`, '');
           });
         }
-      } catch (e) { console.warn("Erro ao registar presença."); }
+      } catch (e) { console.warn("Erro ao registar presença automatizada."); }
+      
+      // Executa a leitura inicial e define ciclo de verificação a cada 10 segundos
       checkOnlineCount();
       setInterval(checkOnlineCount, 10000);
     }
@@ -464,7 +486,11 @@
       try {
         const res = await fetch(`${ATTENDANCE_URL}.json`);
         const data = await res.json();
-        let total = data ? Object.keys(data).length : 0;
+        let total = 0;
+        if (data) {
+          total = Object.keys(data).length;
+        }
+        // Aplica o valor de pessoas ligadas diretamente no contador do site
         const countEl = document.getElementById('vCount');
         if (countEl) countEl.textContent = total > 0 ? total : "1";
       } catch (e) { console.warn("Erro ao ler presenças."); }
@@ -473,10 +499,18 @@
     async function fetchGoogleDriveVideos() {
       const folderId = currentData.driveFolderId;
       const apiKey = currentData.driveApiKey;
-      if (!folderId || !apiKey) return;
+       
+      if (!folderId || !apiKey) {
+        console.warn("Configurações do Google Drive em falta no Painel Admin.");
+        return;
+      }
+       
       try {
-        const res = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`);
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`;
+         
+        const res = await fetch(url);
         const data = await res.json();
+         
         if (data.files) {
           driveVideos = data.files.map(file => ({
             id: file.id,
@@ -484,7 +518,9 @@
             title: file.name.replace(/\.[^/.]+$/, "")
           }));
         }
-      } catch (e) { console.error(e); }
+      } catch (error) {
+        console.error("Erro ao ler vídeos da conta do Google Drive:", error);
+      }
     }
 
     async function load() {
@@ -492,14 +528,23 @@
       updateLiveClock();
       setupAutomaticAttendance();
       try {
-        const res = await fetch(DATA_URL);
-        const d = await res.json();
+        const resFirebase = await fetch(DATA_URL);
+        const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
+         
         await fetchGoogleDriveVideos();
+         
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
-        document.getElementById('livePlayer').src = currentData.streamUrl || "";
+        
+        const rawUrl = currentData.streamUrl || "";
+        document.getElementById('livePlayer').src = rawUrl;
+         
         renderUI();
-      } catch (e) { renderUI(); }
+      } catch (e) { 
+        console.error(e); 
+        renderUI(); 
+      }
+       
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm(localStorage.getItem('admin_user_display') || 'admin');
       }
@@ -507,46 +552,314 @@
 
     function startLiveWithSound() {
       document.getElementById('liveCoverArea').style.display = 'none';
-      document.getElementById('livePlayer').src = currentData.streamUrl.replace('&muted=true', '').replace('?muted=true', '');
+      const cleanUrl = currentData.streamUrl.replace('&muted=true', '').replace('?muted=true', '');
+      document.getElementById('livePlayer').src = cleanUrl;
+    }
+
+    function extractYoutubeId(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
     }
 
     function renderUI() {
       document.getElementById('maintenanceScreen').style.display = currentData.maintenanceActive ? 'flex' : 'none';
-      document.getElementById('neon1').style.display = document.getElementById('neon2').style.display = currentData.neonActive ? 'block' : 'none';
+
+      const displayNeon = currentData.neonActive ? 'block' : 'none';
+      document.getElementById('neon1').style.display = displayNeon;
+      document.getElementById('neon2').style.display = displayNeon;
+
       document.getElementById('budgetArea').style.display = currentData.budgetActive ? 'block' : 'none';
 
       const alertEl = document.getElementById('topAlert');
-      if (currentData.alertActive && currentData.alertText) { alertEl.textContent = currentData.alertText; alertEl.style.display = 'block'; }
-      
+      if (currentData.alertActive && currentData.alertText) {
+        alertEl.textContent = currentData.alertText; alertEl.style.display = 'block';
+      } else { alertEl.style.display = 'none'; }
+
       const tickerEl = document.getElementById('tickerWrap');
-      if (currentData.marqueeActive && currentData.marqueeText) { tickerEl.innerHTML = `<div class="marquee"><span>${currentData.marqueeText}</span></div>`; tickerEl.style.display = 'block'; }
+      if (currentData.marqueeActive && currentData.marqueeText) {
+        const content = `<span>${currentData.marqueeText}</span>`.repeat(6);
+        document.getElementById('marqueeText').innerHTML = content;
+        tickerEl.style.display = 'block';
+      } else { tickerEl.style.display = 'none'; }
+
+      const agenda = currentData.agenda || [];
+      if (agenda.length > 0) {
+        document.getElementById('agendaSection').style.display = 'block';
+        document.getElementById('agendaGrid').innerHTML = agenda.map(item => {
+          const parts = item.split('-');
+          const date = parts[0] ? parts[0].trim() : "Data";
+          const loc = parts[1] ? parts[1].trim() : "";
+          return `<div class="agenda-item"><div class="agenda-date">📅 ${date}</div><div class="agenda-location">${loc}</div></div>`;
+        }).join('');
+      } else { document.getElementById('agendaSection').style.display = 'none'; }
 
       document.getElementById('aboutText').textContent = currentData.about || "";
       document.getElementById('liveBar').style.display = currentData.stats ? 'flex' : 'none';
       document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
       document.getElementById('chatFrame').src = currentData.chatUrl || "";
       
+      // PROCESSAMENTO CORRETO: Sincroniza a barra de contadores com os valores do Firebase
       document.getElementById('numEventos').textContent = currentData.numEventos || "0";
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
 
-      // Renderização simplificada de galerias e vídeos...
-      renderGalleryAndVideos();
-      renderSponsors();
+      const gal = currentData.gal || [];
+      const limGal = galAll ? gal.length : 6;
+      document.getElementById('galGrid').innerHTML = gal.slice(0, limGal).map(img => img ? `<div class="gallery-item"><img src="${img}" loading="lazy"></div>` : '').join('');
+      document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
+      document.getElementById('btnGal').style.display = gal.length <= 6 ? 'none' : 'inline-block';
+
+      const limVid = vidsAll ? driveVideos.length : 3;
+      if (driveVideos.length === 0) {
+        document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
+        document.getElementById('btnVid').style.display = 'none';
+      } else {
+        document.getElementById('vidGrid').innerHTML = driveVideos.slice(0, limVid).map((v, i) => {
+          const thumbnailUrl = v.id ? `https://drive.google.com/thumbnail?id=${v.id}&sz=w1280` : '';
+
+          return `
+            <div class="card" id="vidCard-${i}">
+              <div id="vidPlayerArea-${i}">
+                <div style="width:100%; aspect-ratio:16/9; background:#111; background-image: url('${thumbnailUrl}'); background-size: cover; background-position: center; display:flex; flex-direction: column; align-items:center; justify-content:center; border-bottom:1px solid #222; position:relative; cursor:pointer;" onclick="playInCard('${v.url}', ${i})">
+                  <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.1)'" onmouseout="this.style.background='rgba(0,0,0,0.4)'">
+                    <span style="font-size:44px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8)); margin-bottom: 8px;">▶️</span>
+                    <span style="font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">Carrega play para ver o vídeo</span>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:12px;"><b>${v.title}</b></div>
+            </div>
+          `;
+        }).join('');
+        document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos" : "Ver Mais";
+        document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
+      }
+
+      const sponsorsArray = currentData.listSponsors || [];
+      if (sponsorsArray.length === 0) {
+        document.getElementById('partnersGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Adicione patrocinadores no Painel Admin.</p>`;
+      } else {
+        document.getElementById('partnersGrid').innerHTML = sponsorsArray.map(s => {
+          const cardHtml = `
+            <div class="partner-card">
+              <img src="${s.image}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23222%22/><text y=%2250%25%22 x=%2250%25%22 font-size=%2210%22 text-anchor=%22middle%22 fill=%22%23555%22>Logo</text></svg>';">
+              <span>${s.name}</span>
+            </div>
+          `;
+          return s.link ? `<a href="${s.link}" target="_blank" class="partner-card-link" title="Visitar ${s.name}">${cardHtml}</a>` : cardHtml;
+        }).join('');
+      }
+
+      const soc = currentData.socials || {};
+      let socHtml = "";
+      if (soc.ig) socHtml += `<a href="${soc.ig}" target="_blank" class="social-icon">IG</a>`;
+      if (soc.fb) socHtml += `<a href="${soc.fb}" target="_blank" class="social-icon">FB</a>`;
+      if (soc.tk) socHtml += `<a href="${soc.tk}" target="_blank" class="social-icon">TK</a>`;
+      if (soc.yt) socHtml += `<a href="${soc.yt}" target="_blank" class="social-icon">YT</a>`;
+      document.getElementById('footerSocials').innerHTML = socHtml;
+
+      document.getElementById('serGrid').innerHTML = (currentData.ser || []).map(s => `
+        <div class="card">
+          <img src="${s.i}" loading="lazy">
+          <div style="padding:15px;"><h3>${s.t}</h3><p style="font-size:13px;color:#888;line-height:1.4;">${s.d}</p></div>
+        </div>
+      `).join('');
     }
 
-    function renderGalleryAndVideos() { /* Lógica de renderização mantida para UI */ }
-    function renderSponsors() { /* Lógica de renderização mantida para UI */ }
+    function playInCard(url, index) {
+      const targetArea = document.getElementById(`vidPlayerArea-${index}`);
+      const ytId = extractYoutubeId(url);
+      if (ytId) {
+        targetArea.innerHTML = `<div class="card-player-wrap"><iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allowfullscreen allow="autoplay"></iframe></div>`;
+      } else {
+        targetArea.innerHTML = `<div class="card-player-wrap"><video id="inlineVideo-${index}" controls autoplay playsinline style="width:100%; height:100%; object-fit:cover;"></video></div>`;
+        const videoElement = document.getElementById(`inlineVideo-${index}`);
+        if (Hls.isSupported() && url.includes('.m3u8')) {
+          const hls = new Hls(); hls.loadSource(url); hls.attachMedia(videoElement);
+        } else { videoElement.src = url; }
+      }
+    }
 
-    // Funções Admin e Auxiliares...
-    function login() { /* Lógica login */ }
-    function openWaBudget() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá,%20gostaria%20de%20um%20orçamento!`, '_blank'); }
-    function openWa() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}`, '_blank'); }
-    function saveAll() { /* ... */ }
-    function showAdmin() { document.getElementById('adminArea').style.display = 'block'; }
+    function toggleVids() { vidsAll = !vidsAll; renderUI(); }
+    function toggleGal() { galAll = !galAll; renderUI(); }
+
+    function login() {
+      const userInput = document.getElementById('u').value.trim();
+      const passwordInput = document.getElementById('p').value;
+      if (userInput === CORRECT_USER && passwordInput === CORRECT_PASS) {
+        localStorage.setItem('admin_logged', 'true');
+        localStorage.setItem('admin_user_display', userInput);
+        openEditForm(userInput);
+      } else { alert("Dados de Login incorretos!"); }
+    }
+
+    function addSponsorRow(name = "", image = "", link = "") {
+      const container = document.getElementById('dynamicSponsorsContainer');
+      const row = document.createElement('div');
+      row.className = 'sponsor-row';
+      row.innerHTML = `
+        <div class="sponsor-fields">
+          <div class="admin-group">
+            <label>Título / Nome do Local</label>
+            <input type="text" class="admin-input sp-name" placeholder="Ex: Madeira Club" value="${name}">
+          </div>
+          <div class="admin-group">
+            <label>Link da Foto (Logótipo)</label>
+            <input type="text" class="admin-input sp-image" placeholder="Ex: https://site.com/foto.jpg" value="${image}">
+          </div>
+          <div class="admin-group">
+            <label>Link do Website / Página</label>
+            <input type="text" class="admin-input sp-link" placeholder="Ex: https://instagram.com/local" value="${link}">
+          </div>
+        </div>
+        <button type="button" class="btn-remove-sponsor" onclick="this.parentElement.remove()">❌ Remover Patrocinador</button>
+      `;
+      container.appendChild(row);
+    }
+
+    function openEditForm(username) {
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('editForm').style.display = 'block';
+      document.getElementById('activeSessionText').textContent = `Sessão Iniciada: ${username}`;
+
+      document.getElementById('inThemeColor').value = currentData.themeColor || "#f52a1f";
+      document.getElementById('inAlertActive').checked = !!currentData.alertActive;
+      document.getElementById('inAlertText').value = currentData.alertText || "";
+      document.getElementById('inMarqueeActive').checked = !!currentData.marqueeActive;
+      document.getElementById('inMarqueeText').value = currentData.marqueeText || "";
+      document.getElementById('inNeonActive').checked = !!currentData.neonActive;
+      document.getElementById('inMaintenanceActive').checked = !!currentData.maintenanceActive;
+      
+      document.getElementById('inStreamUrl').value = currentData.streamUrl || "";
+      
+      document.getElementById('inDriveFolderId').value = currentData.driveFolderId || "";
+      document.getElementById('inDriveApiKey').value = currentData.driveApiKey || "";
+
+      document.getElementById('inWa').value = currentData.wa || "";
+      document.getElementById('inAbout').value = currentData.about || "";
+      document.getElementById('inStats').checked = !!currentData.stats;
+      document.getElementById('inChat').checked = !!currentData.chat;
+      document.getElementById('inChatUrl').value = currentData.chatUrl || "";
+      document.getElementById('inBudgetActive').checked = !!currentData.budgetActive;
+
+      document.getElementById('inNumEventos').value = currentData.numEventos || "0";
+      document.getElementById('inNumMusicas').value = currentData.numMusicas || "0";
+      document.getElementById('inNumAnos').value = currentData.numAnos || "0";
+
+      document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
+      document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
+      
+      document.getElementById('dynamicSponsorsContainer').innerHTML = "";
+      const savedSponsors = currentData.listSponsors || [];
+      savedSponsors.forEach(s => {
+        addSponsorRow(s.name, s.image, s.link);
+      });
+
+      let sH = "";
+      const serData = currentData.ser || [];
+      const serviceNames = ["Bloco da Esquerda", "Bloco do Centro", "Bloco da Direita"];
+      for (let i = 0; i < 3; i++) {
+        const s = serData[i] || { t: '', d: '', i: '' };
+        sH += `
+          <div style="background: #000; border: 1px dashed #333; padding: 12px; margin-top: 10px; border-radius: 10px;">
+            <strong style="font-size:11px; color:var(--primary-color); text-transform:uppercase; display:block; margin-bottom:5px;">${serviceNames[i]}</strong>
+            <input id="st${i}" class="admin-input" style="margin-bottom:5px;" placeholder="Título" value="${s.t || ''}">
+            <input id="si${i}" class="admin-input" style="margin-bottom:5px;" placeholder="URL Imagem" value="${s.i || ''}">
+            <input id="sd${i}" class="admin-input" placeholder="Descrição" value="${s.d || ''}">
+          </div>
+        `;
+      }
+      document.getElementById('serInputs').innerHTML = sH;
+    }
+
+    async function saveAll() {
+      if (localStorage.getItem('admin_logged') !== 'true') return;
+
+      const sponsorsToSave = [];
+      const nameInputs = document.querySelectorAll('.sp-name');
+      const imageInputs = document.querySelectorAll('.sp-image');
+      const linkInputs = document.querySelectorAll('.sp-link');
+
+      for (let i = 0; i < nameInputs.length; i++) {
+        const nameVal = nameInputs[i].value.trim();
+        const imgVal = imageInputs[i].value.trim();
+        const linkVal = linkInputs[i].value.trim();
+        if (nameVal || imgVal) {
+          sponsorsToSave.push({
+            name: nameVal,
+            image: imgVal,
+            link: linkVal
+          });
+        }
+      }
+
+      const data = {
+        themeColor: document.getElementById('inThemeColor').value,
+        alertActive: document.getElementById('inAlertActive').checked,
+        alertText: document.getElementById('inAlertText').value.trim(),
+        marqueeActive: document.getElementById('inMarqueeActive').checked,
+        marqueeText: document.getElementById('inMarqueeText').value.trim(),
+        neonActive: document.getElementById('inNeonActive').checked,
+        maintenanceActive: document.getElementById('inMaintenanceActive').checked,
+        streamUrl: document.getElementById('inStreamUrl').value.trim(),
+        
+        driveFolderId: document.getElementById('inDriveFolderId').value.trim(),
+        driveApiKey: document.getElementById('inDriveApiKey').value.trim(),
+
+        wa: document.getElementById('inWa').value.trim(),
+        about: document.getElementById('inAbout').value.trim(),
+        stats: document.getElementById('inStats').checked,
+        chat: document.getElementById('inChat').checked,
+        chatUrl: document.getElementById('inChatUrl').value.trim(),
+        budgetActive: document.getElementById('inBudgetActive').checked,
+        
+        numEventos: document.getElementById('inNumEventos').value.trim(),
+        numMusicas: document.getElementById('inNumMusicas').value.trim(),
+        numAnos: document.getElementById('inNumAnos').value.trim(),
+        
+        agenda: document.getElementById('inAgendaText').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
+        gal: document.getElementById('inGalUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
+        
+        listSponsors: sponsorsToSave,
+        
+        ser: [],
+        socials: {
+          ig: document.getElementById('inLinkIg').value.trim(),
+          fb: document.getElementById('inLinkFb').value.trim(),
+          tk: document.getElementById('inLinkTk').value.trim(),
+          yt: document.getElementById('inLinkYt').value.trim()
+        }
+      };
+
+      // RESOLVIDO DEFINITIVAMENTE: Vinculação exata com ID 'si' sem quebrar as outras chaves do script
+      for (let i = 0; i < 3; i++) {
+        const title = document.getElementById(`st${i}`).value.trim();
+        if (title) data.ser.push({ t: title, i: document.getElementById(`si${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
+      }
+
+      try {
+        await fetch(DATA_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        alert("SITE ATUALIZADO COM SUCESSO!");
+        location.reload();
+      } catch (e) { alert("Erro ao sincronizar modificações."); }
+    }
+
+    function logout() { localStorage.removeItem('admin_logged'); location.reload(); }
+    function showAdmin() { document.getElementById('adminArea').style.display = 'block'; window.scrollTo(0, document.body.scrollHeight); }
     function hideAdmin() { document.getElementById('adminArea').style.display = 'none'; }
+    function openWa() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}`, '_blank'); }
+    function openWaBudget() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá,%20vi%20o%20vosso%20site%20e%20gostaria%20de%20pedir%20um%20orçamento%20para%20um%20evento!`, '_blank'); }
     
+    function openWaBooking() { 
+      window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá!%20Vi%20o%20vosso%20site%20e%20gostaria%20de%20verificar%20a%20vossa%20disponibilidade%20e%20pedir%20um%20orçamento%20para%20uma%20festa!`, '_blank'); 
+    }
+
     load();
   </script>
 </body>
-</html>
+</html></html>
