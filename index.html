@@ -88,7 +88,11 @@
     .card-player-wrap { width: 100%; aspect-ratio: 16 / 9; background: #000; position: relative; }
     .card-player-wrap video, .card-player-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    /* RESOLVIDO: Grelha flexível ajustada para alinhar perfeitamente 6 fotos na mesma linha */
+    .gallery-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    @media (max-width: 900px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+
     .gallery-item { aspect-ratio: 1/1; border-radius: 14px; overflow: hidden; border: 1px solid #222; background: #111; transition: transform 0.3s; }
     .gallery-item:hover { transform: scale(1.04); border-color: var(--primary-color); }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
@@ -516,14 +520,14 @@
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
 
-      // AJUSTE: MÓDULO DE MOMENTOS LIMITADO A 6 IMAGENS INICIAIS
+      // LÓGICA ATUALIZADA: Mostra 6 fotos iniciais antes do botão "Ver Mais"
       const gal = currentData.gal || [];
       const limGal = galAll ? gal.length : 6;
       document.getElementById('galGrid').innerHTML = gal.slice(0, limGal).map(img => img ? `<div class="gallery-item"><img src="${img}" loading="lazy"></div>` : '').join('');
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 6 ? 'none' : 'inline-block';
 
-      // AJUSTE: MÓDULO DE VÍDEOS LIMITADO A 3 ITENS E COM ENDPOINT DE CAPAS ATUALIZADO
+      // LÓGICA ATUALIZADA: Mostra 3 vídeos iniciais antes do botão "Ver Mais"
       const limVid = vidsAll ? driveVideos.length : 3;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
@@ -546,7 +550,7 @@
             </div>
           `;
         }).join('');
-        document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
+        document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos" : "Ver Mais";
         document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
       }
 
