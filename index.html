@@ -19,12 +19,15 @@
     html, body { background: #000; margin: 0; padding: 0; color: #fff; scroll-behavior: smooth; position: relative; overflow-x: hidden; }
     body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto; background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000 70%); min-height: 100vh; }
 
-    .disco-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(245,42,31,0.06) 0%, rgba(0,0,0,0) 70%); filter: blur(60px); z-index: -1; pointer-events: none; display: none; }
-    .glow-1 { top: -10%; left: -10%; animation: floatGlow 15s ease-in-out infinite alternate; }
-    .glow-2 { bottom: -10%; right: -10%; animation: floatGlow 20s ease-in-out infinite alternate-reverse; }
+    /* ATUALIZADO: Efeito de Luzes de Discoteca Dinâmicas com Animação Fluida */
+    .disco-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(245,42,31,0.08) 0%, rgba(0,0,0,0) 70%); filter: blur(60px); z-index: -1; pointer-events: none; display: block !important; }
+    .glow-1 { top: -10%; left: -10%; animation: floatGlow 12s ease-in-out infinite alternate; }
+    .glow-2 { bottom: -10%; right: -10%; animation: floatGlow 16s ease-in-out infinite alternate-reverse; }
+    
     @keyframes floatGlow {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(80px, 50px) scale(1.2); }
+      0% { transform: translate(0, 0) scale(1); filter: blur(60px) hue-rotate(0deg); opacity: 0.7; }
+      50% { opacity: 1; filter: blur(80px); }
+      100% { transform: translate(120px, 80px) scale(1.3); filter: blur(60px) hue-rotate(45deg); opacity: 0.6; }
     }
 
     #maintenanceScreen { position: fixed; inset: 0; background: #000; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
@@ -72,9 +75,10 @@
       100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
     }
 
-    .ticker-wrap { width: 100%; overflow: hidden; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; padding: 12px 0; margin: 15px 0 35px; display: none; }
+    /* ATUALIZADO: Efeito Neon Glow Suave no Letreiro Digital */
+    .ticker-wrap { width: 100%; overflow: hidden; background: #050505; border-top: 1px solid #111; border-bottom: 1px solid #111; padding: 12px 0; margin: 15px 0 35px; box-shadow: 0 0 15px rgba(245, 42, 31, 0.1); }
     .marquee { display: flex; white-space: nowrap; animation: marquee 25s linear infinite; }
-    .marquee span { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #fff; padding: 0 40px; display: flex; align-items: center; gap: 10px; }
+    .marquee span { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #fff; padding: 0 40px; display: flex; align-items: center; gap: 10px; text-shadow: 0 0 8px rgba(255,255,255,0.2); }
     @keyframes marquee {
       0% { transform: translate3d(0, 0, 0); }
       100% { transform: translate3d(-50%, 0, 0); }
@@ -414,7 +418,6 @@
 
   <script>
     const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
-    // URL secundário para gerir utilizadores ligados em tempo real no Firebase REST API
     const ATTENDANCE_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/onlineUsers";
     
     const CORRECT_USER = "admin";
@@ -453,10 +456,8 @@
     }
     setInterval(updateLiveClock, 1000);
 
-    // SISTEMA AUTOMÁTICO: Regista a sessão do utilizador e conta quantos estão no site
     async function setupAutomaticAttendance() {
       try {
-        // Regista a presença atual
         const res = await fetch(`${ATTENDANCE_URL}.json`, {
           method: 'POST',
           body: JSON.stringify({ timestamp: Date.now() })
@@ -464,14 +465,12 @@
         const data = await res.json();
         if (data && data.name) {
           myPresenceId = data.name;
-          // Se fechar ou atualizar a página, limpa a sessão no Firebase de imediato
           window.addEventListener('beforeunload', () => {
             navigator.sendBeacon(`${ATTENDANCE_URL}/${myPresenceId}.json?x-http-method-override=DELETE`, '');
           });
         }
-      } catch (e) { console.warn("Erro ao registar presença automatizada."); }
+      } catch (e) { console.warn("Erro ao registar presenca."); }
       
-      // Executa a leitura inicial e define ciclo de verificação a cada 10 segundos
       checkOnlineCount();
       setInterval(checkOnlineCount, 10000);
     }
@@ -484,10 +483,9 @@
         if (data) {
           total = Object.keys(data).length;
         }
-        // Aplica o valor de pessoas ligadas diretamente no contador do site
         const countEl = document.getElementById('vCount');
         if (countEl) countEl.textContent = total > 0 ? total : "1";
-      } catch (e) { console.warn("Erro ao ler presenças."); }
+      } catch (e) { console.warn("Erro ao ler presencas."); }
     }
 
     async function fetchGoogleDriveVideos() {
@@ -559,6 +557,7 @@
     function renderUI() {
       document.getElementById('maintenanceScreen').style.display = currentData.maintenanceActive ? 'flex' : 'none';
 
+      // ATUALIZADO: Força o neon de fundo a herdar o estado do design dinâmico
       const displayNeon = currentData.neonActive ? 'block' : 'none';
       document.getElementById('neon1').style.display = displayNeon;
       document.getElementById('neon2').style.display = displayNeon;
@@ -570,12 +569,30 @@
         alertEl.textContent = currentData.alertText; alertEl.style.display = 'block';
       } else { alertEl.style.display = 'none'; }
 
+      // ATUALIZADO: Modo Inteligente Automatizado "Festa" / "Dia" aplicado ao Letreiro (Ticker)
       const tickerEl = document.getElementById('tickerWrap');
-      if (currentData.marqueeActive && currentData.marqueeText) {
-        const content = `<span>${currentData.marqueeText}</span>`.repeat(6);
+      if (currentData.marqueeActive) {
+        const now = new Date();
+        const currentHour = now.getHours();
+        let automatedNotice = "";
+
+        // Condição baseada na hora local do visitante
+        if (currentHour >= 6 && currentHour < 21) {
+          // Modo Dia (06h às 20h59) - Foco comercial corporativo
+          automatedNotice = `⚡ Planeia o teu próximo evento connosco • Faz a tua marcação para o fim de semana! • `;
+        } else {
+          // Modo Festa / Noite (21h às 05h59) - Foco no Show ao vivo
+          automatedNotice = `🔥 O ESPETÁCULO JÁ COMEÇOU! Vê o direto ou clica em marca a tua festa! • `;
+        }
+
+        // Combina o aviso inteligente com o texto personalizado guardado no Admin
+        const textToDisplay = automatedNotice + (currentData.marqueeText || "OS CANTA AGORA KARAOKE");
+        const content = `<span>${textToDisplay}</span>`.repeat(6);
         document.getElementById('marqueeText').innerHTML = content;
         tickerEl.style.display = 'block';
-      } else { tickerEl.style.display = 'none'; }
+      } else { 
+        tickerEl.style.display = 'none'; 
+      }
 
       const agenda = currentData.agenda || [];
       if (agenda.length > 0) {
@@ -593,7 +610,6 @@
       document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
       document.getElementById('chatFrame').src = currentData.chatUrl || "";
       
-      // PROCESSAMENTO CORRETO: Sincroniza a barra de contadores com os valores do Firebase
       document.getElementById('numEventos').textContent = currentData.numEventos || "0";
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
@@ -826,7 +842,6 @@
         }
       };
 
-      // RESOLVIDO DEFINITIVAMENTE: Vinculação exata com ID 'si' sem quebrar as outras chaves do script
       for (let i = 0; i < 3; i++) {
         const title = document.getElementById(`st${i}`).value.trim();
         if (title) data.ser.push({ t: title, i: document.getElementById(`si${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
