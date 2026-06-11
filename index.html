@@ -142,6 +142,13 @@
     
     .btn-more { background:none; border:1px solid #333; color:#fff; padding:10px 24px; border-radius:30px; cursor:pointer; font-size:11px; margin-top:25px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; transition: all 0.2s; }
     .btn-more:hover { border-color: var(--primary-color); color: var(--primary-color); background: rgba(245, 42, 31, 0.05); }
+
+    /* ESTILOS DA SECCAO ADMIN DE PATROCINADORES DINAMICOS */
+    .sponsor-row { background: #050505; border: 1px solid #222; padding: 15px; margin-bottom: 15px; border-radius: 12px; position: relative; }
+    .sponsor-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    @media (max-width: 768px) { .sponsor-fields { grid-template-columns: 1fr; } }
+    .btn-remove-sponsor { background: #8a1f1f; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; margin-top: 10px; display: inline-block; text-transform: uppercase; }
+    .btn-add-sponsor { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 5px; }
   </style>
 </head>
 
@@ -363,10 +370,8 @@
 
         <div class="admin-section">
           <h3>🤝 Gestor de Patrocinadores & Parceiros Oficiais (ILIMITADOS)</h3>
-          <div class="admin-group">
-            <label>Lista Completa (Regra: Nome | URL da Imagem | Link de Redes ou Site)</label>
-            <textarea id="inUnlimitedSponsors" class="admin-input" rows="6" placeholder="Exemplo: Madeira Club | https://site.com/logo.jpg | https://instagram.com/madeiraclub"></textarea>
-          </div>
+          <div id="dynamicSponsorsContainer"></div>
+          <button type="button" class="btn-add-sponsor" onclick="addSponsorRow()">➕ Adicionar Novo Patrocinador</button>
         </div>
 
         <div class="admin-section">
@@ -407,7 +412,7 @@
     let currentData = { 
       streamUrl: "", wa: "", about: "", stats: true, chat: true, chatUrl: "", gal: [], ser: [],
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
-      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], rawSponsors: "",
+      numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], listSponsors: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
       neonActive: false, maintenanceActive: false, budgetActive: false,
       driveFolderId: "", driveApiKey: ""
@@ -465,7 +470,6 @@
          
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
         
-        // Mantém a live em mute de fundo inicial por segurança do carregamento do iframe
         const rawUrl = currentData.streamUrl || "";
         document.getElementById('livePlayer').src = rawUrl;
          
@@ -480,7 +484,6 @@
       }
     }
 
-    // NOVA FUNÇÃO: Ativa o som e remove a capa tudo com um único clique do utilizador
     function startLiveWithSound() {
       document.getElementById('liveCoverArea').style.display = 'none';
       const cleanUrl = currentData.streamUrl.replace('&muted=true', '').replace('?muted=true', '');
@@ -565,20 +568,12 @@
         document.getElementById('btnVid').style.display = driveVideos.length <= 3 ? 'none' : 'inline-block';
       }
 
-      const rawSponsorsText = currentData.rawSponsors || "";
-      const parsedSponsors = rawSponsorsText.split('\n').map(line => {
-        const token = line.split('|');
-        return {
-          name: token[0] ? token[0].trim() : "",
-          image: token[1] ? token[1].trim() : "",
-          link: token[2] ? token[2].trim() : ""
-        };
-      }).filter(s => s.name || s.image);
-
-      if (parsedSponsors.length === 0) {
+      // LEITURA DOS PATROCINADORES DA ESTRUTURA DO FORMULÁRIO DINÂMICO
+      const sponsorsArray = currentData.listSponsors || [];
+      if (sponsorsArray.length === 0) {
         document.getElementById('partnersGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Adicione patrocinadores no Painel Admin.</p>`;
       } else {
-        document.getElementById('partnersGrid').innerHTML = parsedSponsors.map(s => {
+        document.getElementById('partnersGrid').innerHTML = sponsorsArray.map(s => {
           const cardHtml = `
             <div class="partner-card">
               <img src="${s.image}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23222%22/><text y=%2250%25%22 x=%2250%25%22 font-size=%2210%22 text-anchor=%22middle%22 fill=%22%23555%22>Logo</text></svg>';">
@@ -632,6 +627,31 @@
       } else { alert("Dados de Login incorretos!"); }
     }
 
+    // GESTÃO DINÂMICA: Funções para criar as linhas com inputs independentes no Admin
+    function addSponsorRow(name = "", image = "", link = "") {
+      const container = document.getElementById('dynamicSponsorsContainer');
+      const row = document.createElement('div');
+      row.className = 'sponsor-row';
+      row.innerHTML = `
+        <div class="sponsor-fields">
+          <div class="admin-group">
+            <label>Título / Nome do Local</label>
+            <input type="text" class="admin-input sp-name" placeholder="Ex: Madeira Club" value="${name}">
+          </div>
+          <div class="admin-group">
+            <label>Link da Foto (Logótipo)</label>
+            <input type="text" class="admin-input sp-image" placeholder="Ex: https://site.com/foto.jpg" value="${image}">
+          </div>
+          <div class="admin-group">
+            <label>Link do Website / Página</label>
+            <input type="text" class="admin-input sp-link" placeholder="Ex: https://instagram.com/local" value="${link}">
+          </div>
+        </div>
+        <button type="button" class="btn-remove-sponsor" onclick="this.parentElement.remove()">❌ Remover Patrocinador</button>
+      `;
+      container.appendChild(row);
+    }
+
     function openEditForm(username) {
       document.getElementById('loginForm').style.display = 'none';
       document.getElementById('editForm').style.display = 'block';
@@ -664,13 +684,12 @@
       document.getElementById('inAgendaText').value = (currentData.agenda || []).join('\n');
       document.getElementById('inGalUrls').value = (currentData.gal || []).join('\n');
       
-      document.getElementById('inUnlimitedSponsors').value = currentData.rawSponsors || "";
-
-      const soc = currentData.socials || {};
-      document.getElementById('inLinkIg').value = soc.ig || "";
-      document.getElementById('inLinkFb').value = soc.fb || "";
-      document.getElementById('inLinkTk').value = soc.tk || "";
-      document.getElementById('inLinkYt').value = soc.yt || "";
+      // Carrega os patrocinadores guardados gerando as linhas automaticamente
+      document.getElementById('dynamicSponsorsContainer').innerHTML = "";
+      const savedSponsors = currentData.listSponsors || [];
+      savedSponsors.forEach(s => {
+        addSponsorRow(s.name, s.image, s.link);
+      });
 
       let sH = "";
       const serData = currentData.ser || [];
@@ -691,6 +710,25 @@
 
     async function saveAll() {
       if (localStorage.getItem('admin_logged') !== 'true') return;
+
+      // Recolha dinâmica das linhas criadas pelo utilizador
+      const sponsorsToSave = [];
+      const nameInputs = document.querySelectorAll('.sp-name');
+      const imageInputs = document.querySelectorAll('.sp-image');
+      const linkInputs = document.querySelectorAll('.sp-link');
+
+      for (let i = 0; i < nameInputs.length; i++) {
+        const nameVal = nameInputs[i].value.trim();
+        const imgVal = imageInputs[i].value.trim();
+        const linkVal = linkInputs[i].value.trim();
+        if (nameVal || imgVal) {
+          sponsorsToSave.push({
+            name: nameVal,
+            image: imgVal,
+            link: linkVal
+          });
+        }
+      }
 
       const data = {
         themeColor: document.getElementById('inThemeColor').value,
@@ -717,7 +755,7 @@
         agenda: document.getElementById('inAgendaText').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         gal: document.getElementById('inGalUrls').value.split('\n').map(l => l.trim()).filter(l => l !== ""),
         
-        rawSponsors: document.getElementById('inUnlimitedSponsors').value,
+        listSponsors: sponsorsToSave,
         
         ser: [],
         socials: {
