@@ -104,7 +104,6 @@
     .stat-number { font-size: 2.5rem; font-weight: 900; color: var(--primary-color); margin-bottom: 5px; }
     .stat-label { font-size: 13px; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
 
-    /* MODIFICADO: Aumentado o tamanho máximo dos logótipos e o espaçamento para ficarem maiores e mais imponentes */
     .partners-grid { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; margin: 40px 0; padding: 15px; }
     .partners-grid img { max-height: 75px; max-width: 180px; object-fit: contain; filter: grayscale(1) brightness(0.9); opacity: 0.6; transition: all 0.3s; }
     .partners-grid img:hover { filter: grayscale(0) brightness(1.1); opacity: 1; transform: scale(1.08); }
@@ -419,18 +418,18 @@
     async function fetchGoogleDriveVideos() {
       const folderId = currentData.driveFolderId;
       const apiKey = currentData.driveApiKey;
-      
+       
       if (!folderId || !apiKey) {
         console.warn("Configurações do Google Drive em falta no Painel Admin.");
         return;
       }
-      
+       
       try {
         const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`;
-        
+         
         const res = await fetch(url);
         const data = await res.json();
-        
+         
         if (data.files) {
           driveVideos = data.files.map(file => ({
             url: `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${apiKey}`,
@@ -448,18 +447,18 @@
         const resFirebase = await fetch(DATA_URL);
         const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
-        
+         
         await fetchGoogleDriveVideos();
-        
+         
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
         document.getElementById('livePlayer').src = currentData.streamUrl || "";
-        
+         
         renderUI();
       } catch (e) { 
         console.error(e); 
         renderUI(); 
       }
-      
+       
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm(localStorage.getItem('admin_user_display') || 'admin');
       }
@@ -517,17 +516,24 @@
       document.getElementById('btnGal').textContent = galAll ? "Ver Menos" : "Ver Mais";
       document.getElementById('btnGal').style.display = gal.length <= 4 ? 'none' : 'inline-block';
 
+      // --- SECÇÃO ATUALIZADA: CAPA E TEXTO REPRODUÇÃO PARA VÍDEOS DO GOOGLE DRIVE ---
       const limVid = vidsAll ? driveVideos.length : 4;
       if (driveVideos.length === 0) {
         document.getElementById('vidGrid').innerHTML = `<p style="text-align:center; color:#666; grid-column: 1/-1;">Configure o ID da Pasta do Google Drive no painel Admin para exibir os vídeos.</p>`;
         document.getElementById('btnVid').style.display = 'none';
       } else {
         document.getElementById('vidGrid').innerHTML = driveVideos.slice(0, limVid).map((v, i) => {
+          const fileId = v.url.split('/files/')[1]?.split('?')[0];
+          const thumbnailUrl = fileId ? `https://googleusercontent.com/profile/picture/0${fileId}=w400-h225-p` : '';
+
           return `
             <div class="card" id="vidCard-${i}">
               <div id="vidPlayerArea-${i}">
-                <div style="width:100%; aspect-ratio:16/9; background:#111; display:flex; align-items:center; justify-content:center; border-bottom:1px solid #222; position:relative; cursor:pointer;" onclick="playInCard('${v.url}', ${i})">
-                  <span style="font-size:40px; z-index:2; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.7));">▶️</span>
+                <div style="width:100%; aspect-ratio:16/9; background:#111; background-image: url('${thumbnailUrl}'); background-size: cover; background-position: center; display:flex; flex-direction: column; align-items:center; justify-content:center; border-bottom:1px solid #222; position:relative; cursor:pointer;" onclick="playInCard('${v.url}', ${i})">
+                  <div style="position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.2)'" onmouseout="this.style.background='rgba(0,0,0,0.4)'">
+                    <span style="font-size:44px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8)); margin-bottom: 8px;">▶️</span>
+                    <span style="font-size:11px; font-weight:bold; letter-spacing:1px; text-transform:uppercase; color:#fff; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">Carrega play para ver o vídeo</span>
+                  </div>
                 </div>
               </div>
               <div style="padding:12px;"><b>${v.title}</b></div>
@@ -537,6 +543,7 @@
         document.getElementById('btnVid').textContent = vidsAll ? "Ver Menos Vídeos" : "Ver Mais Vídeos";
         document.getElementById('btnVid').style.display = driveVideos.length <= 4 ? 'none' : 'inline-block';
       }
+      // ----------------------------------------------------------------------------
 
       const partners = currentData.partners || [];
       document.getElementById('partnersGrid').innerHTML = partners.map(p => {
