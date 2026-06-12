@@ -1,10 +1,4 @@
-
-    load();
-  </script>
-</body>
-</html>
-    </script>
-</body><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
@@ -66,14 +60,6 @@
     .btn-booking { background: #25d366 !important; animation: bookingPulse 2s infinite; font-size: 15px !important; letter-spacing: 1px; }
     @keyframes bookingPulse {
       0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
-      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-    }
-
-    .budget-btn-wrap { text-align: center; margin: 20px 0; display: none; }
-    .btn-budget { background: #25d366; animation: pulseGlow 2s infinite; }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
       70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
       100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
     }
@@ -210,10 +196,6 @@
       <button class="btn-red btn-booking" onclick="openWaBooking()">🗓️ MARCA A TUA FESTA AGORA!</button>
     </div>
 
-    <div class="budget-btn-wrap" id="budgetArea">
-      <button class="btn-red btn-budget" onclick="openWaBudget()">⚡ PEDIR ORÇAMENTO GRÁTIS EM 1 MINUTO</button>
-    </div>
-
     <div class="ticker-wrap" id="tickerWrap">
       <div class="marquee" id="marqueeText"></div>
     </div>
@@ -331,7 +313,6 @@
           <div class="admin-checkbox-group">
             <label><input type="checkbox" id="inStats"> Mostrar Barra "EM DIRETO"</label>
             <label><input type="checkbox" id="inChat"> Ativar Chat Integrado</label>
-            <label><input type="checkbox" id="inBudgetActive"> Mostrar Botão "Pedir Orçamento Grátis"</label>
           </div>
           <div class="admin-group">
             <label>Link do Chat Incorporado</label>
@@ -420,7 +401,6 @@
 
   <script>
     const DATA_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/config.json";
-    // URL secundário para gerir utilizadores ligados em tempo real no Firebase REST API
     const ATTENDANCE_URL = "https://karaokelive-ca58e-default-rtdb.europe-west1.firebasedatabase.app/onlineUsers";
     
     const CORRECT_USER = "admin";
@@ -431,7 +411,7 @@
       themeColor: "#f52a1f", alertActive: false, alertText: "", marqueeActive: false, marqueeText: "",
       numEventos: "0", numMusicas: "0", numAnos: "0", agenda: [], listSponsors: [],
       socials: { ig: "", fb: "", tk: "", yt: "" },
-      neonActive: false, maintenanceActive: false, budgetActive: false,
+      neonActive: false, maintenanceActive: false,
       driveFolderId: "", driveApiKey: ""
     };
 
@@ -459,10 +439,8 @@
     }
     setInterval(updateLiveClock, 1000);
 
-    // SISTEMA AUTOMÁTICO: Regista a sessão do utilizador e conta quantos estão no site
     async function setupAutomaticAttendance() {
       try {
-        // Regista a presença atual
         const res = await fetch(`${ATTENDANCE_URL}.json`, {
           method: 'POST',
           body: JSON.stringify({ timestamp: Date.now() })
@@ -470,14 +448,12 @@
         const data = await res.json();
         if (data && data.name) {
           myPresenceId = data.name;
-          // Se fechar ou atualizar a página, limpa a sessão no Firebase de imediato
           window.addEventListener('beforeunload', () => {
             navigator.sendBeacon(`${ATTENDANCE_URL}/${myPresenceId}.json?x-http-method-override=DELETE`, '');
           });
         }
       } catch (e) { console.warn("Erro ao registar presença automatizada."); }
       
-      // Executa a leitura inicial e define ciclo de verificação a cada 10 segundos
       checkOnlineCount();
       setInterval(checkOnlineCount, 10000);
     }
@@ -490,7 +466,6 @@
         if (data) {
           total = Object.keys(data).length;
         }
-        // Aplica o valor de pessoas ligadas diretamente no contador do site
         const countEl = document.getElementById('vCount');
         if (countEl) countEl.textContent = total > 0 ? total : "1";
       } catch (e) { console.warn("Erro ao ler presenças."); }
@@ -507,10 +482,10 @@
        
       try {
         const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'video/'+and+trashed=false&fields=files(id,name)&key=${apiKey}`;
-         
+          
         const res = await fetch(url);
         const data = await res.json();
-         
+          
         if (data.files) {
           driveVideos = data.files.map(file => ({
             id: file.id,
@@ -531,20 +506,20 @@
         const resFirebase = await fetch(DATA_URL);
         const d = await resFirebase.json();
         if (d) currentData = { ...currentData, ...d };
-         
+          
         await fetchGoogleDriveVideos();
-         
+          
         document.documentElement.style.setProperty('--primary-color', currentData.themeColor || '#f52a1f');
-        
+          
         const rawUrl = currentData.streamUrl || "";
         document.getElementById('livePlayer').src = rawUrl;
-         
+          
         renderUI();
       } catch (e) { 
         console.error(e); 
         renderUI(); 
       }
-       
+        
       if (localStorage.getItem('admin_logged') === 'true') {
         openEditForm(localStorage.getItem('admin_user_display') || 'admin');
       }
@@ -568,8 +543,6 @@
       const displayNeon = currentData.neonActive ? 'block' : 'none';
       document.getElementById('neon1').style.display = displayNeon;
       document.getElementById('neon2').style.display = displayNeon;
-
-      document.getElementById('budgetArea').style.display = currentData.budgetActive ? 'block' : 'none';
 
       const alertEl = document.getElementById('topAlert');
       if (currentData.alertActive && currentData.alertText) {
@@ -599,7 +572,6 @@
       document.getElementById('chatBox').style.display = currentData.chat ? 'block' : 'none';
       document.getElementById('chatFrame').src = currentData.chatUrl || "";
       
-      // PROCESSAMENTO CORRETO: Sincroniza a barra de contadores com os valores do Firebase
       document.getElementById('numEventos').textContent = currentData.numEventos || "0";
       document.getElementById('numMusicas').textContent = currentData.numMusicas || "0";
       document.getElementById('numAnos').textContent = currentData.numAnos || "0";
@@ -741,7 +713,6 @@
       document.getElementById('inStats').checked = !!currentData.stats;
       document.getElementById('inChat').checked = !!currentData.chat;
       document.getElementById('inChatUrl').value = currentData.chatUrl || "";
-      document.getElementById('inBudgetActive').checked = !!currentData.budgetActive;
 
       document.getElementById('inNumEventos').value = currentData.numEventos || "0";
       document.getElementById('inNumMusicas').value = currentData.numMusicas || "0";
@@ -812,7 +783,6 @@
         stats: document.getElementById('inStats').checked,
         chat: document.getElementById('inChat').checked,
         chatUrl: document.getElementById('inChatUrl').value.trim(),
-        budgetActive: document.getElementById('inBudgetActive').checked,
         
         numEventos: document.getElementById('inNumEventos').value.trim(),
         numMusicas: document.getElementById('inNumMusicas').value.trim(),
@@ -832,7 +802,6 @@
         }
       };
 
-      // RESOLVIDO DEFINITIVAMENTE: Vinculação exata com ID 'si' sem quebrar as outras chaves do script
       for (let i = 0; i < 3; i++) {
         const title = document.getElementById(`st${i}`).value.trim();
         if (title) data.ser.push({ t: title, i: document.getElementById(`si${i}`).value.trim(), d: document.getElementById(`sd${i}`).value.trim() });
@@ -853,7 +822,6 @@
     function showAdmin() { document.getElementById('adminArea').style.display = 'block'; window.scrollTo(0, document.body.scrollHeight); }
     function hideAdmin() { document.getElementById('adminArea').style.display = 'none'; }
     function openWa() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}`, '_blank'); }
-    function openWaBudget() { window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá,%20vi%20o%20vosso%20site%20e%20gostaria%20de%20pedir%20um%20orçamento%20para%20um%20evento!`, '_blank'); }
     
     function openWaBooking() { 
       window.open(`https://wa.me/${String(currentData.wa || "").replace(/\D/g, '')}?text=Olá!%20Vi%20o%20vosso%20site%20e%20gostaria%20de%20verificar%20a%20vossa%20disponibilidade%20e%20pedir%20um%20orçamento%20para%20uma%20festa!`, '_blank'); 
@@ -862,4 +830,5 @@
     load();
   </script>
 </body>
-</html></html>
+</html>
+ 
